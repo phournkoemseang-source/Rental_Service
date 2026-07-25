@@ -124,7 +124,7 @@ const formatNotificationTitle = (item) => {
   <div class="notification-panel panel-slim">
     <header class="notification-panel__header">
       <div>
-        <h3>Notifications</h3>
+        <h3>{{ $t('notifications') }}</h3>
         <p class="notification-panel__subtitle">Stay on top of incoming orders and updates.</p>
       </div>
       <button class="header-menu" type="button" aria-label="Open menu">

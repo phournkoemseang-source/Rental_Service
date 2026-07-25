@@ -17,7 +17,7 @@ class ShopController extends Controller
 {
     public function index(Request $request)
     {
-        $shops = Shop::with(['owner:id,name,email,phone']);
+        $shops = Shop::with(['owner:id,name,email,phone', 'city']);
         
         // Filter to only show shops that have at least one payment
         if ($request->boolean('has_payment', false)) {
@@ -29,7 +29,7 @@ class ShopController extends Controller
         $shops = $shops->orderByDesc('id')->paginate(25);
 
         // Manually add img_url_full to ensure it's included
-        $shopsWithImages = $shops->map(function ($shop) {
+        $shopsWithImages = $shops->map(function ($shop) use ($request) {
             // Calculate rating from Rating table based on shop_id
             $shopRatings = Rating::where('shop_id', $shop->id)->get();
             
@@ -48,8 +48,8 @@ class ShopController extends Controller
                 'location' => $shop->location,
                 'phone' => $shop->phone,
                 'img_url' => $shop->img_url,
-                'img_url_full' => $shop->img_url_full,
-                'image' => $shop->img_url_full,
+                'img_url_full' => $this->buildAbsoluteImageUrl($shop->img_url, $request),
+                'image' => $this->buildAbsoluteImageUrl($shop->img_url, $request),
                 'latitude' => $shop->latitude,
                 'longitude' => $shop->longitude,
                 'rating' => $rating,
@@ -57,7 +57,8 @@ class ShopController extends Controller
                 'status' => $shop->status,
                 'created_at' => $shop->created_at,
                 'updated_at' => $shop->updated_at,
-                'owner' => $shop->owner
+                'owner' => $shop->owner,
+                'city' => $shop->city
             ];
         });
 
@@ -152,6 +153,13 @@ class ShopController extends Controller
             }
         }
 
+        if ($this->shopColumnExists('location') && empty($payload['location'])) {
+            $placeName = $this->extractPlaceNameFromMapUrl($payload['map_url'] ?? null);
+            if ($placeName) {
+                $payload['location'] = $placeName;
+            }
+        }
+
         $record = Shop::create($payload);
         try {
             NotificationService::shopCreated($record);
@@ -165,9 +173,80 @@ class ShopController extends Controller
         return response()->json($record, 201);
     }
 
+    /**
+     * Get the authenticated user's own shop(s).
+     */
+    public function myShop(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        $shop = Shop::where('owner_id', $user->id)
+            ->with(['owner:id,name,email,phone', 'city'])
+            ->orderByDesc('id')
+            ->first();
+
+        if (!$shop) {
+            return response()->json(null, 204);
+        }
+
+        $shopRatings = \App\Models\Rating::where('shop_id', $shop->id)->get();
+        $hasRatings = $shopRatings->isNotEmpty();
+        $rating = $hasRatings ? round($shopRatings->avg('rating'), 1) : null;
+        $totalReviews = $hasRatings ? $shopRatings->count() : null;
+
+        return response()->json([
+            'id' => $shop->id,
+            'owner_id' => $shop->owner_id,
+            'city_id' => $shop->city_id,
+            'name' => $shop->name,
+            'description' => $shop->description,
+            'address' => $shop->address,
+            'location' => $shop->location,
+            'phone' => $shop->phone,
+            'img_url' => $shop->img_url,
+            'img_url_full' => $this->buildAbsoluteImageUrl($shop->img_url, $request),
+            'image' => $this->buildAbsoluteImageUrl($shop->img_url, $request),
+            'latitude' => $shop->latitude,
+            'longitude' => $shop->longitude,
+            'map_url' => $shop->map_url,
+            'rating' => $rating,
+            'total_reviews' => $totalReviews,
+            'status' => $shop->status,
+            'created_at' => $shop->created_at,
+            'updated_at' => $shop->updated_at,
+            'owner' => $shop->owner,
+            'city' => $shop->city,
+        ]);
+    }
+
     public function show(Shop $shop)
     {
-        return response()->json($shop->load('owner'));
+        $shop->load('owner');
+
+        return response()->json([
+            'id' => $shop->id,
+            'owner_id' => $shop->owner_id,
+            'city_id' => $shop->city_id,
+            'name' => $shop->name,
+            'description' => $shop->description,
+            'address' => $shop->address,
+            'location' => $shop->location,
+            'phone' => $shop->phone,
+            'img_url' => $shop->img_url,
+            'img_url_full' => $this->buildAbsoluteImageUrl($shop->img_url, request()),
+            'image' => $this->buildAbsoluteImageUrl($shop->img_url, request()),
+            'latitude' => $shop->latitude,
+            'longitude' => $shop->longitude,
+            'map_url' => $shop->map_url,
+            'status' => $shop->status,
+            'created_at' => $shop->created_at,
+            'updated_at' => $shop->updated_at,
+            'owner' => $shop->owner,
+            'city' => $shop->city,
+        ]);
     }
 
     public function update(Request $request, Shop $shop)
@@ -291,9 +370,38 @@ class ShopController extends Controller
             }
         }
 
+        if ($this->shopColumnExists('location') && empty($payload['location'])) {
+            $placeName = $this->extractPlaceNameFromMapUrl($mapUrlForCoords);
+            if ($placeName) {
+                $payload['location'] = $placeName;
+            }
+        }
+
         $shop->update($payload);
 
-        return response()->json($shop->fresh());
+        $fresh = $shop->fresh();
+
+        return response()->json([
+            'id' => $fresh->id,
+            'owner_id' => $fresh->owner_id,
+            'city_id' => $fresh->city_id,
+            'name' => $fresh->name,
+            'description' => $fresh->description,
+            'address' => $fresh->address,
+            'location' => $fresh->location,
+            'phone' => $fresh->phone,
+            'img_url' => $fresh->img_url,
+            'img_url_full' => $this->buildAbsoluteImageUrl($fresh->img_url, $request),
+            'image' => $this->buildAbsoluteImageUrl($fresh->img_url, $request),
+            'latitude' => $fresh->latitude,
+            'longitude' => $fresh->longitude,
+            'map_url' => $fresh->map_url,
+            'status' => $fresh->status,
+            'created_at' => $fresh->created_at,
+            'updated_at' => $fresh->updated_at,
+            'owner' => $fresh->owner,
+            'city' => $fresh->city,
+        ]);
     }
 
     public function destroy(Request $request, Shop $shop)
@@ -378,6 +486,8 @@ class ShopController extends Controller
             '/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/',
             '/[?&](?:q|query|ll|destination|origin)=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/',
             '/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/',
+            '/\/maps\/[^?]*\?[^#]*q=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/',
+            '/\/maps\/place\/[^/]*\/(\d+(?:\.\d+)?),(\d+(?:\.\d+)?),/',
         ];
 
         foreach ($patterns as $pattern) {
@@ -398,5 +508,59 @@ class ShopController extends Controller
         }
 
         return [null, null];
+    }
+
+    /**
+     * Extract place / location name from Google Maps URL path.
+     * Example: /maps/place/Phnom+Penh/ => Phnom Penh
+     */
+    private function extractPlaceNameFromMapUrl(?string $value): ?string
+    {
+        $url = trim((string) $value);
+        if ($url === '') {
+            return null;
+        }
+
+        if (preg_match('#/maps/place/([^/]+)#i', $url, $matches)) {
+            $name = urldecode($matches[1]);
+            $name = str_replace(['+', '_', '-'], ' ', $name);
+            $name = preg_replace('/\s+/', ' ', $name);
+            return trim($name);
+        }
+
+        return null;
+    }
+
+    /**
+     * Build an absolute image URL using the incoming request host/scheme
+     * instead of relying on APP_URL, so deployed environments return
+     * correct public URLs even if APP_URL is still localhost.
+     */
+    private function buildAbsoluteImageUrl(?string $imgUrl, Request $request): ?string
+    {
+        $value = trim((string) $imgUrl);
+        if ($value === '') {
+            return null;
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return $value;
+        }
+
+        $normalized = ltrim(str_replace('\\', '/', $value), '/');
+        $path = $normalized;
+        if (!str_starts_with($normalized, 'storage/')) {
+            $path = 'storage/' . $normalized;
+        }
+
+        $scheme = $request->getScheme();
+        $host = $request->getHost();
+        $port = $request->getPort();
+
+        if ($port && !in_array($port, [80, 443], true)) {
+            return sprintf('%s://%s:%d/%s', $scheme, $host, $port, $path);
+        }
+
+        return sprintf('%s://%s/%s', $scheme, $host, $path);
     }
 }

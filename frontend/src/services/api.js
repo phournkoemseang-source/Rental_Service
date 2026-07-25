@@ -68,6 +68,7 @@ export const vehicleApi = {
 // Shop API calls
 export const shopApi = {
   getAll: () => api.get('/shops'),
+  getMyShop: () => api.get('/my-shop'),
   getById: (id) => api.get(`/shops/${id}`),
   create: (data) => api.post('/shops', data),
   update: (id, data) => {
@@ -172,6 +173,7 @@ export const bookingApi = {
 export const ratingApi = {
   getVehicleRatings: (params) => api.get('/vehicle-ratings', { params }),
   getVehicleRatingsSummary: (params) => api.get('/vehicle-ratings-summary', { params }),
+  getVehicleSummary: (vehicleId) => api.get('/vehicle-ratings-summary', { params: { vehicle_id: vehicleId } }),
   create: (bookingId, data) => api.post(`/bookings/${bookingId}/rating`, data)
 };
 

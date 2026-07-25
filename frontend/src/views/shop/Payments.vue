@@ -1,7 +1,10 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
+import { useToast } from '@/composables/useToast'
 import api, { paymentApi } from '@/services/api'
 import '../../css/Payment.css'
+
+const toast = useToast()
 
 // Get current user's shop
 const getStoredUser = () => {
@@ -393,6 +396,7 @@ const removePayment = async (payment) => {
   if (!Number.isFinite(paymentId) || paymentId <= 0) {
     actionMessageType.value = 'error'
     actionMessage.value = 'This payment record cannot be deleted.'
+    toast.error(actionMessage.value)
     return
   }
 
@@ -407,10 +411,12 @@ const removePayment = async (payment) => {
     selectedPaymentIds.value = selectedPaymentIds.value.filter((id) => id !== paymentId)
     actionMessageType.value = 'success'
     actionMessage.value = 'Payment deleted successfully.'
+    toast.success(actionMessage.value)
   } catch (err) {
     console.error('Error deleting payment:', err)
     actionMessageType.value = 'error'
     actionMessage.value = err?.response?.data?.message || 'Failed to delete payment.'
+    toast.error(actionMessage.value)
   } finally {
     deletingPaymentId.value = null
   }
@@ -447,15 +453,18 @@ const removeSelectedPayments = async () => {
     if (failedCount === 0) {
       actionMessageType.value = 'success'
       actionMessage.value = `${deletedIds.length} payment${deletedIds.length > 1 ? 's were' : ' was'} deleted successfully.`
+      toast.success(actionMessage.value)
       return
     }
 
     actionMessageType.value = 'error'
     actionMessage.value = `${deletedIds.length} payment${deletedIds.length !== 1 ? 's' : ''} deleted, ${failedCount} failed.`
+    toast.error(actionMessage.value)
   } catch (err) {
     console.error('Error deleting selected payments:', err)
     actionMessageType.value = 'error'
     actionMessage.value = 'Failed to delete selected payments.'
+    toast.error(actionMessage.value)
   } finally {
     bulkDeleting.value = false
   }

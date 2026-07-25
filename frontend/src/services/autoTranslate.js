@@ -198,15 +198,17 @@ export const applyAutoTranslate = async (lang) => {
     clearGoogTransCookie();
     setGoogTransCookie('en');
 
+    // Reset Google Translate widget to English without reload
+    if (!triggerLanguageSelection('en')) {
+      // If widget isn't ready yet, retry after a short delay
+      setTimeout(() => triggerLanguageSelection('en'), 200);
+    }
+
+    // Clean up Google Translate DOM artifacts
     const translatedClass = document.documentElement.classList.contains('translated-ltr')
       || document.documentElement.classList.contains('translated-rtl');
-    const hasGoogleFrame = !!document.querySelector('iframe.goog-te-banner-frame');
-    const didResetAlready = sessionStorage.getItem(RESET_FLAG_KEY) === '1';
-
-    if ((translatedClass || hasGoogleFrame) && !didResetAlready) {
-      sessionStorage.setItem(RESET_FLAG_KEY, '1');
-      window.location.reload();
-      return;
+    if (translatedClass) {
+      document.documentElement.classList.remove('translated-ltr', 'translated-rtl');
     }
 
     sessionStorage.removeItem(RESET_FLAG_KEY);

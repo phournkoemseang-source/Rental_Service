@@ -128,6 +128,7 @@ import '@/css/customer-responsive.css'
 import UserNavbar from '@/components/UserNavbar.vue'
 import MobileCustomerLayout from '@/components/MobileCustomerLayout.vue'
 import { cacheSelectedShop, clearSelectedShopCache } from '@/utils/shopSelectionCache'
+import { extractCoordinatesFromMapUrl } from '@/utils/shopLocation'
 
 const location = ref('Siem Reap');
 const formatDate = (date) =>
@@ -231,28 +232,6 @@ watch(
   },
   { immediate: true }
 )
-const extractCoordinatesFromMapUrl = (value) => {
-  const url = String(value || '').trim();
-  if (!url) return null;
-
-  const patterns = [
-    /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-    /[?&](?:q|query|ll|destination|origin)=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-    /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (!match) continue;
-    const lat = Number(match[1]);
-    const lng = Number(match[2]);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
-    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) continue;
-    return { lat, lng };
-  }
-
-  return null;
-};
 const selectedShopCoords = computed(() => {
   if (!selectedShopId.value) return null;
   const shop = shopNamesById.value[selectedShopId.value];

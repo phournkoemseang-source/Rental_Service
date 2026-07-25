@@ -128,6 +128,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update']);
     Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
     Route::apiResource('shops', ShopController::class)->except(['index', 'show']);
+    Route::get('/my-shop', [ShopController::class, 'myShop']);
     Route::apiResource('bookings', BookingController::class);
     Route::post('/bookings/{booking}/rating', [RatingController::class, 'store']);
     Route::get('/vehicle-ratings', [RatingController::class, 'vehicleRatings']);

@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useTheme } from '../../composables/useTheme'
 import { useNotifications } from '../../composables/useNotifications'
 import userService from '../../services/userService.js'
+import { setLanguage, getCurrentLanguage } from '@/i18n'
 import { useAdminStore } from '../../stores/adminStore.js'
 import { CAMBODIA_TIMEZONE, cambodiaDateTimeLabel, cambodiaYear } from '../../utils/cambodiaTime.js'
 import '../../css/DashboardAdmin.css'
@@ -21,8 +22,17 @@ const { isDark, toggleTheme } = useTheme()
 const adminStore = useAdminStore()
 const { t } = useI18n()
 
+// Language state
+const currentAdminLang = ref(getCurrentLanguage())
+const switchAdminLang = (lang) => {
+  if (lang !== currentAdminLang.value) {
+    setLanguage(lang)
+    currentAdminLang.value = lang
+  }
+}
+
 // Professional Logo path from public folder
-const logoUrl = '/Images/logo.png'
+const logoUrl = '/Images/logo-removebg.png'
 
 const searchQuery = ref('')
 const showLogoutConfirm = ref(false)
@@ -30,19 +40,19 @@ let searchTimer = null
 let clockTimer = null
 const nowTick = ref(Date.now())
 
-const navItems = [
-  { label: 'Dashboard', to: '/admin', icon: 'fa-solid fa-table-cells-large' },
-  { label: 'Shop Management', to: '/admin/shops', icon: 'fa-regular fa-building' },
-  { label: 'User Management', to: '/admin/users', icon: 'fa-regular fa-user' },
-  { label: 'Vehicle Management', to: '/admin/vehicles', icon: 'fa-solid fa-motorcycle' },
-  { label: 'Booking Management', to: '/admin/bookings', icon: 'fa-regular fa-calendar-check' },
-  { label: 'Categories', to: '/admin/categories', icon: 'fa-solid fa-tags' },
-  { label: 'Cities', to: '/admin/cities', icon: 'fa-solid fa-location-dot' },
-  { label: 'Financials', to: '/admin/financials', icon: 'fa-solid fa-dollar-sign' },
-  { label: 'Reports', to: '/admin/reports', icon: 'fa-solid fa-chart-column' },
-  { label: 'Notifications', to: '/admin/notifications', icon: 'fa-regular fa-bell' },
-  { label: 'Settings', to: '/admin/settings', icon: 'fa-solid fa-gear' },
-]
+const navItems = computed(() => [
+  { label: t('navDashboard'), to: '/admin', icon: 'fa-solid fa-table-cells-large' },
+  { label: t('navShopManagement'), to: '/admin/shops', icon: 'fa-regular fa-building' },
+  { label: t('navUserManagement'), to: '/admin/users', icon: 'fa-regular fa-user' },
+  { label: t('navVehicleManagement'), to: '/admin/vehicles', icon: 'fa-solid fa-motorcycle' },
+  { label: t('navBookingManagement'), to: '/admin/bookings', icon: 'fa-regular fa-calendar-check' },
+  { label: t('navCategories'), to: '/admin/categories', icon: 'fa-solid fa-tags' },
+  { label: t('navCities'), to: '/admin/cities', icon: 'fa-solid fa-location-dot' },
+  { label: t('navFinancials'), to: '/admin/financials', icon: 'fa-solid fa-dollar-sign' },
+  { label: t('navReports'), to: '/admin/reports', icon: 'fa-solid fa-chart-column' },
+  { label: t('navNotifications'), to: '/admin/notifications', icon: 'fa-regular fa-bell' },
+  { label: t('navSettings'), to: '/admin/settings', icon: 'fa-solid fa-gear' },
+])
 
 const currentUser = computed(() => userService.getCurrentUser())
 const adminName = computed(() => currentUser.value?.name || 'Admin')
@@ -302,7 +312,7 @@ const cambodiaCurrentYear = computed(() => cambodiaYear(new Date(nowTick.value))
       <aside class="admin-sidebar">
          <div class="admin-brand">
            <div class="brand-badge" aria-hidden="true">
-             <img class="brand-logo" :src="logoUrl" alt="Chong Choul" style="background-color: white; padding: 4px; border-radius: 50px; width: 50px; height: 50px; object-fit: contain;" />
+             <img class="brand-logo" :src="logoUrl" alt="Chong Choul" />
            </div>
            <div class="brand-text">
              <span class="brand-name">Chong <span class="brand-cyan">Choul</span></span>
@@ -342,6 +352,26 @@ const cambodiaCurrentYear = computed(() => cambodiaYear(new Date(nowTick.value))
           <div v-else class="topbar-search"></div>
 
           <div class="topbar-actions">
+            <!-- Language Toggle -->
+            <div class="header-lang-toggle">
+              <button
+                class="hl-btn"
+                :class="{ active: currentAdminLang === 'en' }"
+                @click="switchAdminLang('en')"
+                title="English"
+              >
+                EN
+              </button>
+              <span class="hl-sep">|</span>
+              <button
+                class="hl-btn"
+                :class="{ active: currentAdminLang === 'kh' }"
+                @click="switchAdminLang('kh')"
+                title="ភាសាខ្មែរ"
+              >
+                KH
+              </button>
+            </div>
             <div class="topbar-time" :title="`Cambodia time (${CAMBODIA_TIMEZONE})`">
               <span class="topbar-time-year">{{ cambodiaCurrentYear }}</span>
               <span class="dot">•</span>
@@ -458,6 +488,55 @@ const cambodiaCurrentYear = computed(() => cambodiaYear(new Date(nowTick.value))
 </template>
 
 <style scoped>
+.brand-logo {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+/* Header Language Toggle */
+.header-lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(59, 130, 246, 0.12);
+}
+
+.hl-btn {
+  background: transparent;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #64748b;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  letter-spacing: 0.06em;
+}
+
+.hl-btn:hover {
+  color: #2563eb;
+}
+
+.hl-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.hl-sep {
+  color: #cbd5e1;
+  font-size: 0.7rem;
+  user-select: none;
+}
+
 .topbar-notifications {
   position: relative;
 }

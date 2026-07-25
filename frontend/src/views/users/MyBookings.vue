@@ -447,6 +447,14 @@ const goHome = () => {
   router.push({ name: 'view_shop' })
 }
 
+const handleBack = () => {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    goHome()
+  }
+}
+
 const openDetails = async (booking) => {
   selectedBooking.value = booking
   selectedVehicle.value = null
@@ -655,6 +663,14 @@ const skipRating = () => {
   />
 
   <div class="bookings-page">
+    <!-- Back Button -->
+    <div class="bookings-back-bar">
+      <button class="btn-back-top" @click="handleBack">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Back</span>
+      </button>
+    </div>
+
     <section class="bookings-panel">
       <div class="panel-head">
         <div class="panel-head-text">

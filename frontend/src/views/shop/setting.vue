@@ -101,28 +101,30 @@
             </label>
 
             <label class="field full">
+              <span>Google Map URL</span>
+              <input
+                v-model="form.map_url"
+                type="url"
+                placeholder="Paste your Google Maps link here"
+              />
+              <small v-if="form.latitude && form.longitude" class="form-helpert">
+                Coordinates: {{ form.latitude }}, {{ form.longitude }}
+              </small>
+            </label>
+
+            <label class="field full">
               <span>{{ t('shopAddress') }}</span>
               <textarea v-model="form.shop_address" rows="5"></textarea>
             </label>
 
             <label class="field">
               <span>Latitude</span>
-              <input v-model="form.latitude" type="number" step="any" placeholder="e.g. 11.5564" />
+              <input v-model="form.latitude" type="number" step="any" placeholder="Auto" readonly />
             </label>
 
             <label class="field">
               <span>Longitude</span>
-              <input v-model="form.longitude" type="number" step="any" placeholder="e.g. 104.9282" />
-            </label>
-
-            <label class="field full">
-              <span>Google Map URL</span>
-              <input
-                v-model="form.map_url"
-                type="url"
-                placeholder="https://maps.google.com/..."
-                @blur="syncCoordinatesFromMapUrl"
-              />
+              <input v-model="form.longitude" type="number" step="any" placeholder="Auto" readonly />
             </label>
 
             <!-- Language Selector near Notifications -->
@@ -165,6 +167,20 @@
                 </div>
                 <label class="switch">
                   <input v-model="form.notifications_enabled" type="checkbox" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="field notification-field">
+              <span>{{ t('notificationSound') }}</span>
+              <div class="notify-box">
+                <div>
+                  <strong>{{ t('notificationSound') }}</strong>
+                  <p>{{ t('notificationSoundDesc') }}</p>
+                </div>
+                <label class="switch">
+                  <input v-model="form.notification_sound" type="checkbox" />
                   <span class="slider"></span>
                 </label>
               </div>
@@ -217,6 +233,7 @@ import { useI18n } from 'vue-i18n';
 import api from '../../services/api';
 import { logoutUser } from '../../services/auth';
 import { setLanguage, getCurrentLanguage, syncAutoTranslateWithCurrentLanguage } from '../../i18n';
+import { extractCoordinatesFromMapUrl } from '@/utils/shopLocation';
 import "../../css/setting.css";
 import '../../css/setting_dashboard.css'
 
@@ -257,6 +274,7 @@ const localPreviewUrl = ref(null);
 const imageVersion = ref(Date.now());
 const currentShopId = ref(null);
 const NOTIFY_KEY_PREFIX = 'settings_notifications_enabled_';
+const SOUND_KEY_PREFIX = 'settings_notification_sound_';
 const apiOrigin = computed(() => {
   try {
     return new URL(api.defaults.baseURL, window.location.origin).origin;
@@ -304,31 +322,9 @@ const form = reactive({
   longitude: '',
   map_url: '',
   notifications_enabled: true,
+  notification_sound: true,
   password: '',
 });
-
-const extractCoordinatesFromMapUrl = (value) => {
-  const url = String(value || '').trim();
-  if (!url) return null;
-
-  const patterns = [
-    /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-    /[?&](?:q|query|ll|destination|origin)=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-    /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (!match) continue;
-    const lat = Number(match[1]);
-    const lng = Number(match[2]);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
-    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) continue;
-    return { lat, lng };
-  }
-
-  return null;
-};
 
 const syncCoordinatesFromMapUrl = () => {
   const coords = extractCoordinatesFromMapUrl(form.map_url);
@@ -488,6 +484,9 @@ const loadData = async () => {
 
     const notifyRaw = localStorage.getItem(`${NOTIFY_KEY_PREFIX}${user.id}`);
     form.notifications_enabled = notifyRaw === null ? true : notifyRaw === '1';
+
+    const soundRaw = localStorage.getItem(`${SOUND_KEY_PREFIX}${user.id}`);
+    form.notification_sound = soundRaw === null ? true : soundRaw === '1';
   } catch (err) {
     error.value = err.response?.data?.message || err.message || t('failedLoadSettings');
   }
@@ -711,6 +710,7 @@ const saveSettings = async () => {
     });
 
     localStorage.setItem(`${NOTIFY_KEY_PREFIX}${user.id}`, form.notifications_enabled ? '1' : '0');
+    localStorage.setItem(`${SOUND_KEY_PREFIX}${user.id}`, form.notification_sound ? '1' : '0');
     if (form.password) {
       form.password = '';
     }

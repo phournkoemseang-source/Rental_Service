@@ -1,15 +1,16 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import api from "../services/api";
 import "../css/chooserole.css";
 
 const router = useRouter();
+const { t } = useI18n();
 const adminAlreadyRegistered = ref(false);
 
 const selectRole = (role) => {
   localStorage.setItem("selectedRole", role);
-  // Admin can only login, not register
   if (role === 'admin') {
     router.push("/login");
   } else {
@@ -26,41 +27,37 @@ onMounted(async () => {
   }
 });
 </script>
+
 <template>
   <main class="role-page">
     <section class="role-box">
-      <h1>Welcome to ChooseRole</h1>
-      <p class="subtitle">Select your role to continue</p>
+      <h1>{{ t('chooseRole') }}</h1>
+      <p class="role-subtitle">{{ t('selectRole') }}</p>
 
       <div class="roles">
+        <!-- Customer -->
         <button type="button" class="role-card" @click="selectRole('customer')">
-          <span class="icon-wrap user-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path
-                d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-3.314 0-6 2.015-6 4.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1C18 16.015 15.314 14 12 14Z"
-              />
+          <span class="role-icon role-icon--customer" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
             </svg>
           </span>
-          <span class="role-title">Customer</span>
-          <span class="role-desc">Browse and book vehicles for your needs</span>
+          <span class="role-card-title">{{ t('customer') }}</span>
+          <span class="role-card-desc">{{ t('appTagline') }} — {{ t('appDescription') }}</span>
         </button>
 
-        <button
-          type="button"
-          class="role-card"
-          @click="selectRole('shop_owner')"
-        >
-          <span class="icon-wrap owner-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path
-                d="M4 10h16v9a1 1 0 0 1-1 1h-4v-5h-6v5H5a1 1 0 0 1-1-1v-9Zm1.2-5h13.6l1.2 3H4l1.2-3ZM11 20v-3h2v3h-2Z"
-              />
+        <!-- Shop Owner -->
+        <button type="button" class="role-card" @click="selectRole('shop_owner')">
+          <span class="role-icon role-icon--owner" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
             </svg>
           </span>
-          <span class="role-title">Shop Owner</span>
-          <span class="role-desc">Manage your vehicles and shop</span>
+          <span class="role-card-title">{{ t('shopOwner') }}</span>
+          <span class="role-card-desc">{{ t('registerYourShop') }} — {{ t('ctaDesc') }}</span>
         </button>
 
+        <!-- Admin -->
         <button
           type="button"
           class="role-card"
@@ -68,22 +65,20 @@ onMounted(async () => {
           :disabled="adminAlreadyRegistered"
           @click="selectRole('admin')"
         >
-          <span class="icon-wrap admin-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path
-                d="m19.43 12.98 1.34-1.03a.8.8 0 0 0 .2-1.04l-1.27-2.2a.8.8 0 0 0-.97-.36l-1.58.64a6.8 6.8 0 0 0-1.12-.65l-.24-1.67a.8.8 0 0 0-.79-.67h-2.54a.8.8 0 0 0-.79.67l-.24 1.67c-.39.16-.77.37-1.12.65l-1.58-.64a.8.8 0 0 0-.97.36l-1.27 2.2a.8.8 0 0 0 .2 1.04l1.34 1.03a6.85 6.85 0 0 0 0 1.3l-1.34 1.03a.8.8 0 0 0-.2 1.04l1.27 2.2a.8.8 0 0 0 .97.36l1.58-.64c.35.28.73.49 1.12.65l.24 1.67a.8.8 0 0 0 .79.67h2.54a.8.8 0 0 0 .79-.67l.24-1.67c.39-.16.77-.37 1.12-.65l1.58.64a.8.8 0 0 0 .97-.36l1.27-2.2a.8.8 0 0 0-.2-1.04l-1.34-1.03c.06-.43.06-.87 0-1.3ZM12 15.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4Z"
-              />
+          <span class="role-icon role-icon--admin" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
             </svg>
           </span>
-          <span class="role-title">Admin</span>
-          <span class="role-desc">Full system administration access</span>
+          <span class="role-card-title">{{ t('admin') }}</span>
+          <span class="role-card-desc">{{ adminAlreadyRegistered ? t('adminRegistered') : t('adminDashboard') }}</span>
         </button>
       </div>
 
-      <p class="hint">
-        Choose your role to access the appropriate registration page
-      </p>
-      <RouterLink class="back-home" to="/">Back to Home</RouterLink>
+      <p class="role-hint">{{ t('haveAccount') }} <RouterLink to="/login" style="color: var(--color-primary); font-weight: 600;">{{ t('loginLink') }}</RouterLink></p>
+      <RouterLink class="back-home" to="/">
+        <i class="fa-solid fa-arrow-left"></i> {{ t('back') }}
+      </RouterLink>
     </section>
   </main>
 </template>

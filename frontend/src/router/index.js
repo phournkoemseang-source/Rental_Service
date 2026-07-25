@@ -13,7 +13,7 @@ const AdminDashboard = () => import('../views/admin/Dashboard.vue');
 const ShopVehicles = () => import('../views/users/ShopVehicles.vue');
 const VehiclesByShop = () => import('../views/users/VehiclesByShop.vue');
 const Booking = () => import('../views/users/Booking.vue');
-const ViewDetail = () => import('../views/users/ViewDetail.vue');
+const VehicleDetail = () => import('../views/vehicle/VehicleDetail.vue');
 const AdminLayout = () => import('../views/admin/AdminLayout.vue');
 const UserNotifications = () => import('../views/users/Notification.vue');
 
@@ -210,7 +210,7 @@ const router = createRouter({
     {
       path: '/vehicles/:id',
       name: 'vehicle-detail',
-      component: ViewDetail,
+      component: VehicleDetail,
       meta: { requiresAuth: true, allowedRoles: ['customer', 'shop_owner', 'admin'] }
     },
     {

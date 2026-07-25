@@ -3,7 +3,7 @@
   background: #ffffff;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px 40px 24px;
+  padding: 20px;
   color: #102f56;
   box-sizing: border-box;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -91,16 +91,16 @@
 
 .booking-detail-header h3 {
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #0f172a;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .booking-detail-code {
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   color: #64748b;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 500;
 }
 
@@ -122,7 +122,7 @@
 }
 
 .highlight-chip .chip-icon {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
 }
 
 .highlight-chip > div {
@@ -131,17 +131,17 @@
 }
 
 .highlight-chip span {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   font-weight: 600;
 }
 
 .highlight-chip strong {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #0f172a;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .highlight-chip.neon {
@@ -181,15 +181,15 @@
 }
 
 .detail-card-row span {
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   color: #64748b;
   font-weight: 500;
 }
 
 .detail-card-row strong {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #0f172a;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .booking-detail-vehicle {
@@ -259,8 +259,8 @@
 
 .confirm-modal-header h2 {
   margin: 0;
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: #0f172a;
 }
 
@@ -274,7 +274,7 @@
 .confirm-modal-body p {
   margin: 0;
   color: #475569;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1.6;
 }
 
@@ -284,7 +284,7 @@
 
 .confirm-modal-period {
   color: #64748b;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   margin-top: 12px;
 }
 
@@ -302,7 +302,7 @@
 }
 
 .confirm-modal-detail strong {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   color: #059669;
 }
 
@@ -316,8 +316,8 @@
   flex: 1;
   padding: 14px 24px;
   border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
@@ -399,8 +399,8 @@
 
 .completion-modal-header h2 {
   margin: 0;
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: #0f172a;
 }
 
@@ -435,7 +435,7 @@
 .completion-modal-body p {
   margin: 0;
   color: #475569;
-  font-size: 1rem;
+  font-size: 0.9rem;
   line-height: 1.6;
 }
 
@@ -449,8 +449,8 @@
   flex: 1;
   padding: 14px 24px;
   border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
@@ -494,15 +494,15 @@
 
 .panel-head h1 {
   margin: 0;
-  font-size: 2.2rem;
-  line-height: 1.08;
+  font-size: 1.4rem;
+  line-height: 1.2;
   color: #22232b;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .panel-head p {
   margin: 8px 0 0;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   color: #385f89;
 }
 
@@ -529,8 +529,8 @@
   background: #dfe4ea;
   color: #3f638d;
   padding: 10px 20px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
 }
 

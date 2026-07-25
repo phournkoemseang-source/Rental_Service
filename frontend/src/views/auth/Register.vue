@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="min-height: 100vh">
+  <div class="auth-container" style="min-height: 100vh">
     <!-- LEFT SIDE -->
     <div class="left">
       <div class="overlay">
@@ -8,9 +8,8 @@
          </div>
 
         <div class="left-content">
-          <div class="hero-badge">
-            <span class="hero-badge-dot"></span>
-            Premium Car Rental
+          <div class="hero-badge">              <span class="hero-badge-dot"></span>
+            {{ $t('appTagline') }}
           </div>
           <h1>Start your journey<br /><span class="journey-highlight">in minutes.</span></h1>
           <p>
@@ -48,13 +47,13 @@
       </div>
       <div class="form-box">
         <div class="form-header">
-          <h2>Register</h2>
-          <p class="subtitle">Please enter your details to sign up</p>
+          <h2>{{ $t('createAccount') }}</h2>
+          <p class="subtitle">{{ $t('registerDescription') }}</p>
         </div>
 
         <!-- Selected Role Display -->
         <div class="selected-role" v-if="selectedRole">
-          <span class="role-label">Selected Role:</span>
+          <span class="role-label">{{ $t('selectedRole') }}:</span>
           <span class="role-badge" :data-role="selectedRole">{{
             selectedRole === "customer"
               ? "Customer"
@@ -88,12 +87,12 @@
               <i :class="locationGranted ? 'fa-solid fa-circle-check' : 'fa-solid fa-location-crosshairs'"></i>
             </div>
             <div class="guard-copy">
-              <strong>{{ locationGranted ? 'Location access granted' : 'Location access is required' }}</strong>
+              <strong>{{ locationGranted ? $t('locationGranted') : $t('locationRequired') }}</strong>
               <p>
                 {{
                   locationGranted
-                    ? 'You can now register and view route distance to shops.'
-                    : 'Please allow location access before creating an account.'
+                    ? $t('locationGrantedDesc')
+                    : $t('locationDesc')
                 }}
               </p>
               <button
@@ -103,13 +102,13 @@
                 @click="requestLocationAccess"
                 :disabled="isRequestingLocation"
               >
-                {{ isRequestingLocation ? 'Detecting location...' : 'Allow Location Access' }}
+                {{ isRequestingLocation ? $t('detectingLocation') : $t('allowLocation') }}
               </button>
             </div>
           </div>
 
           <div class="form-group">
-            <label><span class="required-star">*</span> Full Name</label>
+            <label><span class="required-star">*</span> {{ $t('fullName') }}</label>
             <input
               type="text"
               placeholder="John Doe"
@@ -123,7 +122,7 @@
           </div>
 
           <div class="form-group">
-            <label><span class="required-star">*</span> Email Address</label>
+            <label><span class="required-star">*</span> {{ $t('emailAddress') }}</label>
             <input
               type="email"
               placeholder="name@example.com"
@@ -137,7 +136,7 @@
           </div>
 
           <div class="form-group">
-            <label><span class="required-star">*</span> Phone Number</label>
+            <label><span class="required-star">*</span> {{ $t('phoneNumber') }}</label>
             <input
               type="tel"
               placeholder="+855 12 345 678"
@@ -152,7 +151,7 @@
 
           <div class="row">
             <div class="form-group">
-              <label><span class="required-star">*</span> Password</label>
+              <label><span class="required-star">*</span> {{ $t('password') }}</label>
               <div class="password-input-wrapper">
                 <input
                   :type="showPassword ? 'text' : 'password'"
@@ -207,9 +206,7 @@
               }}</span>
             </div>
             <div class="form-group">
-              <label
-                ><span class="required-star">*</span> Confirm Password</label
-              >
+              <label><span class="required-star">*</span> {{ $t('confirmPassword') }}</label>
               <div class="password-input-wrapper">
                 <input
                   :type="showConfirmPassword ? 'text' : 'password'"
@@ -266,22 +263,21 @@
           </div>
 
           <button type="submit" class="login-btn" :disabled="isLoading">
-            <span v-if="!isLoading">Register</span>
-            <span v-else>Creating account...</span>
+            <span v-if="!isLoading">{{ $t('register') }}</span>
+            <span v-else>{{ $t('register') }}...</span>
           </button>
         </form>
 
         <div class="register-prompt">
-          <span>Already have an account?</span>
-          <router-link to="/login" class="register-link">Login</router-link>
+          <span>{{ $t('haveAccount') }}</span>
+          <router-link to="/login" class="register-link">{{ $t('loginLink') }}</router-link>
         </div>
 
         <div class="divider">
-          <span>OR CONTINUE WITH</span>
+          <span>{{ $t('orContinueWith') }}</span>
         </div>
         <p class="terms">
-          By creating an account, you agree to GoRent's
-          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+          {{ $t('termsRegister') }}
         </p>
       </div>
     </div>
@@ -291,10 +287,13 @@
 <script setup>
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { registerUser } from "../../services/auth";
 import { hasLocationAccess, saveLocationAccess } from "../../utils/locationAccess";
 import "../../css/login.css";
 import Logo from '@/components/Logo.vue'
+
+const { t } = useI18n();
 
 const router = useRouter();
 const route = useRoute();

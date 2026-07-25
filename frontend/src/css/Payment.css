@@ -14,7 +14,7 @@
   --payments-red-soft: #fee2e2;
   max-width: 1320px;
   margin: 0 auto;
-  padding: 18px;
+  padding: 20px;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   color: var(--payments-text);
 }
@@ -41,24 +41,24 @@
   border-radius: 999px;
   background: rgba(29, 78, 216, 0.1);
   color: var(--payments-blue);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .payments-shell .hero-copy h1 {
   margin: 12px 0 8px;
-  font-size: clamp(1.8rem, 2.6vw, 2.45rem);
-  line-height: 1.05;
+  font-size: 1.35rem;
+  line-height: 1.2;
 }
 
 .payments-shell .hero-copy p {
   max-width: 680px;
   margin: 0;
   color: var(--payments-muted);
-  font-size: 0.96rem;
-  line-height: 1.6;
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 
 .payments-shell .hero-side {
@@ -84,10 +84,10 @@
 }
 
 .payments-shell .hero-chip-label {
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--payments-muted);
 }
 
@@ -96,7 +96,7 @@
 }
 
 .payments-shell .hero-chip strong {
-  font-size: 1.08rem;
+  font-size: 1rem;
 }
 
 .payments-shell .stats-grid {
@@ -184,22 +184,22 @@
 }
 
 .payments-shell .stat-label {
-  font-size: 0.84rem;
-  font-weight: 800;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--payments-muted);
 }
 
 .payments-shell .stat-number {
-  font-size: clamp(1.3rem, 1.7vw, 1.8rem);
-  line-height: 1.05;
+  font-size: 1.3rem;
+  line-height: 1.1;
 }
 
 .payments-shell .stat-note {
   color: var(--payments-muted);
-  font-size: 0.88rem;
-  line-height: 1.4;
+  font-size: 0.82rem;
+  line-height: 1.35;
 }
 
 .payments-shell .status-strip {
@@ -221,14 +221,14 @@
 
 .payments-shell .status-card-label {
   color: var(--payments-muted);
-  font-size: 0.78rem;
-  font-weight: 800;
+  font-size: 0.72rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .payments-shell .status-card strong {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
 }
 
 .payments-shell .status-card--confirmed {
@@ -280,9 +280,9 @@
   border-radius: 999px;
   background: #eaf3ff;
   color: var(--payments-blue);
-  font-size: 0.74rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -295,16 +295,16 @@
 
 .payments-shell .panel-head h2 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   letter-spacing: -0.01em;
 }
 
 .payments-shell .panel-head p {
   margin: 0;
   color: var(--payments-muted);
-  line-height: 1.45;
+  line-height: 1.4;
   max-width: 560px;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
 }
 
 .payments-shell .panel-pill {
@@ -343,9 +343,9 @@
 
 .payments-shell .filter-caption {
   color: #64748b;
-  font-size: 0.74rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -361,7 +361,7 @@
   border: 1px solid #dbe5f0;
   background: #ffffff;
   color: #334155;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
 }
 
@@ -446,7 +446,7 @@
 
 .payments-shell .results-meta {
   color: var(--payments-muted);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
 }
 
 .payments-shell .results-actions {
@@ -464,7 +464,7 @@
   color: #ffffff;
   padding: 8px 14px;
   font: inherit;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
   transition: background 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
 }
@@ -483,8 +483,8 @@
   margin: 0 0 16px;
   padding: 12px 16px;
   border-radius: 14px;
-  font-size: 0.94rem;
-  font-weight: 700;
+  font-size: 0.88rem;
+  font-weight: 600;
 }
 
 .payments-shell .payments-feedback--success {
@@ -509,7 +509,7 @@
 
 .payments-shell .payments-table th,
 .payments-shell .payments-table td {
-  padding: 14px 18px;
+  padding: 12px 16px;
   text-align: left;
   border-bottom: 1px solid rgba(226, 232, 240, 0.82);
   vertical-align: middle;
@@ -517,10 +517,10 @@
 
 .payments-shell .payments-table th {
   color: #64748b;
-  font-size: 0.74rem;
-  font-weight: 800;
+  font-size: 0.72rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   background: #fbfdff;
 }
 
@@ -544,14 +544,14 @@
 
 .payments-shell .cell-stack strong {
   color: #0f172a;
-  font-size: 0.94rem;
-  font-weight: 800;
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 
 .payments-shell .cell-stack span {
   color: var(--payments-muted);
-  font-size: 0.84rem;
-  line-height: 1.45;
+  font-size: 0.82rem;
+  line-height: 1.4;
 }
 
 .payments-shell .cell-placeholder {
@@ -584,8 +584,8 @@
 
 .payments-shell .amount-cell {
   color: #0f172a;
-  font-size: 0.95rem;
-  font-weight: 800;
+  font-size: 0.88rem;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -604,10 +604,10 @@
   min-width: 96px;
   padding: 7px 12px;
   border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 800;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 
 .payments-shell .payments-status-badge.confirmed,
@@ -639,7 +639,7 @@
   color: #dc2626;
   padding: 8px 12px;
   font: inherit;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
 }
@@ -724,13 +724,14 @@
 .payments-shell .empty-content h3 {
   margin: 6px 0 0;
   color: #0f172a;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
 }
 
 .payments-shell .empty-content p {
   max-width: 420px;
   margin: 0;
-  line-height: 1.6;
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 
 @media (max-width: 1200px) {
@@ -746,7 +747,7 @@
 
 @media (max-width: 900px) {
   .payments-shell {
-    padding: 18px;
+    padding: 20px;
   }
 
   .payments-shell .panel-head,
@@ -841,7 +842,7 @@
     gap: 14px;
     width: 100%;
     border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-    padding: 14px 16px;
+    padding: 12px 16px;
   }
 
   .payments-shell .payments-table tbody td:last-child {
@@ -852,10 +853,10 @@
     content: attr(data-label);
     flex: 0 0 82px;
     color: #64748b;
-    font-size: 0.72rem;
-    font-weight: 800;
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     line-height: 1.5;
   }
 

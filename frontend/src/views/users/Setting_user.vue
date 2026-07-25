@@ -432,6 +432,14 @@ const handleLogout = async () => {
     }
 }
 
+const handleBack = () => {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/view_shop')
+  }
+}
+
 const openProfile = () => {
     router.push('/user/profile')
 }
@@ -446,6 +454,13 @@ onMounted(fetchProfile)
             :show-fallback-message="true"
             @logout-request="handleLogout"
         />
+        <!-- Back Button -->
+        <div class="settings-back-bar">
+            <button class="btn-back-top" @click="handleBack">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Back</span>
+            </button>
+        </div>
         <div :class="styles['page']">
         <transition name="slide-right">
             <div
@@ -1537,6 +1552,41 @@ onMounted(fetchProfile)
 </style>
 
 <style>
+/* Back button bar */
+.settings-back-bar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px clamp(16px, 4vw, 48px) 0;
+}
+
+.btn-back-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #fff;
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.btn-back-top:hover {
+  background: #f8fafc;
+  color: #2563eb;
+  transform: translateX(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-back-top i {
+  font-size: 0.85rem;
+}
+
 .slide-right-enter-active {
     animation: slideInRight 0.35s ease;
 }

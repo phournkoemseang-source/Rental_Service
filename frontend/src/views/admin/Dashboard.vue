@@ -1,10 +1,13 @@
 <script setup>
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAdminStore } from '../../stores/adminStore.js'
 import { useToast } from '../../composables/useToast.js'
 import userService from '../../services/userService.js'
 import CountUp from '../../components/CountUp.vue'
+
+const { t } = useI18n()
 
 const toast = useToast()
 const router = useRouter()
@@ -31,17 +34,17 @@ const money0 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'US
 
 // Optimized stats computation (Direct access, no spread if possible)
 const stats = computed(() => {
-  const t = admin.totals
+  const totals = admin.totals
   const tr = admin.trends
   const fmtNumber = admin.formatted.fmtNumber
   const fmtMoney = admin.formatted.fmtMoneyCompact
 
   return [
-    { key: 'users', label: 'TOTAL USERS', raw: t.totalUsers, formatter: fmtNumber, trend: tr.users, icon: 'fa-solid fa-users', tint: 'tint-blue', to: '/admin/users' },
-    { key: 'shops', label: 'TOTAL SHOPS', raw: t.totalShops, formatter: fmtNumber, trend: tr.shops, icon: 'fa-regular fa-building', tint: 'tint-purple', to: '/admin/shops' },
-    { key: 'vehicles', label: 'TOTAL VEHICLES', raw: t.totalVehicles, formatter: fmtNumber, trend: tr.vehicles, icon: 'fa-solid fa-motorcycle', tint: 'tint-orange', to: '/admin/vehicles' },
-    { key: 'bookings', label: 'TOTAL BOOKINGS', raw: t.totalBookings, formatter: fmtNumber, trend: tr.bookings, icon: 'fa-regular fa-calendar-check', tint: 'tint-green', to: '/admin/bookings' },
-    { key: 'revenue', label: 'TOTAL REVENUE', raw: admin.paymentTotal, formatter: fmtMoney, trend: tr.revenue, icon: 'fa-solid fa-sack-dollar', tint: 'tint-cyan', to: '/admin/reports' }
+    { key: 'users', label: t('totalUsers').toUpperCase(), raw: totals.totalUsers, formatter: fmtNumber, trend: tr.users, icon: 'fa-solid fa-users', tint: 'tint-blue', to: '/admin/users' },
+    { key: 'shops', label: t('totalShops').toUpperCase(), raw: totals.totalShops, formatter: fmtNumber, trend: tr.shops, icon: 'fa-regular fa-building', tint: 'tint-purple', to: '/admin/shops' },
+    { key: 'vehicles', label: t('totalVehicles').toUpperCase(), raw: totals.totalVehicles, formatter: fmtNumber, trend: tr.vehicles, icon: 'fa-solid fa-motorcycle', tint: 'tint-orange', to: '/admin/vehicles' },
+    { key: 'bookings', label: t('totalBookings').toUpperCase(), raw: totals.totalBookings, formatter: fmtNumber, trend: tr.bookings, icon: 'fa-regular fa-calendar-check', tint: 'tint-green', to: '/admin/bookings' },
+    { key: 'revenue', label: t('totalRevenue').toUpperCase(), raw: admin.paymentTotal, formatter: fmtMoney, trend: tr.revenue, icon: 'fa-solid fa-sack-dollar', tint: 'tint-cyan', to: '/admin/reports' }
   ]
 })
 
@@ -302,8 +305,8 @@ watch(
   <section class="admin-page" :class="{ 'hide-status-overlay': isAdmin }">
     <header class="page-head">
       <div>
-        <h1 class="page-title">Admin Dashboard Overview</h1>
-        <p class="page-subtitle">Welcome back, {{ adminName }}. Real-time platform performance monitoring.</p>
+        <h1 class="page-title">{{ t('adminDashboard') }}</h1>
+        <p class="page-subtitle">{{ t('welcomeBack', { name: adminName }) }}. {{ t('adminDashboardDesc') }}</p>
       </div>
     </header>
 
@@ -323,22 +326,22 @@ watch(
     <section class="card">
       <div class="card-head">
         <div>
-          <h2 class="card-title">Recent Shop Registrations</h2>
-          <p class="card-subtitle">Monitoring latest pending and verified shops</p>
+          <h2 class="card-title">{{ t('recentShops') }}</h2>
+          <p class="card-subtitle">{{ t('adminDashboardDesc') }}</p>
         </div>
-        <button type="button" class="btn btn-ghost" @click="openShops">View All</button>
+        <button type="button" class="btn btn-ghost" @click="openShops">{{ t('viewAll') }}</button>
       </div>
 
       <div class="table-wrap">
         <table class="data-table">
           <thead>
             <tr>
-              <th>SHOP NAME</th>
-              <th>OWNER</th>
-              <th>LOCATION</th>
-              <th class="num">FLEET SIZE</th>
-              <th>STATUS</th>
-              <th class="actions">ACTIONS</th>
+              <th>{{ t('shopName').toUpperCase() }}</th>
+              <th>{{ t('shopOwner').toUpperCase() }}</th>
+              <th>{{ t('shopLocation').toUpperCase() }}</th>
+              <th class="num">{{ t('totalVehicles').toUpperCase() }}</th>
+              <th>{{ t('status').toUpperCase() }}</th>
+              <th class="actions">{{ t('actions').toUpperCase() }}</th>
             </tr>
           </thead>
           <tbody v-if="admin.recentShops.length">
@@ -356,7 +359,7 @@ watch(
               <td>{{ ownerName(shop) }}</td>
               <td class="muted">{{ shopLocation(shop) }}</td>
               <td class="num">
-                <strong>{{ fleetCountMap[String(shop.id)] || shop.fleet_size || 0 }}</strong> <span class="muted">VEHICLES</span>
+                <strong>{{ fleetCountMap[String(shop.id)] || shop.fleet_size || 0 }}</strong> <span class="muted">{{ t('vehicles').toUpperCase() }}</span>
               </td>
               <td><span :class="statusBadgeClass(shop.status)">{{ statusLabel(shop.status) }}</span></td>
               <td class="actions">
@@ -382,8 +385,8 @@ watch(
     <section class="grid-2">
       <section class="card">
         <div class="card-head">
-          <h2 class="card-title">Revenue Overview</h2>
-          <div class="card-chip">Last 7 Days</div>
+          <h2 class="card-title">{{ t('revenueOverview') }}</h2>
+          <div class="card-chip">{{ t('last7Days') }}</div>
         </div>
         <svg class="daily-revenue-chart" viewBox="0 0 740 300" @mouseleave="hideRevenueTooltip">
           <line
@@ -445,15 +448,14 @@ watch(
             <text :x="revenueTooltipData.x + 12" :y="revenueTooltipData.y + 90" class="daily-tooltip-earnings">Total Earnings : {{ money0.format(revenueTooltipData.row.earnings) }}</text>
           </g>
         </svg>
-        <div class="daily-legend">
-          <span class="daily-legend-item"><i class="dot earnings"></i>Total Earnings</span>
-          <span class="daily-legend-item"><i class="dot commission"></i>Platform Commission</span>
-          <span class="daily-legend-item"><i class="dot net"></i>Net Payout</span>
+        <div class="daily-legend">                <span class="daily-legend-item"><i class="dot earnings"></i>{{ t('totalRevenue') }}</span>
+          <span class="daily-legend-item"><i class="dot commission"></i>{{ t('navFinancials') }}</span>
+          <span class="daily-legend-item"><i class="dot net"></i>{{ t('payments') }}</span>
         </div>
       </section>
 
       <section class="card">
-        <div class="card-head"><h2 class="card-title">Popular Fleet Types</h2></div>
+        <div class="card-head">          <h2 class="card-title">{{ t('fleetTypes') }}</h2></div>
         <div class="fleet-list">
           <div v-for="item in fleetTypes" :key="item.key" class="fleet-row">
             <div class="fleet-left">

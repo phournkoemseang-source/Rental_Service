@@ -20,6 +20,7 @@ const i18n = createI18n({
   legacy: false,
   locale: getStoredLanguage(),
   fallbackLocale: 'en',
+  globalInjection: true,
   messages: {
     en,
     kh,
@@ -35,16 +36,9 @@ try {
 // Helper function to change language
 export const setLanguage = (lang) => {
   if (lang === 'en' || lang === 'kh') {
-    const previous = i18n.global.locale.value;
     i18n.global.locale.value = lang;
     localStorage.setItem('app_language', lang);
     document.documentElement.lang = lang;
-
-    if (typeof window !== 'undefined' && previous !== lang) {
-      window.location.reload();
-      return;
-    }
-
     applyAutoTranslate(lang);
   }
 };

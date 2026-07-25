@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 800;
   color: #1a1d23;
   margin: 0;
@@ -782,7 +782,7 @@
   }
   
   .header-content .page-title {
-    font-size: 24px;
+    font-size: 20px;
   }
   
   .page-subtitle {

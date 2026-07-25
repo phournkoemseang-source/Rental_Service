@@ -1,6 +1,7 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import { shopApi } from "@/services/api";
+import { extractCoordinatesFromMapUrl } from "@/utils/shopLocation";
 import "../../css/Myshop.css";
 
 const shop = ref(null);
@@ -128,7 +129,6 @@ const loadMyShop = async () => {
   ownerName.value = storedUser?.name || "N/A";
   ownerEmail.value = storedUser?.email || "";
 
-  // Clear shop first to ensure we get fresh data
   shop.value = null;
   const cachedShop = getCachedShop(ownerId);
   if (cachedShop) {
@@ -136,29 +136,17 @@ const loadMyShop = async () => {
   }
 
   try {
-    const response = await shopApi.getAll();
-    const shops = asArray(response.data);
-    const myShops = shops.filter(
-      (item) => Number(item.owner_id) === Number(ownerId),
-    );
-
-    if (!myShops.length) {
+    const response = await shopApi.getMyShop();
+    const data = response.data;
+    if (!data || (response.status && response.status === 204)) {
       shop.value = null;
       setCachedShop(ownerId, null);
       return;
     }
 
-    myShops.sort((a, b) => {
-      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
-      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
-
-      if (bTime !== aTime) return bTime - aTime;
-      return Number(b.id || 0) - Number(a.id || 0);
-    });
-
-    shop.value = myShops[0];
+    shop.value = data;
     shopImageLoadFailed.value = false;
-    setCachedShop(ownerId, shop.value);
+    setCachedShop(ownerId, data);
     ownerName.value =
       shop.value?.owner_name ||
       shop.value?.owner?.name ||
@@ -213,36 +201,19 @@ const validateCreateForm = () => {
   return phone.length >= 7;
 };
 
-const extractCoordinatesFromMapUrl = (value) => {
-  const url = String(value || "").trim();
-  if (!url) return null;
+const syncCoordinatesFromMapUrl = () => {
+  const coords = extractCoordinatesFromMapUrl(createForm.map_url)
+  if (!coords) return
+  createForm.latitude = String(coords.lat)
+  createForm.longitude = String(coords.lng)
+}
 
-  const patterns = [
-    /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-    /[?&](?:q|query|ll|destination|origin)=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-    /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (!match) continue;
-    const lat = Number(match[1]);
-    const lng = Number(match[2]);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
-    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) continue;
-    return { lat, lng };
+watch(
+  () => createForm.map_url,
+  () => {
+    syncCoordinatesFromMapUrl()
   }
-
-  return null;
-};
-
-const onMapUrlBlur = () => {
-  const coords = extractCoordinatesFromMapUrl(createForm.map_url);
-  if (!coords) return;
-  // Always update latitude and longitude from the map URL
-  createForm.latitude = String(coords.lat);
-  createForm.longitude = String(coords.lng);
-};
+)
 
 const applyShopImageFile = (file) => {
   if (!file) return;
@@ -619,6 +590,13 @@ onBeforeUnmount(() => {
             <input type="text" :value="shop.name || ''" readonly />
           </label>
           <label class="settings-field">
+            <span>Province / City</span>
+            <div class="province-display">
+              <i class="fa-solid fa-location-dot province-icon"></i>
+              <span class="province-value">{{ shop.city?.name || shop.location || '—' }}</span>
+            </div>
+          </label>
+          <label class="settings-field">
             <span>Status</span>
             <select disabled>
               <option :value="shop.status">{{ shop.status || "inactive" }}</option>
@@ -760,12 +738,32 @@ onBeforeUnmount(() => {
                     placeholder="Street, City, Country"
                   />
                 </label>
+                <label class="form-field full">
+                  <span>Google Map URL</span>
+                  <input
+                    v-model="createForm.map_url"
+                    type="url"
+                    placeholder="Paste your Google Maps link here"
+                  />
+                  <small v-if="createForm.latitude && createForm.longitude" class="form-helpert">
+                    Coordinates auto-detected: {{ createForm.latitude }}, {{ createForm.longitude }}
+                  </small>
+                </label>
                 <label class="form-field">
-                  <span>Location</span>
+                  <span>Address</span>
+                  <input
+                    v-model="createForm.address"
+                    type="text"
+                    placeholder="Street, City, Country"
+                  />
+                </label>
+                <label class="form-field">
+                  <span>City / Province</span>
                   <input
                     v-model="createForm.location"
                     type="text"
-                    placeholder="City, Country"
+                    placeholder="Auto-filled from map link"
+                    :readonly="!!createForm.map_url"
                   />
                 </label>
                 <label class="form-field">
@@ -774,7 +772,8 @@ onBeforeUnmount(() => {
                     v-model="createForm.latitude"
                     type="number"
                     step="any"
-                    placeholder="e.g. 11.5564"
+                    placeholder="Auto"
+                    readonly
                   />
                 </label>
                 <label class="form-field">
@@ -783,16 +782,8 @@ onBeforeUnmount(() => {
                     v-model="createForm.longitude"
                     type="number"
                     step="any"
-                    placeholder="e.g. 104.9282"
-                  />
-                </label>
-                <label class="form-field full">
-                  <span>Google Map URL</span>
-                  <input
-                    v-model="createForm.map_url"
-                    type="url"
-                    placeholder="https://maps.google.com/..."
-                    @blur="onMapUrlBlur"
+                    placeholder="Auto"
+                    readonly
                   />
                 </label>
                 <label class="form-field">

@@ -63,7 +63,8 @@ const matchesTab = (shop) => {
 }
 
 const ownerName = (shop) => shop?.owner?.name || shop?.owner_name || shop?.owner || '—'
-const shopLocation = (shop) => shop?.location || shop?.address || shop?.city || '—'
+const shopLocation = (shop) => shop?.location || shop?.address || shop?.city?.name || shop?.city || '—'
+const shopProvince = (shop) => shop?.city?.name || shop?.location || shop?.address || '—'
 
 const matchesQuery = (shop) => {
   const q = normalizedQuery.value
@@ -97,11 +98,12 @@ const downloadShops = () => {
     return
   }
   // Create CSV content
-  const headers = ['ID', 'Name', 'Owner', 'Address', 'Phone', 'Status', 'Created At']
+  const headers = ['ID', 'Name', 'Owner', 'Province/City', 'Address', 'Phone', 'Status', 'Created At']
   const rows = shops.map(s => [
     s.id,
     s.name,
     ownerName(s),
+    shopProvince(s),
     s.address || '',
     s.phone || '',
     s.status || '',
@@ -470,6 +472,7 @@ onMounted(() => {
             <tr>
               <th>SHOP NAME</th>
               <th>OWNER</th>
+              <th>PROVINCE/CITY</th>
               <th class="num">FLEET COUNT</th>
               <th class="num">TOTAL BOOKINGS</th>
               <th class="num">REVENUE</th>
@@ -490,6 +493,10 @@ onMounted(() => {
                 </div>
               </td>
               <td>{{ ownerName(shop) }}</td>
+              <td class="province-cell">
+                <i class="fa-solid fa-location-dot province-icon"></i>
+                {{ shopProvince(shop) }}
+              </td>
               <td class="num">
                 <strong>{{ fleetCountByShop.get(String(shop.id)) || 0 }}</strong> <span class="muted">VEHICLES</span>
               </td>
@@ -510,7 +517,7 @@ onMounted(() => {
               </td>
             </tr>
             <tr v-if="!pagedShops.length">
-              <td colspan="7" style="text-align:center; padding: 30px; color: var(--mp-muted);">
+              <td colspan="8" style="text-align:center; padding: 30px; color: var(--mp-muted);">
                 {{ normalizedQuery ? `No shops matched "${route.query.q}". Try clearing search.` : 'No shops found.' }}
               </td>
             </tr>
@@ -689,18 +696,18 @@ onMounted(() => {
   .create-shop-layout {
     display: grid;
     grid-template-columns: minmax(240px, 320px) 1fr;
-    gap: 32px;
+    gap: 24px;
     align-items: start;
   }
 
   .create-shop-preview {
     background: #f8fafc;
-    border-radius: 20px;
+    border-radius: 14px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e2e8f0;
     text-align: center;
   }
 
@@ -708,10 +715,10 @@ onMounted(() => {
     width: 100%;
     padding-top: 56%;
     position: relative;
-    border-radius: 16px;
+    border-radius: 12px;
     overflow: hidden;
     background: #fff;
-    box-shadow: inset 0 0 0 1px #e5e7eb;
+    border: 1px solid #e5e7eb;
   }
 
   .create-shop-preview__image img {
@@ -739,7 +746,7 @@ onMounted(() => {
   .create-shop-preview__title {
     margin: 0;
     font-weight: 700;
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     color: #0f172a;
   }
 
@@ -755,7 +762,7 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #fff;
     border: 1px solid #e5e7eb;
     color: #475569;
@@ -765,73 +772,72 @@ onMounted(() => {
   .create-shop-form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     background: #ffffff;
-    padding: 24px;
-    border-radius: 22px;
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow:
-      0 20px 40px rgba(15, 23, 42, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    padding: 22px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
   }
 
   .create-shop-modal {
     width: min(100%, 960px);
-    border-radius: 42px;
-    border: 2px solid rgba(37, 99, 235, 0.35);
-    padding: 40px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, #edf2ff 40%, #e0edff 100%);
-    box-shadow:
-      0 18px 60px rgba(15, 23, 42, 0.18),
-      inset 0 2px 12px rgba(255, 255, 255, 0.6),
-      inset 0 -10px 20px rgba(37, 99, 235, 0.08);
-    backdrop-filter: blur(18px);
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    background: #ffffff;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
   }
 
   .create-shop-modal .modal-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #f1f5f9;
   }
 
   .create-shop-modal .modal-title {
-    font-size: 1.8rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: #0f172a;
   }
 
   .create-shop-modal .modal-sub {
     margin-top: 4px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #475569;
   }
 
   .modal-head .icon-action {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
-    border: 1px solid rgba(15, 23, 42, 0.2);
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
     background: #ffffff;
     color: #475569;
     display: grid;
     place-items: center;
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.15);
+  }
+
+  .modal-head .icon-action:hover {
+    background: #f8fafc;
+    color: #0f172a;
   }
 
   .upload-drop {
-    border: 2px dashed #cbd5f5;
-    border-radius: 22px;
-    padding: 28px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 24px;
     text-align: center;
-    background: #f5f7fb;
+    background: #f8fafc;
     cursor: pointer;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: inset 0 0 0 1px rgba(226, 232, 240, 0.8);
+    transition: border-color 0.15s ease;
   }
 
   .upload-drop:hover {
     border-color: #2563eb;
+    background: #ffffff;
   }
 
   .upload-drop input {
@@ -847,38 +853,78 @@ onMounted(() => {
   }
 
   .upload-drop__content i {
-    font-size: 32px;
+    font-size: 28px;
     color: #2563eb;
   }
 
   .field-grid {
     display: grid;
-    gap: 16px;
+    gap: 14px;
   }
 
   .field-grid.two-column {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .field label {
+  .field {
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
 
+  .field label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+  }
+
   .field input,
   .field textarea {
-    border-radius: 16px;
-    border: none;
-    padding: 14px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 11px 14px;
     font-size: 0.95rem;
-    font-family: 'Inter', system-ui, sans-serif;
-    background: #eef2ff;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    font-family: inherit;
+    background: #ffffff;
+    transition: all 0.15s ease;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    background: #ffffff;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: #94a3b8;
   }
 
   .field textarea {
-    min-height: 120px;
+    min-height: 100px;
     resize: vertical;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+  }
+  .province-cell {
+    color: #475569;
+    font-size: 0.88rem;
+    white-space: nowrap;
+  }
+
+  .province-cell .province-icon {
+    color: #2563eb;
+    margin-right: 5px;
+    font-size: 0.8rem;
+    opacity: 0.7;
   }
 </style>

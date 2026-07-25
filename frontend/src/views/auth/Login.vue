@@ -1,6 +1,6 @@
 
 <template>
-  <div class="container">
+  <div class="auth-container">
     <!-- LEFT SIDE -->
     <div class="left">
         <div class="overlay">
@@ -11,7 +11,7 @@
           <div class="left-content">
             <div class="hero-badge">
               <span class="hero-badge-dot"></span>
-              Premium Car Rental
+              {{ $t('appTagline') }}
             </div>
             <h1>Start your journey<br /><span class="journey-highlight">in minutes.</span></h1>
             <p>
@@ -49,8 +49,8 @@
       </div>
       <div class="form-box">
         <div class="form-header">
-          <h2>Welcome Back</h2>
-          <p class="subtitle">Please enter your details to sign in</p>
+          <h2>{{ $t('welcomeBack') }}</h2>
+          <p class="subtitle">{{ $t('signInDescription') }}</p>
         </div>
 
         <form @submit.prevent="handleLogin" novalidate>
@@ -59,12 +59,12 @@
               <i :class="locationGranted ? 'fa-solid fa-circle-check' : 'fa-solid fa-location-crosshairs'"></i>
             </div>
             <div class="guard-copy">
-              <strong>{{ locationGranted ? 'Location access granted' : 'Location access is required' }}</strong>
+              <strong>{{ locationGranted ? $t('locationGranted') : $t('locationRequired') }}</strong>
               <p>
                 {{
                   locationGranted
-                    ? 'You can now sign in and use live route distance to shops.'
-                    : 'Please allow location access before Login and Register.'
+                    ? $t('locationGrantedDesc')
+                    : $t('locationDesc')
                 }}
               </p>
               <button
@@ -74,7 +74,7 @@
                 @click="requestLocationAccess"
                 :disabled="isRequestingLocation"
               >
-                {{ isRequestingLocation ? 'Detecting location...' : 'Allow Location Access' }}
+                {{ isRequestingLocation ? $t('detectingLocation') : $t('allowLocation') }}
               </button>
             </div>
           </div>
@@ -90,10 +90,10 @@
           </div>
 
           <div class="form-group">
-            <label><span class="required-star">*</span> Email Address</label>
+            <label><span class="required-star">*</span> {{ $t('emailAddress') }}</label>
             <input 
               type="email" 
-              placeholder="name@example.com" 
+              :placeholder="$t('email') + '...'" 
               v-model="form.email" 
               :class="{ 'error': errors.email }"
               required 
@@ -102,11 +102,11 @@
           </div>
 
           <div class="form-group">
-            <label><span class="required-star">*</span> Password</label>
+            <label><span class="required-star">*</span> {{ $t('password') }}</label>
             <div class="password-input-wrapper">
               <input 
                 :type="showPassword ? 'text' : 'password'" 
-                placeholder="Enter your password" 
+                :placeholder="$t('passwordPlaceholder')" 
                 v-model="form.password"
                 autocomplete="current-password"
                 :class="{ 'error': errors.password }"
@@ -129,31 +129,27 @@
           <div class="form-options">
             <label class="checkbox">
               <input type="checkbox" v-model="form.remember" />
-              <span>Remember me</span>
+              <span>{{ $t('rememberMe') }}</span>
             </label>
           </div>
 
           <button type="submit" class="login-btn" :disabled="isLoading">
-            <span v-if="!isLoading">Sign In</span>
-            <span v-else>Signing in...</span>
+            <span v-if="!isLoading">{{ $t('signIn') }}</span>
+            <span v-else>{{ $t('signIn') }}...</span>
           </button>
         </form>
 
         <div class="register-prompt">
-          <span>Don't have an account?</span>
-          <router-link to="/register" class="register-link">Register</router-link>
+          <span>{{ $t('noAccount') }}</span>
+          <router-link to="/register" class="register-link">{{ $t('registerLink') }}</router-link>
         </div>
 
         <div class="divider">
-          <span>OR CONTINUE WITH</span>
+          <span>{{ $t('orContinueWith') }}</span>
         </div>
 
-       
-
         <p class="terms">
-          By signing in, you agree to GoRent's
-          <a href="#">Terms of Service</a> and
-          <a href="#">Privacy Policy</a>.
+          {{ $t('terms') }}
         </p>
       </div>
     </div>
@@ -163,10 +159,13 @@
 <script setup>
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { loginUser } from "../../services/auth";
 import { hasLocationAccess, saveLocationAccess } from "../../utils/locationAccess";
 import "../../css/login.css";
 import Logo from '@/components/Logo.vue'
+
+const { t } = useI18n();
 
 const router = useRouter();
 const isLoading = ref(false);

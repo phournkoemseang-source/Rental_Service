@@ -1,7 +1,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { couponApi, shopApi } from '@/services/api'
 import '../../css/Coupons.css'
+
+const { t } = useI18n()
 
 const loading = ref(true)
 const error = ref(null)
@@ -335,8 +338,8 @@ const exportCoupons = () => {
   <div class="panel coupons-page">
       <div class="line top-line">
         <div>
-          <h3>Manage Coupons</h3>
-          <p class="muted">Create and manage discount coupons</p>
+          <h3>{{ $t('manageCoupons') }}</h3>
+          <p class="muted">{{ $t('manageCouponsDesc') }}</p>
         </div>
         <div class="controls">
           <button class="primary add-btn" @click="openCreate" :disabled="shopsLoading || !hasShops">
@@ -344,7 +347,7 @@ const exportCoupons = () => {
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
-            {{ shopsLoading ? 'Loading shops...' : 'Add New Coupon' }}
+            {{ shopsLoading ? $t('loadingShops') : $t('addNewCoupon') }}
           </button>
         </div>
         <p v-if="shopLoadError" class="shop-error">{{ shopLoadError }}</p>
@@ -355,28 +358,28 @@ const exportCoupons = () => {
       <!-- Loading State -->
       <div v-if="loading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading coupons...</p>
+        <p>{{ $t('loadingCoupons') }}</p>
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="error-state">
         <p>{{ error }}</p>
-        <button class="retry-btn" @click="fetchCoupons">Retry</button>
+        <button class="retry-btn" @click="fetchCoupons">{{ $t('retry') }}</button>
       </div>
 
       <!-- Data Table -->
       <table v-else class="coupons-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>CODE</th>
-            <th>SHOP</th>
-            <th>DISCOUNT %</th>
-            <th>DISCOUNT AMOUNT</th>
-            <th>VALID FROM</th>
-            <th>EXPIRE DATE</th>
-            <th>STATUS</th>
-            <th>ACTIONS</th>
+            <th>{{ $t('id') }}</th>
+            <th>{{ $t('code') }}</th>
+            <th>{{ $t('shop') }}</th>
+            <th>{{ $t('discountPercent') }}</th>
+            <th>{{ $t('discountAmount') }}</th>
+            <th>{{ $t('validFrom') }}</th>
+            <th>{{ $t('expireDate') }}</th>
+            <th>{{ $t('status') }}</th>
+            <th>{{ $t('actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -388,8 +391,8 @@ const exportCoupons = () => {
                   <path d="M3 8a2 2 0 0 1 2-2h14v4a2 2 0 0 0 0 4v4H5a2 2 0 0 1-2-2z"/>
                   <path d="M9 6v12M15 6v12"/>
                 </svg>
-                <p>No coupons yet</p>
-                <button class="create-btn-sm" @click="openCreate">Create Your First Coupon</button>
+                <p>{{ $t('noCouponsYet') }}</p>
+                <button class="create-btn-sm" @click="openCreate">{{ $t('createFirstCoupon') }}</button>
               </div>
             </td>
           </tr>
@@ -442,7 +445,7 @@ const exportCoupons = () => {
       <div class="add-vehicle-modal">
         <!-- Header -->
         <div class="add-vehicle-header">
-          <h2>{{ editId ? 'Edit Coupon' : 'Add New Coupon' }}</h2>
+          <h2>{{ editId ? $t('editCoupon') : $t('addNewCoupon') }}</h2>
           <button class="close-btn" @click="showModal = false">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -457,15 +460,15 @@ const exportCoupons = () => {
           <div class="add-vehicle-left">
             <!-- Coupon Information -->
           <div class="form-card">
-            <h3 class="card-title">Coupon Information</h3>
+            <h3 class="card-title">{{ $t('couponInformation') }}</h3>
             <div class="form-group">
-              <label>Coupon Code</label>
+              <label>{{ $t('couponCode') }}</label>
               <input v-model="form.code" placeholder="e.g., SUMMER2024" />
             </div>
             <div class="form-group">
-              <label>Shop</label>
+              <label>{{ $t('shop') }}</label>
               <select v-model="form.shopId">
-                <option disabled value="">Select a shop</option>
+                <option disabled value="">{{ $t('selectAShop') }}</option>
                 <option v-for="shop in ownerShops" :key="shop.id" :value="String(shop.id)">
                   {{ shop.name || shop.address || `Shop #${shop.id}` }}
                 </option>
@@ -475,14 +478,14 @@ const exportCoupons = () => {
 
             <!-- Discount -->
             <div class="form-card">
-              <h3 class="card-title">Discount</h3>
+              <h3 class="card-title">{{ $t('discount') }}</h3>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Discount Percent (%)</label>
+                  <label>{{ $t('discountPercent') }}</label>
                   <input v-model="form.discountPercent" type="number" min="0" max="100" placeholder="0" />
                 </div>
                 <div class="form-group">
-                  <label>Discount Amount ($)</label>
+                  <label>{{ $t('discountAmount') }}</label>
                   <input v-model="form.discountAmount" type="number" min="0" placeholder="0" />
                 </div>
               </div>
@@ -493,14 +496,14 @@ const exportCoupons = () => {
           <div class="add-vehicle-right">
             <!-- Validity Period -->
             <div class="form-card">
-              <h3 class="card-title">Validity Period</h3>
+              <h3 class="card-title">{{ $t('validityPeriod') }}</h3>
               <div class="form-row">
               <div class="form-group">
-                <label>Valid From</label>
+                <label>{{ $t('validFrom') }}</label>
                 <input v-model="form.validFrom" type="date" />
               </div>
               <div class="form-group">
-                <label>Expire Date</label>
+                <label>{{ $t('expireDate') }}</label>
                 <input v-model="form.validUntil" type="date" />
               </div>
               </div>
@@ -508,12 +511,12 @@ const exportCoupons = () => {
 
             <!-- Status -->
             <div class="form-card">
-              <h3 class="card-title">Status</h3>
+              <h3 class="card-title">{{ $t('status') }}</h3>
               <div class="form-group">
-                <label>Coupon Status</label>
+                <label>{{ $t('couponStatus') }}</label>
                 <select v-model="form.isActive">
-                  <option :value="true">Active</option>
-                  <option :value="false">Inactive</option>
+                  <option :value="true">{{ $t('active') }}</option>
+                  <option :value="false">{{ $t('inactive') }}</option>
                 </select>
               </div>
             </div>
@@ -522,14 +525,14 @@ const exportCoupons = () => {
 
         <!-- Footer -->
         <div class="add-vehicle-footer">
-          <button class="discard-btn" @click="showModal = false">Cancel</button>
+          <button class="discard-btn" @click="showModal = false">{{ $t('cancel') }}</button>
           <button class="store-btn" @click="save">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
               <polyline points="17 21 17 13 7 13 7 21"></polyline>
               <polyline points="7 3 7 8 15 8"></polyline>
             </svg>
-            {{ editId ? 'Update Coupon' : 'Store Coupon' }}
+            {{ editId ? $t('updateCoupon') : $t('storeCoupon') }}
           </button>
         </div>
       </div>

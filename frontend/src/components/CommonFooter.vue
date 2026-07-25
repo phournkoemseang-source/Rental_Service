@@ -6,9 +6,13 @@ const quickLinks = [
   { label: 'My Booking', to: '/my-bookings' },
   { label: 'Promotions', to: '/promotions' }
 ]
-const paymentMethods = ['Visa', 'Mastercard', 'Bank Transfer']
+const paymentMethods = [
+  { name: 'Visa', icon: 'fa-brands fa-cc-visa' },
+  { name: 'Mastercard', icon: 'fa-brands fa-cc-mastercard' },
+  { name: 'Bank Transfer', icon: 'fa-solid fa-building-columns' }
+]
 const socialLinks = [
-  { label: 'Facebook', href: 'https://www.facebook.com', icon: 'fa-brands fa-facebook' },
+  { label: 'Facebook', href: 'https://www.facebook.com', icon: 'fa-brands fa-facebook-f' },
   { label: 'Instagram', href: 'https://www.instagram.com', icon: 'fa-brands fa-instagram' },
   { label: 'TikTok', href: 'https://www.tiktok.com', icon: 'fa-brands fa-tiktok' }
 ]
@@ -19,6 +23,9 @@ const currentYear = new Date().getFullYear()
   <footer class="common-footer">
     <div class="common-footer__content">
       <div class="common-footer__brand">
+        <div class="common-footer__brand-logo">
+          <img src="/Images/logo-removebg.png" alt="Chong Choul" class="common-footer__brand-img" />
+        </div>
         <h4>Chong Choul</h4>
         <p>
           Connecting adventurous travelers with the best local vehicle rentals across the Kingdom of Wonder.
@@ -26,26 +33,28 @@ const currentYear = new Date().getFullYear()
       </div>
 
       <div class="common-footer__col">
-        <h5>Quick Links</h5>
+        <h5><i class="fa-solid fa-link" aria-hidden="true"></i> Quick Links</h5>
         <RouterLink
           v-for="item in quickLinks"
           :key="item.label"
           :to="item.to"
           class="common-footer__link"
         >
+          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
           {{ item.label }}
         </RouterLink>
       </div>
 
       <div class="common-footer__col">
-        <h5>Payment Methods</h5>
-        <span v-for="method in paymentMethods" :key="method" class="common-footer__link">
-          {{ method }}
+        <h5><i class="fa-solid fa-credit-card" aria-hidden="true"></i> Payment Methods</h5>
+        <span v-for="method in paymentMethods" :key="method.name" class="common-footer__link">
+          <i :class="method.icon" aria-hidden="true"></i>
+          {{ method.name }}
         </span>
       </div>
 
       <div class="common-footer__col">
-        <h5>Social Medias</h5>
+        <h5><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Social Medias</h5>
         <a
           v-for="social in socialLinks"
           :key="social.label"
@@ -69,8 +78,14 @@ const currentYear = new Date().getFullYear()
         in Cambodia.
       </span>
       <div class="common-footer__legal">
-        <a href="#" class="common-footer__legal-link">Privacy Policy</a>
-        <a href="#" class="common-footer__legal-link">Terms of Service</a>
+        <a href="#" class="common-footer__legal-link">
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+          Privacy Policy
+        </a>
+        <a href="#" class="common-footer__legal-link">
+          <i class="fa-solid fa-file-contract" aria-hidden="true"></i>
+          Terms of Service
+        </a>
       </div>
     </div>
   </footer>
@@ -78,119 +93,179 @@ const currentYear = new Date().getFullYear()
 
 <style scoped>
 .common-footer {
-  background: #f6f8fc;
-  color: #1a2235;
-  padding: 34px 24px 24px;
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background: #0f172a;
+  color: #cbd5e1;
+  padding: 48px 24px 28px;
+  font-family: var(--font-sans, 'Inter', 'Segoe UI', system-ui, sans-serif);
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .common-footer__content {
-  max-width: 1080px;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 36px;
+  gap: 40px;
   align-items: flex-start;
 }
 
 .common-footer__brand {
-  flex: 1 1 240px;
-  max-width: 280px;
+  flex: 1 1 280px;
+  max-width: 320px;
+}
+
+.common-footer__brand-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.common-footer__brand-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.35));
 }
 
 .common-footer__col {
   flex: 0 1 170px;
+  min-width: 140px;
 }
 
 .common-footer__brand h4 {
-  margin: 0 0 6px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #1380ff;
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
 }
 
 .common-footer__brand p {
   margin: 0;
-  max-width: 250px;
-  color: #66748d;
-  line-height: 1.6;
-  font-size: 0.95rem;
+  max-width: 280px;
+  color: #94a3b8;
+  line-height: 1.7;
+  font-size: 0.9rem;
 }
 
 .common-footer__col h5 {
-  margin: 0 0 10px;
-  font-size: 0.96rem;
-  letter-spacing: 0.03em;
-  color: #2b3447;
+  margin: 0 0 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.common-footer__col h5 i {
+  color: #60a5fa;
+  font-size: 0.75rem;
 }
 
 .common-footer__link {
-  display: block;
-  font-size: 0.92rem;
-  color: #4d586f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #94a3b8;
   text-decoration: none;
-  margin-bottom: 6px;
-  transition: color 0.2s ease;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+  padding: 4px 0;
 }
 
 .common-footer__link i {
-  margin-right: 6px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.common-footer__link .fa-chevron-right {
+  font-size: 0.55rem;
+  color: #475569;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .common-footer__link:hover {
-  color: #0b3ca1;
+  color: #ffffff;
+}
+
+.common-footer__link:hover .fa-chevron-right {
+  transform: translateX(3px);
+  color: #60a5fa;
 }
 
 .common-footer__heart {
   display: inline-block;
   margin: 0 4px;
-  color: #ff5d7d;
+  color: #ef4444;
+  animation: heartBeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
 }
 
 .common-footer__divider {
   width: 100%;
-  max-width: 1080px;
+  max-width: 1200px;
   margin: 0 auto;
-  border-top: 1px solid #cdd3e1;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .common-footer__bottom {
-  max-width: 1080px;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.9rem;
-  color: #5b6378;
-  padding-top: 10px;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: #64748b;
+  padding-top: 4px;
 }
 
 .common-footer__legal {
   display: flex;
-  gap: 26px;
+  gap: 24px;
   flex-wrap: wrap;
-  font-style: italic;
 }
 
 .common-footer__legal-link {
-  color: #5b6378;
+  color: #64748b;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
 }
 
 .common-footer__legal-link:hover {
-  color: #0b3ca1;
+  color: #ffffff;
 }
 
 @media (max-width: 1024px) {
   .common-footer__content {
-    gap: 28px;
+    gap: 32px;
   }
 
   .common-footer__bottom {
@@ -202,17 +277,22 @@ const currentYear = new Date().getFullYear()
 
 @media (max-width: 640px) {
   .common-footer {
-    padding: 32px 16px 20px;
+    padding: 36px 16px 24px;
   }
 
   .common-footer__content {
     flex-direction: column;
-    gap: 24px;
+    gap: 28px;
   }
 
   .common-footer__brand,
   .common-footer__col {
     max-width: none;
+    flex: 1;
+  }
+
+  .common-footer__legal {
+    gap: 16px;
   }
 }
 </style>

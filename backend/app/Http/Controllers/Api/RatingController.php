@@ -91,6 +91,7 @@ class RatingController extends Controller
     {
         // Check for specific shop_id in query params
         $requestedShopId = $request->query('shop_id');
+        $requestedVehicleId = $request->query('vehicle_id');
         $userShopIds = $this->getShopIdsFromUser($request);
         
         $shopIds = [];
@@ -105,16 +106,34 @@ class RatingController extends Controller
             $shopIds = $userShopIds;
         }
         
-        if (empty($shopIds)) {
+        // If vehicle_id is passed, we can skip shop ownership check (public endpoint)
+        if ($requestedVehicleId && !$requestedShopId) {
+            $shopIds = []; // Allow public access for specific vehicle
+        }
+        
+        if (empty($shopIds) && !$requestedVehicleId) {
             return response()->json([]);
         }
 
-        // Get only vehicles that have ratings
-        $vehicles = Vehicle::whereHas('directRatings', function($query) use ($shopIds) {
-                if (!empty($shopIds)) {
-                    $query->whereIn('shop_id', $shopIds);
-                }
-            })
+        $vehicleQuery = Vehicle::query();
+        
+        // Filter by vehicle_id if provided
+        if ($requestedVehicleId) {
+            $vehicleQuery->where('id', (int)$requestedVehicleId);
+        }
+        
+        $vehicleQuery->whereHas('directRatings', function($query) use ($shopIds) {
+            if (!empty($shopIds)) {
+                $query->whereIn('shop_id', $shopIds);
+            }
+        });
+        
+        if (!empty($shopIds)) {
+            $vehicleQuery->whereIn('shop_id', $shopIds);
+        }
+
+        // Get vehicles that have ratings
+        $vehicles = $vehicleQuery
             ->withCount(['directRatings' => function($query) use ($shopIds) {
                 if (!empty($shopIds)) {
                     $query->whereIn('shop_id', $shopIds);
@@ -127,9 +146,6 @@ class RatingController extends Controller
                 $query->with('user');
                 $query->orderBy('created_at', 'desc');
             }])
-            ->when(!empty($shopIds), function($query) use ($shopIds) {
-                return $query->whereIn('shop_id', $shopIds);
-            })
             ->get()
             ->map(function($vehicle) {
                 $vehicleRatings = $vehicle->directRatings;

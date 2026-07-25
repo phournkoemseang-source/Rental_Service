@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { vehicleApi, shopApi, ratingApi } from '@/services/api'
 import { userService } from '../../services/database.js'
 import { readStoredLocation } from '@/utils/locationAccess'
+import { extractCoordinatesFromMapUrl, haversineDistanceKm } from '@/utils/shopLocation'
 import CommonFooter from '../../components/CommonFooter.vue'
 import '../../css/ShopVehicle.css'
 import '@/css/customer-responsive.css'
@@ -388,23 +389,11 @@ const selectedShopCoords = computed(() => {
 
 const selectedShopMapLink = computed(() => String(shop.value?.map_url || shop.value?.location || '').trim())
 
-const calculateDistanceKm = (lat1, lng1, lat2, lng2) => {
-  const toRad = (v) => (v * Math.PI) / 180
-  const earthRadiusKm = 6371
-  const dLat = toRad(lat2 - lat1)
-  const dLng = toRad(lng2 - lng1)
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2)
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  return earthRadiusKm * c
-}
-
 const distanceKm = computed(() => {
   const origin = originCoords.value
   const dest = selectedShopCoords.value
   if (!origin || !dest) return null
-  return calculateDistanceKm(origin.lat, origin.lng, dest.lat, dest.lng)
+  return haversineDistanceKm(origin.lat, origin.lng, dest.lat, dest.lng)
 })
 
 // Optional: Google Maps Embed API key to render the richer place card UI when available
@@ -480,26 +469,6 @@ const openMap = () => {
   }
   const destWithCoords = coords ? `${destination} (${coords.lat},${coords.lng})` : destination
   window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destWithCoords)}`, '_blank')
-}
-
-const extractCoordinatesFromMapUrl = (value) => {
-  const url = String(value || '').trim()
-  if (!url) return null
-  const patterns = [
-    /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-    /[?&](?:q|query|ll|destination|origin)=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-    /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
-  ]
-  for (const pattern of patterns) {
-    const match = url.match(pattern)
-    if (!match) continue
-    const lat = Number(match[1])
-    const lng = Number(match[2])
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue
-    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) continue
-    return { lat, lng }
-  }
-  return null
 }
 </script>
 

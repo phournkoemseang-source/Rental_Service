@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import UserProfileMenu from '@/components/UserProfileMenu.vue'
 import NotificationMenu from '@/components/NotificationMenu.vue'
 import { useNotifications } from '@/composables/useNotifications'
+import { setLanguage, getCurrentLanguage } from '@/i18n'
 
 const baseNavItems = [{ label: 'Home', route: '/' }]
 const defaultNavItems = [
@@ -43,6 +44,15 @@ const { unreadCount, loadNotifications } = useNotifications()
 const notificationMenuOpen = ref(false)
 const notificationMenuRef = ref(null)
 const mobileMenuOpen = ref(false)
+
+// Language toggle
+const currentNavLang = ref(getCurrentLanguage())
+const switchNavLang = (lang) => {
+  if (lang !== currentNavLang.value) {
+    setLanguage(lang)
+    currentNavLang.value = lang
+  }
+}
 
 const resolvedNavItems = computed(() => {
   return props.navItems && props.navItems.length > 0 ? props.navItems : defaultNavItems
@@ -160,6 +170,26 @@ onBeforeUnmount(() => {
 
 
       <div class="top-actions">
+        <!-- Language Toggle -->
+        <div class="navbar-lang-toggle">
+          <button
+            class="navbar-lang-btn"
+            :class="{ active: currentNavLang === 'en' }"
+            @click="switchNavLang('en')"
+            aria-label="Switch to English"
+          >
+            EN
+          </button>
+          <span class="navbar-lang-sep">|</span>
+          <button
+            class="navbar-lang-btn"
+            :class="{ active: currentNavLang === 'kh' }"
+            @click="switchNavLang('kh')"
+            aria-label="ប្តូរទៅភាសាខ្មែរ"
+          >
+            KH
+          </button>
+        </div>
         <div ref="notificationMenuRef" class="notification-bell-wrap">
           <button
             type="button"
@@ -282,6 +312,48 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+/* Language Toggle in Navbar */
+.navbar-lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.navbar-lang-btn {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+}
+
+.navbar-lang-btn:hover {
+  color: #475569;
+}
+
+.navbar-lang-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.navbar-lang-sep {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 300;
+  user-select: none;
 }
 
 .notification-bell-wrap {

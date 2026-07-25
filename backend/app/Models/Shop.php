@@ -40,6 +40,11 @@ class Shop extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
+    }
+
     public function getImgUrlFullAttribute(): ?string
     {
         $value = trim((string) ($this->img_url ?? ''));

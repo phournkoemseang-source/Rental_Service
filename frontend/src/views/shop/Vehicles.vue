@@ -1,11 +1,14 @@
 ﻿<script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { vehicleApi, shopApi, api } from '@/services/api'
 import { getSessionUser } from '@/services/auth'
 import UserNavbar from '@/components/UserNavbar.vue'
 import CommonFooter from '@/components/CommonFooter.vue'
 import '../../css/Vehicles.css'
+
+const { t } = useI18n()
 
 const router = useRouter()
 
@@ -30,6 +33,13 @@ const handleLogout = () => {
 
 const categories = ['Car','Moto', 'Bike']
 const statuses = ['Available', 'Rented', 'Maintenance']
+
+// Status labels for display
+const statusLabels = {
+  'Available': () => t('available'),
+  'Rented': () => t('rented'),
+  'Maintenance': () => t('maintenance')
+}
 
 const search = ref('')
 const categoryFilter = ref('All Categories')
@@ -90,7 +100,7 @@ const deleteVehicleName = ref('')
 
 const confirmDelete = (v) => {
     deleteId.value = v.id
-    deleteVehicleName.value = v.name ? `${v.name} - ${v.plate || 'No plate'}` : v.plate || 'Unknown Vehicle'
+    deleteVehicleName.value = v.name ? `${v.name} - ${v.plate || t('noPlate')}` : v.plate || t('unknownVehicle')
     showDeleteModal.value = true
 }
 
@@ -338,8 +348,8 @@ const filteredVehicles = computed(() => {
             (v.brand && v.brand.toLowerCase().includes(s)) ||
             (v.model && v.model.toLowerCase().includes(s)) ||
             (v.plate && v.plate.toLowerCase().includes(s))
-        const cOk = categoryFilter.value === 'All Categories' || v.category === categoryFilter.value
-        const stOk = statusFilter.value === 'All Status' || v.status === statusFilter.value
+        const cOk = categoryFilter.value === t('allCategories') || v.category === categoryFilter.value
+        const stOk = statusFilter.value === t('allStatus') || v.status === statusFilter.value
         return sOk && cOk && stOk
     })
 })
@@ -620,8 +630,8 @@ const onPhotoDrop = async (e) => {
     <div class="panel vehicles-page">
     <div class="line top-line">
       <div>
-        <h3>Manage Vehicles</h3>
-        <p class="muted">Add, edit, and manage your rental fleet</p>
+        <h3>{{ $t('manageVehicles') }}</h3>
+        <p class="muted">{{ $t('manageVehiclesDesc') }}</p>
       </div>
       <div class="controls">
         <div class="search">
@@ -640,12 +650,12 @@ const onPhotoDrop = async (e) => {
           </svg>
           <input
             v-model="search"
-            placeholder="Search vehicle name, model, or plate"
+            :placeholder="$t('searchVehicle')"
           />
         </div>
         <div class="select-wrap">
           <select v-model="categoryFilter" class="select">
-            <option>All Categories</option>
+            <option>{{ $t('allCategories') }}</option>
             <option v-for="c in categories" :key="c">{{ c }}</option>
           </select>
           <svg
@@ -661,8 +671,8 @@ const onPhotoDrop = async (e) => {
         </div>
         <div class="select-wrap">
           <select v-model="statusFilter" class="select">
-            <option>All Status</option>
-            <option v-for="s in statuses" :key="s">{{ s }}</option>
+            <option>{{ $t('allStatus') }}</option>
+            <option v-for="s in statuses" :key="s">{{ statusLabels[s] ? statusLabels[s]() : s }}</option>
           </select>
           <svg
             viewBox="0 0 24 24"
@@ -689,7 +699,7 @@ const onPhotoDrop = async (e) => {
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-          Add New Vehicle
+          {{ $t('addNewVehicle') }}
         </button>
       </div>
     </div>
@@ -714,7 +724,7 @@ const onPhotoDrop = async (e) => {
         </div>
         <div>
           <h3>{{ totalVehicles }}</h3>
-          <span>Total Vehicles</span>
+          <span>{{ $t('totalVehicles') }}</span>
         </div>
       </article>
       <article>
@@ -735,7 +745,7 @@ const onPhotoDrop = async (e) => {
         </div>
         <div>
           <h3>{{ availableVehicles }}</h3>
-          <span>Available</span>
+          <span>{{ $t('available') }}</span>
         </div>
       </article>
       <article>
@@ -756,7 +766,7 @@ const onPhotoDrop = async (e) => {
         </div>
         <div>
           <h3>{{ maintenanceVehicles }}</h3>
-          <span>Maintenance</span>
+          <span>{{ $t('maintenance') }}</span>
         </div>
       </article>
     </div>
@@ -765,16 +775,16 @@ const onPhotoDrop = async (e) => {
       <table>
         <thead>
           <tr>
-            <th>Image</th>
-            <th>Vehicle</th>
-            <th>Stock</th>
-            <th>Category</th>
-            <th>Plate Number</th>
-            <th>Stock</th>
-            <th>Price/Day</th>
-            <th>Status</th>
-            <th>Created At</th>
-            <th>Actions</th>
+            <th>{{ $t('image') }}</th>
+            <th>{{ $t('vehicle') }}</th>
+            <th>{{ $t('stock') }}</th>
+            <th>{{ $t('category') }}</th>
+            <th>{{ $t('plateNumber') }}</th>
+            <th>{{ $t('stock') }}</th>
+            <th>{{ $t('pricePerDay') }}</th>
+            <th>{{ $t('status') }}</th>
+            <th>{{ $t('createdAt') }}</th>
+            <th>{{ $t('actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -783,6 +793,7 @@ const onPhotoDrop = async (e) => {
               <img
                 :src="v.previewUrl || sampleThumb"
                 alt="Vehicle"
+                @error="$event.target.src = sampleThumb"
                 style="
                   width: 60px;
                   height: 40px;
@@ -805,7 +816,7 @@ const onPhotoDrop = async (e) => {
             <td>${{ v.price }}</td>
             <td>
               <span :class="['status-badge', getStatusClass(v.status)]">
-                <span v-html="getStatusIcon(v.status)"></span> {{ v.status }}
+                <span v-html="getStatusIcon(v.status)"></span> {{ statusLabels[v.status] ? statusLabels[v.status]() : v.status }}
               </span>
             </td>
             <td>{{ formatDate(v.createdAt) }}</td>
@@ -859,7 +870,7 @@ const onPhotoDrop = async (e) => {
             <circle cx="7.5" cy="17.5" r="1.5"></circle>
             <circle cx="16.5" cy="17.5" r="1.5"></circle>
           </svg>
-          <p>No vehicles found. Click "Add New Vehicle" to get started.</p>
+          <p>{{ $t('noVehiclesFound') }}</p>
         </div>
       </div>
     </div>
@@ -868,7 +879,7 @@ const onPhotoDrop = async (e) => {
       <div class="add-vehicle-modal">
         <!-- Header -->
         <div class="add-vehicle-header">
-          <h2>{{ editId ? "Edit Vehicle" : "Add New Vehicle" }}</h2>
+          <h2>{{ editId ? $t('editVehicle') : $t('addNewVehicle') }}</h2>
           <button class="close-btn" @click="modal = false">
             <svg
               viewBox="0 0 24 24"
@@ -890,9 +901,9 @@ const onPhotoDrop = async (e) => {
           <div class="add-vehicle-left">
             <!-- Vehicle Identification -->
             <div class="form-card">
-              <h3 class="card-title">Vehicle Identification</h3>
+              <h3 class="card-title">{{ $t('vehicleIdentification') }}</h3>
               <div class="form-group">
-                <label>Vehicle Name</label>
+                <label>{{ $t('vehicleName') }}</label>
                 <input
                   v-model="form.name"
                   placeholder="e.g. 2023 Luxury Sedan White"
@@ -901,16 +912,16 @@ const onPhotoDrop = async (e) => {
               
               <div class="form-row">
                 <div class="form-group">
-                  <label>Category</label>
+                  <label>{{ $t('category') }}</label>
                   <select v-model="form.category">
-                    <option value="" disabled>Select Category</option>
+                    <option value="" disabled>{{ $t('selectCategory') }}</option>
                     <option v-for="c in categories" :key="c">{{ c }}</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>Shop Location</label>
+                  <label>{{ $t('shopLocation') }}</label>
                   <select v-model="form.shop">
-                    <option value="" disabled>Select Shop</option>
+                    <option value="" disabled>{{ $t('selectShop') }}</option>
                     <option v-if="currentShop" :value="currentShop.name">
                       {{ currentShop.name }}
                     </option>
@@ -921,49 +932,47 @@ const onPhotoDrop = async (e) => {
 
             <!-- Description -->
             <div class="form-card">
-              <h3 class="card-title">Description</h3>
+              <h3 class="card-title">{{ $t('description') }}</h3>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Plate Number</label>
+                  <label>{{ $t('plateNumber') }}</label>
                   <input v-model="form.plate" placeholder="e.g. ABC-1234" />
                 </div>
                 <div class="form-group">
-                  <label>Fuel Type</label>
+                  <label>{{ $t('fuelType') }}</label>
                   <select v-model="form.fuel">
-                    <option value="" disabled>Select Fuel</option>
-                    <option>Petrol</option>
-                    <option>Diesel</option>
-                    <option>Electric</option>
-                    <option>Hybrid</option>
+                    <option value="" disabled>{{ $t('selectFuel') }}</option>
+                    <option>{{ $t('petrol') }}</option>
+                    <option>{{ $t('diesel') }}</option>
+                    <option>{{ $t('electric') }}</option>
+                    <option>{{ $t('hybrid') }}</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>Transmission</label>
+                  <label>{{ $t('transmission') }}</label>
                   <select v-model="form.transmission">
-                    <option value="" disabled>Select Transmission</option>
-                    <option>Automatic</option>
-                    <option>Manual</option>
+                    <option value="" disabled>{{ $t('selectTransmission') }}</option>
+                    <option>{{ $t('automatic') }}</option>
+                    <option>{{ $t('manual') }}</option>
                   </select>
                 </div>
               </div>
               <div class="form-group mt-12">
-                <label>Description</label>
+                <label>{{ $t('description') }}</label>
                 <textarea
                   v-model="form.description"
-                  placeholder="Provide a detailed description of the vehicle features..."
+                  :placeholder="$t('manageVehiclesDesc')"
                 ></textarea>
               </div>
             </div>
-          </div>
-
-          <!-- Right Column -->
+          </div>            <!-- Right Column -->
           <div class="add-vehicle-right">
             <!-- Pricing & Status -->
             <div class="form-card">
-              <h3 class="card-title">Pricing & Status</h3>
+              <h3 class="card-title">{{ $t('pricingAndStatus') }}</h3>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Price per Day ($)</label>
+                  <label>{{ $t('pricePerDayLabel') }}</label>
                   <input
                     v-model="form.price"
                     type="number"
@@ -971,27 +980,27 @@ const onPhotoDrop = async (e) => {
                   />
                 </div>
                 <div class="form-group">
-                  <label>Status</label>
+                  <label>{{ $t('status') }}</label>
                   <select v-model="form.status">
-                    <option>Available</option>
-                    <option>Rented</option>
-                    <option>Maintenance</option>
+                    <option>{{ $t('available') }}</option>
+                    <option>{{ $t('rented') }}</option>
+                    <option>{{ $t('maintenance') }}</option>
                   </select>
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Rider Details</label>
+                  <label>{{ $t('riderDetails') }}</label>
                   <select v-model="form.riderDetails">
-                    <option value="" disabled>Select Rider Details</option>
-                    <option>1 Rider</option>
-                    <option>2 Riders</option>
-                    <option>3 Riders</option>
-                    <option>4+ Riders</option>
+                    <option value="" disabled>{{ $t('selectRiderDetails') }}</option>
+                    <option>{{ $t('oneRider') }}</option>
+                    <option>{{ $t('twoRiders') }}</option>
+                    <option>{{ $t('threeRiders') }}</option>
+                    <option>{{ $t('fourRiders') }}</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>Total Vehicles</label>
+                  <label>{{ $t('totalVehiclesLabel') }}</label>
                   <input
                     v-model="form.totalVehiclesInput"
                     type="number"
@@ -1002,7 +1011,7 @@ const onPhotoDrop = async (e) => {
               </div>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Insurance Fee ($)</label>
+                  <label>{{ $t('insuranceFee') }}</label>
                   <input
                     v-model="form.insuranceFee"
                     type="number"
@@ -1010,7 +1019,7 @@ const onPhotoDrop = async (e) => {
                   />
                 </div>
                 <div class="form-group">
-                  <label>Taxes & Fees ($)</label>
+                  <label>{{ $t('taxesFees') }}</label>
                   <input
                     v-model="form.taxesFee"
                     type="number"
@@ -1022,7 +1031,7 @@ const onPhotoDrop = async (e) => {
 
             <!-- Vehicle Photos -->
             <div class="form-card">
-              <h3 class="card-title">Vehicle Photos</h3>
+              <h3 class="card-title">{{ $t('vehiclePhotos') }}</h3>
               <div
                 class="photo-upload-area"
                 @click="$refs.photos && $refs.photos.click()"
@@ -1053,13 +1062,13 @@ const onPhotoDrop = async (e) => {
                     <polyline points="7 10 12 5 17 10"></polyline>
                     <line x1="12" y1="5" x2="12" y2="16"></line>
                   </svg>
-                  <p>Click to upload or drag and drop</p>
-                  <span>PNG, JPG up to 10MB</span>
+                  <p>{{ $t('clickToUpload') }}</p>
+                  <span>{{ $t('uploadHint') }}</span>
                 </div>
                 <div v-else class="photo-preview">
                   <img :src="photoPreview" alt="Vehicle preview" />
                   <div class="photo-overlay">
-                    <span>Click to change</span>
+                    <span>{{ $t('clickToChange') }}</span>
                   </div>
                 </div>
               </div>
@@ -1070,7 +1079,7 @@ const onPhotoDrop = async (e) => {
         <!-- Footer -->
         <div class="add-vehicle-footer">
           <button class="discard-btn" @click="modal = false">
-            Discard Draft
+            {{ $t('discardDraft') }}
           </button>
           <button class="store-btn" @click="saveVehicle">
             <svg
@@ -1087,7 +1096,7 @@ const onPhotoDrop = async (e) => {
               <polyline points="17 21 17 13 7 13 7 21"></polyline>
               <polyline points="7 3 7 8 15 8"></polyline>
             </svg>
-            {{ editId ? "Update Vehicle" : "Store Product" }}
+            {{ editId ? $t('updateVehicle') : $t('storeProduct') }}
           </button>
         </div>
       </div>
@@ -1114,19 +1123,18 @@ const onPhotoDrop = async (e) => {
           <line x1="14" y1="11" x2="14" y2="17"></line>
         </svg>
       </div>
-      <h3 class="delete-title">Delete Vehicle</h3>
+      <h3 class="delete-title">{{ $t('deleteVehicle') }}</h3>
       <p class="delete-message">
-        Are you sure you want to delete this vehicle?
+        {{ $t('deleteVehicleConfirm') }}
       </p>
       <p class="delete-vehicle-name">{{ deleteVehicleName }}</p>
       <p class="delete-warning">
-        This action cannot be undone. All associated data (maintenance history,
-        documents, photos, assignments) will be permanently removed.
+        {{ $t('deleteVehicleWarning') }}
       </p>
       <div class="delete-actions">
-        <button class="delete-cancel-btn" @click="cancelDelete">Cancel</button>
+        <button class="delete-cancel-btn" @click="cancelDelete">{{ $t('cancel') }}</button>
         <button class="delete-confirm-btn" @click="removeVehicle">
-          Delete
+          {{ $t('delete') }}
         </button>
       </div>
     </div>

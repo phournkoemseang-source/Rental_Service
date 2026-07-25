@@ -15,7 +15,7 @@
 
 .page-header h1 {
   margin: 0;
-  font-size: 30px;
+  font-size: 24px;
   color: #1e293b;
 }
 
@@ -63,13 +63,13 @@
 }
 
 .shop-settings-card {
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid #e2e8f0;
   background: #ffffff;
-  border-radius: 32px;
-  padding: 36px;
-  box-shadow: 0 35px 60px rgba(15, 23, 42, 0.12);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
   width: min(1100px, 100%);
-  margin: 40px auto 0;
+  margin: 24px auto 0;
 }
 
 .shop-settings-header {
@@ -77,7 +77,9 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .settings-title {
@@ -89,7 +91,7 @@
 .settings-icon {
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #e0f2fe;
   color: #0284c7;
   display: grid;
@@ -104,7 +106,7 @@
 
 .settings-title h2 {
   margin: 0 0 4px;
-  font-size: 22px;
+  font-size: 20px;
   color: #0f172a;
 }
 
@@ -117,36 +119,39 @@
 .shop-settings-profile {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
   flex-wrap: wrap;
-  margin-bottom: 32px;
-  padding: 22px 24px;
-  border-radius: 20px;
+  margin-bottom: 24px;
+  padding: 20px;
+  border-radius: 12px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
 }
 
 .profile-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
   margin-left: auto;
 }
 
 .profile-btn {
   border: none;
-  border-radius: 12px;
-  padding: 10px 18px;
+  border-radius: 8px;
+  padding: 9px 16px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .profile-btn.primary {
-  background: #1d4ed8;
+  background: #2563eb;
   color: #fff;
-  box-shadow: 0 10px 20px rgba(29, 78, 216, 0.3);
+}
+
+.profile-btn.primary:hover:not(:disabled) {
+  background: #1d4ed8;
 }
 
 .profile-btn.ghost {
@@ -155,18 +160,21 @@
   border: 1px solid #e2e8f0;
 }
 
+.profile-btn.ghost:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
 .profile-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  box-shadow: none;
 }
 
 .settings-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
   padding: 18px;
-  border-radius: 16px;
+  border-radius: 12px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
 }
@@ -183,21 +191,54 @@
   font-weight: 600;
 }
 
+.province-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #dbe3f1;
+  background: #ffffff;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.province-icon {
+  color: #2563eb;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.province-value {
+  font-weight: 500;
+}
+
 .settings-field input,
 .settings-field select,
 .settings-field textarea {
-  border-radius: 12px;
+  border-radius: 8px;
   border: 1px solid #dbe3f1;
-  padding: 10px 12px;
+  padding: 9px 12px;
   font-size: 14px;
   color: #0f172a;
+  background: #ffffff;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.settings-field input:focus,
+.settings-field select:focus,
+.settings-field textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
   background: #ffffff;
 }
 
 .settings-field input[readonly],
 .settings-field textarea[readonly],
 .settings-field select:disabled {
-  background: #ffffff;
+  background: #f8fafc;
   color: #1f2937;
 }
 

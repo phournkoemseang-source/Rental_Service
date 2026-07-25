@@ -1,8 +1,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useToast } from '@/composables/useToast'
 import { feedbackApi, ratingApi } from '@/services/api'
 import { getSessionUser } from '@/services/auth'
 import '../../css/Feedback.css'
+
+const toast = useToast()
 
 const props = defineProps({
   shopId: {
@@ -114,6 +117,7 @@ const saveReply = () => {
   if (!selected.value) return
   selected.value.reply = newReply.value
   selected.value = null
+  toast.success('Reply saved successfully.')
 }
 
 // Generate stars array for rendering
@@ -487,7 +491,7 @@ const getRatingDistribution = (ratings) => {
 }
 
 .page-title {
-  font-size: 2rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #1e293b;
   margin: 0;
@@ -500,7 +504,7 @@ const getRatingDistribution = (ratings) => {
 .page-subtitle {
   color: #64748b;
   margin: 4px 0 0 0;
-  font-size: 0.9375rem;
+  font-size: 0.88rem;
 }
 
 /* Search Bar */
@@ -528,7 +532,7 @@ const getRatingDistribution = (ratings) => {
   padding: 12px 16px 12px 44px;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  font-size: 0.9375rem;
+  font-size: 0.85rem;
   background: #fff;
   transition: all 0.2s;
 }
@@ -568,11 +572,11 @@ const getRatingDistribution = (ratings) => {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 24px;
+  padding: 10px 20px;
   border: none;
   background: transparent;
   color: #64748b;
-  font-size: 0.9375rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   border-radius: 12px;
@@ -682,7 +686,7 @@ const getRatingDistribution = (ratings) => {
 }
 
 .stat-value {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
   line-height: 1;
   color: #343b1e;
@@ -690,7 +694,7 @@ const getRatingDistribution = (ratings) => {
 
 .stat-card.main-stat .stat-value {
   color: #1e293b;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
 }
 
 .stat-card.main-stat .stat-label {
@@ -698,7 +702,7 @@ const getRatingDistribution = (ratings) => {
 }
 
 .stat-label {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: #64748b;
   margin-top: 4px;
   font-weight: 700;
@@ -742,14 +746,14 @@ const getRatingDistribution = (ratings) => {
 .feedback-card {
   background: linear-gradient(180deg, #fefefe 0%, #eef2ff 100%);
   border: none;
-  border-radius:25px;
-  padding: 28px;
-  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.1);
 }
 
 .feedback-card-heading h2 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   color: #111827;
   font-weight: 700;
 }
@@ -757,12 +761,12 @@ const getRatingDistribution = (ratings) => {
 .feedback-card-heading p {
   margin: 6px 0 0;
   color: #6b7280;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
 }
 
 .feedback-table {
-  margin-top: 20px;
-  border-radius: 28px;
+  margin-top: 18px;
+  border-radius: 20px;
   overflow: hidden;
   background: #fff;
   position: relative;
@@ -774,7 +778,7 @@ const getRatingDistribution = (ratings) => {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 28px;
+  border-radius: 20px;
   border: 1px solid rgba(59, 130, 246, 0.12);
   pointer-events: none;
 }
@@ -783,7 +787,7 @@ const getRatingDistribution = (ratings) => {
   display: grid;
   grid-template-columns: 1.2fr 2.2fr 1.2fr 1fr 1.5fr 1fr;
   gap: 18px;
-  padding: 16px 24px;
+  padding: 12px 16px;
   align-items: center;
   background: #fff;
   position: relative;
@@ -852,7 +856,7 @@ const getRatingDistribution = (ratings) => {
 .cell.vehicle-name div {
   font-weight: 600;
   color: #0f172a;
-  font-size: 1.2rem;
+  font-size: 0.95rem;
 }
 
 .cell .label {
@@ -967,8 +971,8 @@ const getRatingDistribution = (ratings) => {
 
 .comment-label {
   text-transform: uppercase;
-  font-size: 1rem;
-  letter-spacing: 0.1em;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
   color: #0f172a;
 }
 
@@ -1062,7 +1066,7 @@ const getRatingDistribution = (ratings) => {
 }
 
 .vehicle-name {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #1e293b;
   display: inline;
@@ -1077,7 +1081,7 @@ const getRatingDistribution = (ratings) => {
 .rating-value {
   font-weight: 700;
   color: #1e293b;
-  font-size: 1.125rem;
+  font-size: 1rem;
 }
 
 .rating-count {

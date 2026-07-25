@@ -1,6 +1,8 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import ShopDashboard from "./ShopDashboard.vue";
 import Bookings from "./Bookings.vue";
 import Payments from "./Payments.vue";
 import ReviewsFeedback from "./Review_Feedback.vue";
@@ -10,12 +12,15 @@ import Setting from "./setting.vue";
 import NotificationOwner from "./Notification_owner.vue";
 import api, { bookingApi, shopApi, vehicleApi } from "@/services/api";
 import { getSessionUser, logoutUser } from "@/services/auth";
-import NotificationMenu from "@/components/NotificationMenu.vue";
 import { useNotifications } from "@/composables/useNotifications";
+import { setLanguage, getCurrentLanguage } from "@/i18n";
+import ToastStack from "@/components/ToastStack.vue";
+
+const { t } = useI18n();
 
 // Toast notifications
 const router = useRouter();
-const logoUrl = "/Images/logo.png";
+const logoUrl = "/Images/logo-removebg.png";
 const route = useRoute();
 const SHOP_DASHBOARD_THEME_KEY = "shop-dashboard-theme";
 const toast = ref({ show: false, message: "", type: "success" });
@@ -24,27 +29,81 @@ const showToast = (message, type = "success") => {
   setTimeout(() => (toast.value.show = false), 100);
 };
 
-const { unreadCount } = useNotifications();
-const showNotifications = ref(false);
-const notificationRoot = ref(null);
+const { unreadCount, loadNotifications } = useNotifications();
+let notificationPollTimer = null;
 const isDarkMode = ref(false);
 
+const SOUND_KEY_PREFIX = 'settings_notification_sound_';
+
+const playNotificationSound = () => {
+  // Check user preference in localStorage before playing
+  try {
+    const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const pref = localStorage.getItem(`${SOUND_KEY_PREFIX}${storedUser.id}`);
+    if (pref === '0') return; // Sound disabled
+  } catch { /* ignore */ }
+
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+
+    // First tone (C5 ~ 523Hz) - gentle sine chime
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.value = 523.25;
+    gain1.gain.setValueAtTime(0, now);
+    gain1.gain.linearRampToValueAtTime(0.08, now + 0.04);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.25);
+
+    // Second tone (E5 ~ 659Hz) - harmony, slightly delayed
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.value = 659.25;
+    gain2.gain.setValueAtTime(0, now + 0.05);
+    gain2.gain.linearRampToValueAtTime(0.05, now + 0.09);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.05);
+    osc2.stop(now + 0.35);
+
+    // Auto-close after sound finishes
+    setTimeout(() => { ctx.close().catch(() => {}); }, 500);
+  } catch {
+    // Audio not available - silently ignore
+  }
+};
+
+// Watch for new unread notifications and play sound
+watch(unreadCount, (newCount, oldCount) => {
+  if (newCount > oldCount && oldCount !== undefined) {
+    playNotificationSound();
+  }
+});
+
+// Language state
+const currentShopLang = ref(getCurrentLanguage())
+const switchShopLang = (lang) => {
+  if (lang !== currentShopLang.value) {
+    setLanguage(lang)
+    currentShopLang.value = lang
+  }
+}
+
 const themeModeLabel = computed(() =>
-  isDarkMode.value ? "Dark mode" : "Light mode",
+  isDarkMode.value ? t('darkMode') : t('lightMode'),
 );
 
 const badgeLabel = computed(() => {
   if (!unreadCount.value) return "";
   return unreadCount.value > 9 ? "9+" : String(unreadCount.value);
 });
-
-const toggleNotifications = () => {
-  showNotifications.value = !showNotifications.value;
-};
-
-const closeNotifications = () => {
-  showNotifications.value = false;
-};
 
 const loadStoredTheme = () => {
   try {
@@ -68,27 +127,17 @@ const goToOwnerNotifications = () => {
   router.push({ name: "shop-notifications" })
 }
 
-const handleDocumentClick = (event) => {
-  if (
-    showNotifications.value &&
-    notificationRoot.value &&
-    !notificationRoot.value.contains(event.target)
-  ) {
-    closeNotifications();
-  }
-};
-
-const sections = [
-  { id: "dashboard", label: "Dashboard", icon: "dashboard" },
-  { id: "my-shop", label: "My Shop", icon: "building" },
-  { id: "vehicles", label: "Vehicles", icon: "motorcycle" },
-  { id: "bookings", label: "Bookings", icon: "calendar-check" },
-  { id: "payments", label: "Payments", icon: "wallet" },
-  { id: "reviews", label: "Reviews & Feedback", icon: "message-star" },
-  { id: "coupons", label: "Coupons", icon: "ticket" },
-  { id: "notifications", label: "Notifications", icon: "bell" },
-  { id: "settings", label: "Settings", icon: "settings" },
-];
+const sections = computed(() => [
+  { id: "dashboard", label: t('dashboard'), icon: "dashboard" },
+  { id: "my-shop", label: t('myShop'), icon: "building" },
+  { id: "vehicles", label: t('vehicles'), icon: "motorcycle" },
+  { id: "bookings", label: t('bookings'), icon: "calendar-check" },
+  { id: "payments", label: t('payments'), icon: "wallet" },
+  { id: "reviews", label: t('reviewsFeedback'), icon: "message-star" },
+  { id: "coupons", label: t('coupons'), icon: "ticket" },
+  { id: "notifications", label: t('notifications'), icon: "bell" },
+  { id: "settings", label: t('shopSettings'), icon: "settings" },
+]);
 
 const active = ref("dashboard");
 const isSidebarCollapsed = ref(false);
@@ -127,7 +176,19 @@ const normalizeAvatarUrl = (url) => {
 
 const normalizeVehicleImageUrl = (url) => {
   if (!url) return "";
-  if (/^https?:\/\//.test(url) || /^data:image\//.test(url)) return url;
+  if (/^https?:\/\//.test(url) || /^data:image\//.test(url)) {
+    const originValue = apiOrigin.value;
+    // Check if current origin matches or the URL host is bogus (localhost without port)
+    try {
+      const urlObj = new URL(url);
+      const currentOrigin = window.location.origin;
+      if (urlObj.hostname === 'localhost' && !currentOrigin.includes('localhost:8000') && !currentOrigin.includes('127.0.0.1:8000')) {
+        // Replace wrong host with API origin
+        return url.replace(urlObj.origin, originValue);
+      }
+    } catch { /* ignore invalid URLs */ }
+    return url;
+  }
   const normalized = String(url).replace(/^\/+/, "");
   if (normalized.startsWith("storage/")) return `/${normalized}`;
   if (normalized.startsWith("vehicles/")) return `/storage/${normalized}`;
@@ -174,12 +235,7 @@ watch(showUserMenu, (isOpen) => {
   }
 });
 
-watch(
-  () => router.currentRoute.value.fullPath,
-  () => {
-    closeNotifications();
-  }
-);
+
 
 watch(isDarkMode, (enabled) => {
   try {
@@ -220,14 +276,24 @@ onMounted(() => {
   loadStoredTheme();
   window.addEventListener("storage", refreshSessionUser);
   window.addEventListener("user-updated", refreshSessionUser);
-  document.addEventListener("mousedown", handleDocumentClick);
+
+
+  // Load notifications on mount and poll every 30s for real-time updates
+  loadNotifications().catch(() => {});
+  notificationPollTimer = setInterval(() => {
+    loadNotifications().catch(() => {});
+  }, 15000);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("storage", refreshSessionUser);
   window.removeEventListener("user-updated", refreshSessionUser);
   clearUserMenuTimer();
-  document.removeEventListener("mousedown", handleDocumentClick);
+
+  if (notificationPollTimer) {
+    clearInterval(notificationPollTimer);
+    notificationPollTimer = null;
+  }
 });
 const categories = ["Car", "Moto", "Bike"];
 const statuses = ["Available", "Rented", "Maintenance"];
@@ -403,29 +469,27 @@ const setCachedShop = (ownerId, shopData) => {
 const fetchShop = async () => {
   try {
     const ownerId = Number(sessionUser.value?.id || 0);
-    const response = await api.get("/shops");
-    const shops = response.data.data || response.data || [];
-    const myShops = ownerId
-      ? shops.filter((entry) => Number(entry.owner_id) === ownerId)
-      : shops;
-
-    myShops.sort((a, b) => {
-      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
-      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
-      if (bTime !== aTime) return bTime - aTime;
-      return Number(b.id || 0) - Number(a.id || 0);
-    });
-
-    const cached = getCachedShop(ownerId);
-    const cachedShop =
-      cached && myShops.find((entry) => Number(entry.id) === Number(cached.id));
-    const selectedShop = cachedShop || myShops[0] || null;
-
-    shop.value = selectedShop;
-    if (ownerId) {
-      setCachedShop(ownerId, selectedShop);
+    if (!ownerId) {
+      shop.value = null;
+      return;
     }
+
+    const response = await shopApi.getMyShop();
+    const data = response.data;
+    if (!data || (response.status && response.status === 204)) {
+      shop.value = null;
+      setCachedShop(ownerId, null);
+      return;
+    }
+
+    shop.value = data;
+    setCachedShop(ownerId, data);
   } catch (error) {
+    if (error.response?.status === 401) {
+      logoutUser();
+      router.push('/login');
+      return;
+    }
     console.error("Error fetching shop:", error);
     shop.value = null;
   }
@@ -724,9 +788,9 @@ const fetchVehicles = async () => {
           taxesFee: v.taxes_fee ?? "",
           createdAt: createdAtValue,
           updatedAt: v.updated_at,
-          image: v.image_url_full || normalizeVehicleImageUrl(v.image_url || ""),
+          image: normalizeVehicleImageUrl(v.image_url_full) || normalizeVehicleImageUrl(v.image_url || ""),
           image_url:
-            v.image_url_full || normalizeVehicleImageUrl(v.image_url || ""),
+            normalizeVehicleImageUrl(v.image_url_full) || normalizeVehicleImageUrl(v.image_url || ""),
         };
       });
   } catch (error) {
@@ -803,24 +867,15 @@ const loadOwnerShopName = async () => {
     }
 
     const ownerId = getUserId();
-    const response = await shopApi.getAll();
-    const shops = response.data?.data || response.data || [];
-    const myShops = shops.filter((s) => Number(s.owner_id) === Number(ownerId));
-
-    if (!myShops.length) {
+    const response = await shopApi.getMyShop();
+    const data = response.data;
+    if (!data || (response.status && response.status === 204)) {
       currentShopName.value = "No Shop Found";
       form.shop = currentShopName.value;
       return;
     }
 
-    myShops.sort((a, b) => {
-      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
-      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
-      if (bTime !== aTime) return bTime - aTime;
-      return Number(b.id || 0) - Number(a.id || 0);
-    });
-
-    currentShopName.value = myShops[0]?.name || "No Shop Name";
+    currentShopName.value = data.name || "No Shop Name";
     form.shop = currentShopName.value;
   } catch (error) {
     console.error("Error loading owner shop name:", error);
@@ -832,24 +887,19 @@ const loadOwnerShopName = async () => {
 const resolveOwnerShop = async () => {
   if (shop.value?.id) return shop.value;
 
-  const ownerId = getUserId();
-  const response = await shopApi.getAll();
-  const shops = response.data?.data || response.data || [];
-  const myShops = shops.filter((s) => Number(s.owner_id) === Number(ownerId));
+  try {
+    const response = await shopApi.getMyShop();
+    const data = response.data;
+    if (!data || (response.status && response.status === 204)) return null;
 
-  if (!myShops.length) return null;
-
-  myShops.sort((a, b) => {
-    const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
-    const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
-    if (bTime !== aTime) return bTime - aTime;
-    return Number(b.id || 0) - Number(a.id || 0);
-  });
-
-  shop.value = myShops[0];
-  currentShopName.value = shop.value?.name || "No Shop Name";
-  form.shop = currentShopName.value;
-  return shop.value;
+    shop.value = data;
+    currentShopName.value = shop.value?.name || "No Shop Name";
+    form.shop = currentShopName.value;
+    return shop.value;
+  } catch (error) {
+    console.error("Error resolving owner shop:", error);
+    return null;
+  }
 };
 
 initializeShopData = async () => {
@@ -1156,7 +1206,7 @@ const saveVehicle = async () => {
           insuranceFee: updatedData.insurance_fee ?? "",
           taxesFee: updatedData.taxes_fee ?? "",
           image:
-            updatedData.image_url_full ||
+            normalizeVehicleImageUrl(updatedData.image_url_full) ||
             normalizeVehicleImageUrl(updatedData.image_url || "") ||
             form.image,
           updatedAt: khTime(),
@@ -1188,7 +1238,7 @@ const saveVehicle = async () => {
         insuranceFee: newData.insurance_fee ?? "",
         taxesFee: newData.taxes_fee ?? "",
         image:
-          newData.image_url_full ||
+          normalizeVehicleImageUrl(newData.image_url_full) ||
           normalizeVehicleImageUrl(newData.image_url || "") ||
           form.image,
         createdAt: khTime(),
@@ -1384,8 +1434,6 @@ const iconSvg = (name) => {
           <span class="menu-label">{{ item.label }}</span>
         </button>
       </div>
-
-
       <button class="menu-item logout-item" @click="showLogoutModal = true">
         <span class="menu-icon logout-icon" v-html="iconSvg('logout')"></span>
         <span class="menu-label">Logout</span>
@@ -1401,9 +1449,29 @@ const iconSvg = (name) => {
               iconSvg(sections.find((s) => s.id === active)?.icon || 'grid')
             "
           ></span>
-          <h1>{{ sections.find((s) => s.id === active)?.label }}</h1>
+          <h1>{{ sections.find((s) => s.id === active)?.label || t('shopDashboardTitle') }}</h1>
         </div>
         <div class="topbar-right">
+          <!-- Language Toggle -->
+          <div class="header-lang-toggle-shop">
+            <button
+              class="hl-btn-shop"
+              :class="{ active: currentShopLang === 'en' }"
+              @click="switchShopLang('en')"
+              title="English"
+            >
+              EN
+            </button>
+            <span class="hl-sep-shop">|</span>
+            <button
+              class="hl-btn-shop"
+              :class="{ active: currentShopLang === 'kh' }"
+              @click="switchShopLang('kh')"
+              title="ភាសាខ្មែរ"
+            >
+              KH
+            </button>
+          </div>
           <button
             type="button"
             class="theme-toggle"
@@ -1416,27 +1484,21 @@ const iconSvg = (name) => {
             ></span>
             <span class="theme-toggle-label">{{ themeModeLabel }}</span>
           </button>
-          <div class="notification-wrapper" ref="notificationRoot">
-            <button
-              type="button"
-              class="bell-btn notification-btn"
-              aria-label="Open notifications"
-              @click.stop="toggleNotifications"
-            >
-              <span class="bell-icon" v-html="iconSvg('bell')"></span>
-              <span v-if="badgeLabel" class="notification-count">{{ badgeLabel }}</span>
-            </button>
-            <transition name="notification-fade">
-              <div v-if="showNotifications" class="notification-popup">
-                <NotificationMenu :shop-id="shop?.id" />
-              </div>
-            </transition>
-          </div>
+          <button
+            type="button"
+            class="bell-btn notification-btn"
+            aria-label="Open notifications"
+            @click.stop="goToOwnerNotifications"
+          >
+            <span class="bell-icon" v-html="iconSvg('bell')"></span>
+            <span v-if="badgeLabel" class="notification-count">{{ badgeLabel }}</span>
+          </button>
           <div class="user-box">
             <div class="user-dropdown" @click="toggleUserMenu">
               <div class="avatar">
                 <img
                   v-if="displayAvatarUrl"
+                  :key="displayAvatarUrl"
                   :src="displayAvatarUrl"
                   alt="User profile"
                   class="avatar-img"
@@ -1465,6 +1527,7 @@ const iconSvg = (name) => {
                   <div class="dropdown-avatar">
                     <img
                       v-if="displayAvatarUrl"
+                      :key="displayAvatarUrl"
                       :src="displayAvatarUrl"
                       alt="User profile"
                       class="avatar-img"
@@ -1520,78 +1583,23 @@ const iconSvg = (name) => {
         </div>
       </header>
 
-      <section v-if="active === 'dashboard'" class="dashboard-view">
-        <h2>Dashboard</h2>
-        <p class="sub">Welcome back! Here's your business overview.</p>
-
-        <div class="stats dashboard-cards">
-          <article class="card">
-            <span>Total Bookings</span>
-            <h3>{{ totalBookings }}</h3>
-            <b class="stat-icon icon-teal" v-html="iconSvg('calendar')"></b>
-          </article>
-          <article class="card">
-            <span>Total Earnings</span>
-            <h3>{{ formatCurrency(totalEarnings) }}</h3>
-            <b class="stat-icon icon-green" v-html="iconSvg('dollar')"></b>
-          </article>
-          <article class="card">
-            <span>Today's Bookings</span>
-            <h3>{{ todayBookings }}</h3>
-            <b class="stat-icon icon-orange" v-html="iconSvg('activity')"></b>
-          </article>
-          <article class="card">
-            <span>Total Vehicles</span>
-            <h3>{{ totalVehicles }}</h3>
-            <b class="stat-icon icon-sky" v-html="iconSvg('car')"></b>
-          </article>
-          <article class="card">
-            <span>Monthly Income</span>
-            <h3>{{ formatCurrency(monthlyIncome) }}</h3>
-            <b class="stat-icon icon-green" v-html="iconSvg('trend')"></b>
-          </article>
-          <article class="card">
-            <span>New Customers</span>
-            <h3>{{ newCustomers }}</h3>
-            <b class="stat-icon icon-teal" v-html="iconSvg('users')"></b>
-          </article>
-          <article class="card" v-if="shopRating.total_ratings > 0">
-            <span>Average Rating</span>
-            <h3>{{ averageRating }}</h3>
-            <b class="stat-icon icon-yellow" v-html="iconSvg('star')"></b>
-          </article>
+      <section v-if="active === 'dashboard'" class="shop-dash-section">
+        <div v-if="isLoadingDashboard" class="shop-loading">
+          <div class="shop-spinner"></div>
+          <p>Loading your dashboard...</p>
         </div>
-
-        <div class="activity-card">
-          <h3>Recent Vehicles</h3>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Vehicle</th>
-                  <th>Category</th>
-                  <th>Plate Number</th>
-                  <th>Stock</th>
-                  <th>Price/Day</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="vehicle in latestVehicles" :key="vehicle.id">
-                  <td>{{ vehicle.name }}</td>
-                  <td>{{ vehicle.category }}</td>
-                  <td>{{ vehicle.plate }}</td>
-                  <td>{{ vehicle.total_vehicles ?? 1 }}</td>
-                  <td>${{ vehicle.price }}</td>
-                  <td>{{ vehicle.status }}</td>
-                </tr>
-                <tr v-if="latestVehicles.length === 0">
-                  <td colspan="6" class="empty">No vehicles yet.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <ShopDashboard
+          v-else
+          :has-shop="!!shop?.id"
+          :total-bookings="totalBookings"
+          :total-earnings="totalEarnings"
+          :total-vehicles="totalVehicles"
+          :average-rating="averageRating"
+          :is-loading="isLoadingDashboard"
+          :recent-activity="histories"
+          @create-shop="openShopModal"
+          @navigate="(section) => active = section"
+        />
       </section>
 
       <section v-else-if="active === 'coupons'" class="coupons-view">
@@ -1677,6 +1685,7 @@ const iconSvg = (name) => {
                   <img
                     :src="v.image || sampleThumb"
                     alt="Vehicle"
+                    @error="$event.target.src = sampleThumb"
                     style="
                       width: 50px;
                       height: 35px;
@@ -2236,13 +2245,20 @@ const iconSvg = (name) => {
                 </div>
                 <div class="field-grid two-column">
                   <label class="field">
-                    <span>Location</span>
-                    <input
+                    <span>Province / City</span>
+                    <select
                       class="rounded-input"
-                      v-model="shopForm.location"
-                      type="text"
-                      placeholder="City, Country"
-                    />
+                      v-model="shopForm.city_id"
+                    >
+                      <option value="" disabled>Select province</option>
+                      <option
+                        v-for="city in cities"
+                        :key="city.id"
+                        :value="city.id"
+                      >
+                        {{ city.name }}
+                      </option>
+                    </select>
                   </label>
                   <label class="field">
                     <span>Phone</span>
@@ -2254,6 +2270,15 @@ const iconSvg = (name) => {
                     />
                   </label>
                 </div>
+                <label class="field">
+                  <span>Area / Location hint</span>
+                  <input
+                    class="rounded-input"
+                    v-model="shopForm.location"
+                    type="text"
+                    placeholder="e.g. Street 123, Khan ..."
+                  />
+                </label>
                 <label class="field">
                   <span>Description</span>
                   <textarea
@@ -2284,6 +2309,7 @@ const iconSvg = (name) => {
         </div>
       </div>
     </div>
+    <ToastStack />
   </div>
 </template>
 
@@ -2301,6 +2327,36 @@ const iconSvg = (name) => {
     Segoe UI,
     Roboto,
     sans-serif;
+}
+
+.shop-dash-section {
+  padding: 20px;
+}
+
+.shop-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 60px 20px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.shop-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .toast {
@@ -2612,6 +2668,7 @@ const iconSvg = (name) => {
   width: 48px;
   height: 48px;
   border-radius: 90px;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
   object-fit: contain;
   display: block;
   position: relative;
@@ -2630,12 +2687,12 @@ const iconSvg = (name) => {
 .brand-name {
   font-size: 18px;
   font-weight: 700;
-  color: #111b36;
+  color: #ffffff;
   white-space: nowrap;
 }
 
 .brand-cyan {
-  color: #06b6d4;
+  color: #22d3ee;
 }
 
 .brand-tagline {
@@ -2650,7 +2707,7 @@ const iconSvg = (name) => {
   margin: 4px 0 0;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #0f172a;
+  color: #e2e8f0;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -2697,6 +2754,10 @@ const iconSvg = (name) => {
   padding: 12px 12px;
   margin-bottom: 6px;
   border: 1px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -2723,14 +2784,16 @@ const iconSvg = (name) => {
 }
 
 .menu-item:hover {
-  background: rgba(148, 163, 184, 0.08);
+  background: rgba(148, 163, 184, 0.12);
   color: #ffffff;
+  transform: translateX(2px);
 }
 
 .menu-item.active {
   background: rgba(34, 211, 238, 0.16);
   border-color: rgba(34, 211, 238, 0.32);
   color: #fff;
+  box-shadow: inset 3px 0 0 #22d3ee;
 }
 
 .menu-item.active .menu-icon {
@@ -2750,9 +2813,10 @@ const iconSvg = (name) => {
 .topbar {
   min-height: 64px;
   margin: 0 0 20px;
-  padding: 0 16px 0 20px;
-  border-bottom: 1px solid #dbe1ea;
-  background: #fff;
+  padding: 0 20px 0 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2762,21 +2826,24 @@ const iconSvg = (name) => {
   position: sticky;
   top: 0;
   z-index: 30;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
 .topbar h1 {
   margin: 0;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #0f172a;
+  letter-spacing: -0.01em;
 }
 
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex: 1;
   min-width: 0;
 }
@@ -2808,18 +2875,21 @@ const iconSvg = (name) => {
   align-items: center;
   gap: 8px;
   min-height: 36px;
-  padding: 0 12px;
+  padding: 0 14px;
   border-radius: 999px;
-  border: 1px solid #dbe1ea;
+  border: 1px solid #e2e8f0;
   background: #f8fafc;
-  color: #334155;
+  color: #475569;
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.theme-toggle:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.1);
 }
 
 .theme-toggle:hover {
@@ -4389,15 +4459,15 @@ textarea {
 }
 
 .add-vehicle-modal {
-  background: white;
-  border-radius: 12px;
+  background: #fcfcfd;
+  border-radius: 16px;
   width: 100%;
   max-width: 900px;
   max-height: 90vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
 .add-vehicle-header {
@@ -4451,10 +4521,11 @@ textarea {
 }
 
 .form-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #edf2f7;
+  border-radius: 12px;
   padding: 20px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }
 
 .card-title {
@@ -4477,32 +4548,42 @@ textarea {
 
 .form-group label {
   display: block;
-  font-size: 13px;
-  font-weight: 500;
-  color: #475569;
-  margin-bottom: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 5px;
+  letter-spacing: -0.01em;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #1a1a1a;
-  background: white;
-  transition: all 0.2s;
+  padding: 10px 13px;
+  border: 1.5px solid #e5e9ef;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  color: #1f2937;
+  background: #fafbfc;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
+  font-family: inherit;
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  background: #ffffff;
+  border-color: #d1d9e6;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #6366f1;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
 }
 
 .form-group input::placeholder,
@@ -4541,21 +4622,23 @@ textarea {
 }
 
 .photo-upload-area {
-  border: 2px dashed #cbd5e1;
-  border-radius: 10px;
+  border: 2px dashed #dce2ec;
+  border-radius: 14px;
   padding: 32px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
   min-height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #fafbfc;
 }
 
 .photo-upload-area:hover {
-  border-color: #3b82f6;
-  background: #f8fafc;
+  border-color: #818cf8;
+  background: #f0f2ff;
+  border-style: solid;
 }
 
 .upload-placeholder {
@@ -4625,58 +4708,70 @@ textarea {
 
 .discard-btn {
   padding: 10px 20px;
-  border: 1px solid #cbd5e1;
-  background: white;
-  border-radius: 8px;
+  border: 1.5px solid #e5e9ef;
+  background: transparent;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
-  color: #475569;
+  color: #6b7280;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .discard-btn:hover {
-  border-color: #94a3b8;
-  color: #1a1a1a;
+  border-color: #d1d9e6;
+  color: #374151;
+  background: #f9fafb;
 }
 
 .store-btn {
   padding: 10px 24px;
   border: none;
-  background: #3b82f6;
-  border-radius: 8px;
+  background: #1f2937;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   color: white;
   cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
+  transition: all 0.2s ease;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  letter-spacing: -0.01em;
 }
 
 .store-btn:hover {
-  background: #2563eb;
+  background: #111827;
+  transform: translateY(-1px);
+}
+
+.store-btn:active {
+  transform: translateY(0);
 }
 
 .cancel-btn-modal {
   padding: 10px 20px;
-  border: 1px solid #e2e8f0;
-  background: white;
-  border-radius: 8px;
+  border: 1.5px solid #e5e9ef;
+  background: transparent;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
-  color: #64748b;
+  color: #6b7280;
   cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
+  transition: all 0.2s ease;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .cancel-btn-modal:hover {
-  background: #f1f5f9;
-  color: #334155;
+  border-color: #d1d9e6;
+  color: #374151;
+  background: #f9fafb;
 }
 
 @media (max-width: 768px) {
@@ -4794,6 +4889,47 @@ textarea {
 
 .page.sidebar-collapsed .sidebar-profile {
   display: none;
+}
+
+/* Header Language Toggle for Shop */
+.header-lang-toggle-shop {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(59, 130, 246, 0.12);
+}
+
+.hl-btn-shop {
+  background: transparent;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #64748b;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  letter-spacing: 0.06em;
+}
+
+.hl-btn-shop:hover {
+  color: #2563eb;
+}
+
+.hl-btn-shop.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.hl-sep-shop {
+  color: #cbd5e1;
+  font-size: 0.7rem;
+  user-select: none;
 }
 
 .sidebar-footer {
@@ -5201,16 +5337,12 @@ textarea {
   }
 }
 
-.notification-wrapper {
-  position: relative;
-  margin-right: 16px;
-}
-
 .notification-btn {
   position: relative;
   border: none;
   background: transparent;
   padding: 0;
+  margin-right: 16px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -5235,24 +5367,6 @@ textarea {
   padding: 2px 6px;
   border-radius: 999px;
   font-weight: 700;
-}
-
-.notification-popup {
-  position: absolute;
-  top: 48px;
-  right: 0;
-  z-index: 1200;
-}
-
-
-.notification-fade-enter-active,
-.notification-fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.notification-fade-enter-from,
-.notification-fade-leave-to {
-  opacity: 0;
 }
 
 .page.dark-theme {
@@ -5461,48 +5575,6 @@ textarea {
 .page.dark-theme .delete-vehicle-name {
   background: rgba(239, 68, 68, 0.14);
   color: #fda4af;
-}
-
-.page.dark-theme .notification-popup :deep(.notification-panel) {
-  background: #111a2d;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
-  border: 1px solid #22314a;
-}
-
-.page.dark-theme .notification-popup :deep(.notification-panel__header h3),
-.page.dark-theme .notification-popup :deep(.notification-item__title) {
-  color: #f8fafc;
-}
-
-.page.dark-theme .notification-popup :deep(.notification-panel__subtitle),
-.page.dark-theme .notification-popup :deep(.notification-item__description),
-.page.dark-theme .notification-popup :deep(.notification-item__time),
-.page.dark-theme .notification-popup :deep(.notification-panel__empty),
-.page.dark-theme .notification-popup :deep(.notification-panel__state) {
-  color: #94a3b8;
-}
-
-.page.dark-theme .notification-popup :deep(.notification-panel__state) {
-  background: #0b1322;
-}
-
-.page.dark-theme .notification-popup :deep(.notification-tab),
-.page.dark-theme .notification-popup :deep(.mark-read) {
-  background: #0b1322;
-  color: #cbd5e1;
-  border-color: #22314a;
-}
-
-.page.dark-theme .notification-popup :deep(.notification-tab.active),
-.page.dark-theme .notification-popup :deep(.view-all) {
-  background: #1d4ed8;
-  color: #ffffff;
-}
-
-.page.dark-theme .notification-popup :deep(.notification-item) {
-  background: #0d1627;
-  border-color: #22314a;
-  box-shadow: none;
 }
 
 @media (max-width: 700px) {

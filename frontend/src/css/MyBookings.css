@@ -1,3 +1,37 @@
+/* Back button bar */
+.bookings-back-bar {
+  max-width: 1400px;
+  margin: 0 auto 12px;
+}
+
+.btn-back-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #fff;
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.btn-back-top:hover {
+  background: #f8fafc;
+  color: #2563eb;
+  transform: translateX(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-back-top i {
+  font-size: 0.85rem;
+}
+
 .bookings-page {
   min-height: 100vh;
   background: #ffffff;

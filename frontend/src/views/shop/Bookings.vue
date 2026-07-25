@@ -1,6 +1,9 @@
 <script setup>
 import { computed, ref, onMounted, watch } from 'vue'
+import { useToast } from '@/composables/useToast'
 import '../../css/Booking.css'
+
+const toast = useToast()
 
 const activeTab = ref('all')
 const searchQuery = ref('')
@@ -225,6 +228,10 @@ const updateBookingStatus = async (bookingId, newStatus, extra = {}) => {
 }
 
 const openBookingConfirmation = (booking, action) => {
+  if (action === 'accept') {
+    confirmBookingAction(booking, 'accept')
+    return
+  }
   confirmationModal.value = {
     visible: true,
     booking,
@@ -240,23 +247,27 @@ const closeBookingConfirmation = () => {
   }
 }
 
-const confirmBookingAction = async () => {
-  const booking = confirmationModal.value.booking
-  if (!booking) return
+const confirmBookingAction = async (booking, action) => {
+  const targetBooking = booking || confirmationModal.value.booking
+  if (!targetBooking) return
 
-  const targetStatus = confirmationModal.value.action === 'accept' ? 'confirmed' : 'cancelled'
-  const success = await updateBookingStatus(booking.id, targetStatus)
+  const targetStatus = action === 'accept' ? 'confirmed' : 'cancelled'
+  const success = await updateBookingStatus(targetBooking.id, targetStatus)
 
   if (success) {
     closeBookingConfirmation()
+    if (action === 'accept') {
+      toast.success('Booking accepted successfully.')
+    } else {
+      toast.success('Booking rejected.')
+    }
+  } else {
+    toast.error('Failed to update booking.')
   }
 }
 
 const openCompletionModal = (booking) => {
-  completionModal.value = {
-    visible: true,
-    booking
-  }
+  submitCompletion(booking)
 }
 
 const closeCompletionModal = () => {
@@ -267,13 +278,16 @@ const closeCompletionModal = () => {
   }
 }
 
-const submitCompletion = async () => {
-  const booking = completionModal.value.booking
-  if (!booking) return
+const submitCompletion = async (booking) => {
+  const targetBooking = booking || completionModal.value.booking
+  if (!targetBooking) return
 
-  const success = await updateBookingStatus(booking.id, 'completed')
+  const success = await updateBookingStatus(targetBooking.id, 'completed')
   if (success) {
     closeCompletionModal()
+    toast.success('Booking marked as completed.')
+  } else {
+    toast.error('Failed to complete booking.')
   }
 }
 
@@ -335,8 +349,10 @@ const confirmCancelBooking = async () => {
     )
 
     closeCancelModal()
+    toast.success('Booking cancelled successfully.')
   } catch (err) {
     cancelError.value = err.message || 'Unable to cancel booking'
+    toast.error(cancelError.value)
   } finally {
     cancelLoading.value = false
   }

@@ -270,54 +270,57 @@ const formatFullDate = (timestamp) => {
 
 .notification-screen__body {
   flex: 1;
-  padding: 32px 24px;
+  padding: 24px 20px;
 }
 
 .notification-shell {
   max-width: 960px;
   margin: 0 auto;
-  background: linear-gradient(180deg, #fefefe 0%, #f2f7ff 100%);
-  border-radius: 32px;
-  padding: 32px;
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .notification-shell__header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 24px;
+  gap: 20px;
 }
 
 .notification-shell__eyebrow {
   margin: 0;
-  font-size: 0.85rem;
-  letter-spacing: 0.15em;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #6366f1;
+  color: #64748b;
+  font-weight: 600;
 }
 
 .notification-shell__header h1 {
-  margin: 8px 0 0;
-  font-size: 2rem;
+  margin: 6px 0 0;
+  font-size: 1.25rem;
   color: #0f172a;
+  font-weight: 700;
 }
 
 .notification-shell__filters {
   display: flex;
-  gap: 12px;
+  gap: 8px;
 }
 
 .filter-pill {
   border-radius: 999px;
-  border: 1px solid #cbd5f5;
-  padding: 10px 20px;
+  border: 1px solid #cbd5e1;
+  padding: 6px 14px;
   background: #fff;
   color: #475569;
   font-weight: 600;
+  font-size: 0.78rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -333,7 +336,7 @@ const formatFullDate = (timestamp) => {
 .notification-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .notification-list__actions {
@@ -342,11 +345,11 @@ const formatFullDate = (timestamp) => {
 }
 
 .notification-list__state {
-  padding: 14px;
-  border-radius: 18px;
+  padding: 12px;
+  border-radius: 12px;
   background: #f8fafc;
   color: #475569;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   text-align: center;
 }
 
@@ -357,38 +360,38 @@ const formatFullDate = (timestamp) => {
 
 .notification-row {
   display: grid;
-  grid-template-columns: 60px 1fr 14px;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 26px;
-  background: #eef2ff;
+  grid-template-columns: 44px 1fr 10px;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f8fafc;
   align-items: center;
   position: relative;
   min-width: 0;
+  border: 1px solid #e2e8f0;
 }
 
 .notification-row.unread {
-  background: #dde5ff;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.25);
+  background: #eff6ff;
+  border-color: #bfdbfe;
 }
 
 .notification-row__avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   object-fit: cover;
-  box-shadow: 0 12px 20px rgba(15, 23, 42, 0.18);
 }
 
 .notification-row__content {
   background: #fff;
-  border-radius: 22px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 12px;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  gap: 4px;
+  border: 1px solid #f1f5f9;
 }
 
 .notification-row__heading {
@@ -397,26 +400,27 @@ const formatFullDate = (timestamp) => {
 
 .notification-row__title {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 0.88rem;
+  font-weight: 600;
   color: #111827;
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  line-height: 1.4;
+  line-height: 1.35;
   word-break: break-word;
   overflow-wrap: anywhere;
 }
 
 .notification-row__name {
-  color: #4338ca;
+  color: #2563eb;
+  font-weight: 700;
 }
 
 .notification-row__message {
   margin: 0;
   color: #475569;
-  font-size: 0.9rem;
-  line-height: 1.45;
+  font-size: 0.8rem;
+  line-height: 1.4;
   word-break: break-word;
   overflow-wrap: anywhere;
 }
@@ -425,8 +429,8 @@ const formatFullDate = (timestamp) => {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 8px;
-  font-size: 0.8rem;
+  gap: 6px;
+  font-size: 0.72rem;
   color: #94a3b8;
   align-items: center;
 }
@@ -436,6 +440,7 @@ const formatFullDate = (timestamp) => {
   border: none;
   color: #2563eb;
   font-weight: 600;
+  font-size: 0.72rem;
   cursor: pointer;
 }
 
@@ -453,13 +458,13 @@ const formatFullDate = (timestamp) => {
 
 .notification-detail-dialog__panel {
   background: #fff;
-  border-radius: 20px;
+  border-radius: 16px;
   width: min(520px, 100%);
-  padding: 1.5rem;
-  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.35);
+  padding: 1.25rem;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.35);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .notification-detail-dialog__header {
@@ -471,21 +476,21 @@ const formatFullDate = (timestamp) => {
 
 .notification-detail-dialog__title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #0f172a;
 }
 
 .notification-detail-dialog__subtitle {
   margin: 0.25rem 0 0;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #6b7280;
 }
 
 .notification-detail-dialog__meta {
   display: flex;
   gap: 1rem;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #475569;
 }
 
@@ -494,6 +499,7 @@ const formatFullDate = (timestamp) => {
   line-height: 1.5;
   color: #111827;
   white-space: pre-wrap;
+  font-size: 0.88rem;
 }
 
 .notification-detail-dialog__close {
@@ -506,8 +512,8 @@ const formatFullDate = (timestamp) => {
 }
 
 .notification-row__dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: rgba(99, 102, 241, 0.5);
 }
@@ -520,26 +526,28 @@ const formatFullDate = (timestamp) => {
   text-align: center;
   color: #94a3b8;
   margin: 12px 0;
+  font-size: 0.82rem;
 }
 
 .notification-shell__footer {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
 .mark-read,
 .view-all {
   flex: 1;
-  border-radius: 14px;
-  padding: 12px 0;
+  border-radius: 10px;
+  padding: 10px 0;
   font-weight: 600;
+  font-size: 0.82rem;
   border: none;
   cursor: pointer;
 }
 
 .mark-read {
   background: #fff;
-  border: 1px solid #cbd5f5;
+  border: 1px solid #cbd5e1;
   color: #2563eb;
 }
 
@@ -549,29 +557,29 @@ const formatFullDate = (timestamp) => {
 }
 
 .view-all {
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  background: #2563eb;
   color: #fff;
   text-align: center;
   text-decoration: none;
 }
 
 .notification-shell__meta {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #94a3b8;
 }
 
 @media (max-width: 860px) {
   .notification-shell {
-    padding: 24px;
+    padding: 20px;
   }
 
   .notification-row {
-    grid-template-columns: 52px 1fr 10px;
+    grid-template-columns: 40px 1fr 8px;
   }
 
   .notification-row__avatar {
-    width: 52px;
-    height: 52px;
+    width: 40px;
+    height: 40px;
   }
 }
 

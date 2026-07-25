@@ -116,7 +116,7 @@
 }
 
 .hero-banner-content h1 {
-  font-size: 4rem;
+  font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 10px;
   text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -623,7 +623,7 @@
 
 /* ── Responsive tweaks */
 @media (max-width: 768px) {
-  .hero-banner-content h1 { font-size: 2.5rem; }
+  .hero-banner-content h1 { font-size: 1.8rem; }
   .search-bar-wrap { flex-direction: column; }
   .province-search-btn { padding: 15px; width: 38px; height: 38px; min-width: 38px; }
   .map-container-box { height: 350px; }
@@ -638,6 +638,6 @@
 
 @media (max-width: 480px) {
   .brand-left span { display: none; }
-  .hero-banner-content h1 { font-size: 2rem; }
+  .hero-banner-content h1 { font-size: 1.5rem; }
   .hero-banner-content p { font-size: 1.1rem; }
 }

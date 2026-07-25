@@ -8,344 +8,165 @@
     />
 
     <div class="page-container">
+      <!-- Back Button -->
+      <div class="booking-back-bar">
+        <button class="btn-back-top" @click="goToShop">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Back</span>
+        </button>
+      </div>
 
       <div class="page-heading-row">
         <div class="title-block">
           <h1>Checkout</h1>
-          <span class="step-pill">Step 2 of 3</span>
         </div>
-      </div>
-
-      <div class="checkout-progress" aria-hidden="true">
-        <span class="progress-value"></span>
       </div>
 
       <p v-if="isLoading" class="page-subtitle">Loading vehicle details...</p>
       <p v-else-if="loadingError" class="page-subtitle">{{ loadingError }}</p>
       <p v-else class="page-subtitle">
-        Securely complete your rental booking for the {{ rental.title }}
+        Complete your booking for the {{ rental.title }}
       </p>
 
-      <div class="checkout-layout">
-        <aside class="sidebar">
-          <div class="card summary-card">
-            <div class="motorcycle-image">
-              <img
-                :src="vehicleImage"
-                :alt="vehicleName"
-              />
-              <span class="vehicle-tag">{{ vehicleTag }}</span>
-            </div>
-
+      <div class="card checkout-card-single">
+        <!-- Vehicle Summary -->
+        <div class="vehicle-summary-row">
+          <div class="vehicle-thumb">
+            <img :src="vehicleImage" :alt="vehicleName" />
+            <span class="vehicle-tag-sm">{{ vehicleTag }}</span>
+          </div>
+          <div class="vehicle-info">
             <h2 class="item-title">{{ rental.title }}</h2>
             <p class="item-location">{{ rental.location }}</p>
-
-            <div class="detail-list">
-              <div class="row">
-                <span class="label">Rental Period</span>
-                <span class="value">{{ rental.period || "Select dates below" }}</span>
-              </div>
-              <div class="row">
-                <span class="label">Rider Details</span>
-                <span class="value">{{ rental.riders }}</span>
-              </div>
-              <div class="row">
-                <span class="label">Daily Rate</span>
-                <span class="value">${{ rental.dailyRate.toFixed(2) }}/day</span>
-              </div>
+            <div class="vehicle-meta">
+              <span>{{ rental.riders }}</span>
+              <span class="meta-dot">·</span>
+              <span>${{ rental.dailyRate.toFixed(2) }}/day</span>
             </div>
+          </div>
+        </div>
 
-          <div class="pricing-list">
-            <div class="row">
+        <!-- Promo Code -->
+        <div class="section-block">
+          <div class="promo-input-group">
+            <input type="text" placeholder="Have a promo code?" v-model="promoCode" />
+            <button class="btn-promo" type="button" @click="applyPromoCode">
+              {{ appliedCoupon && promoCode === appliedCoupon.code ? 'Applied' : 'Apply' }}
+            </button>
+          </div>
+          <p v-if="promoFeedback" :class="['promo-feedback', `promo-feedback--${promoFeedbackType}`]">
+            {{ promoFeedback }}
+          </p>
+        </div>
+
+        <hr class="section-divider" />
+
+        <!-- Contact & Dates -->
+        <div class="section-block">
+          <div class="form-row">
+            <label>Phone Number <span class="required">*</span></label>
+            <input type="tel" v-model="customerPhone" placeholder="012345678" required />
+          </div>
+          <label class="save-phone-check">
+            <input type="checkbox" v-model="savePhoneToProfile" />
+            <span class="check-box"><i class="fa-solid fa-check"></i></span>
+            <span>Save to my profile</span>
+          </label>
+
+          <div class="date-row">
+            <div class="form-row date-field">
+              <label>Pick-up</label>
+              <input type="date" v-model="rental.startDate" :min="minDate" @change="validateDates" required />
+            </div>
+            <span class="date-arrow">→</span>
+            <div class="form-row date-field">
+              <label>Drop-off</label>
+              <input type="date" v-model="rental.endDate" :min="rental.startDate || minDate" @change="validateDates" required />
+            </div>
+          </div>
+          <p class="date-error" v-if="dateError">{{ dateError }}</p>
+        </div>
+
+        <hr class="section-divider" />
+
+        <!-- Pricing -->
+        <div class="section-block">
+          <div class="pricing-rows">
+            <div class="price-row">
               <span>Daily Rate x {{ calculateDays() }} day(s)</span>
               <span>${{ rental.subtotal.toFixed(2) }}</span>
             </div>
-            <div class="row">
-              <span>Rider(s)</span>
-              <span>{{ riderCount }} rider(s)</span>
+            <div class="insurance-toggle">
+              <label>
+                <input type="checkbox" v-model="includeInsurance" />
+                Include Insurance
+              </label>
+              <span>${{ insuranceAmount.toFixed(2) }}</span>
             </div>
-              <div class="row">
-                <span>Insurance</span>
-                <span>${{ insuranceAmount.toFixed(2) }}</span>
-              </div>
-              <div v-if="appliedCoupon && couponDiscount > 0" class="row">
-                <span class="label">Coupon ({{ appliedCoupon.code }})</span>
-                <div class="coupon-pricing">
-                  <span class="old-total">${{ (rental.subtotal + insuranceAmount).toFixed(2) }}</span>
-                  <span class="new-total">-${{ couponDiscount.toFixed(2) }}</span>
-                </div>
-              </div>
-              <hr class="dashed-divider" />
-              <div class="row total-row">
-                <span>Total Amount</span>
-                <span class="total-price">${{ totalAmount.toFixed(2) }}</span>
-              </div>
+            <div v-if="appliedCoupon && couponDiscount > 0" class="price-row coupon-row">
+              <span>Coupon ({{ appliedCoupon.code }})</span>
+              <span class="discount-amount">-${{ couponDiscount.toFixed(2) }}</span>
             </div>
           </div>
+          <div class="total-row">
+            <span>Total</span>
+            <span class="total-amount">${{ totalAmount.toFixed(2) }}</span>
+          </div>
+        </div>
 
-          <div class="card promo-card">
-            <h3>Have a promo code?</h3>
-            <div class="promo-input-group">
-              <input
-                type="text"
-                placeholder="Enter code"
-                v-model="promoCode"
-              />
-              <button class="btn-secondary" type="button" @click="applyPromoCode">
-                {{ appliedCoupon && promoCode === appliedCoupon.code ? 'Applied' : 'Apply' }}
-              </button>
-            </div>
-            <p v-if="promoFeedback" :class="['promo-feedback', `promo-feedback--${promoFeedbackType}`]">
-              {{ promoFeedback }}
-            </p>
+        <hr class="section-divider" />
+
+        <!-- Payment Method -->
+        <div class="section-block">
+          <div class="payment-tabs-single">
+            <button class="tab" :class="{ active: method === 'qr' }" type="button" @click="method = 'qr'">
+              QR Code
+            </button>
+            <button class="tab" :class="{ active: method === 'later' }" type="button" @click="method = 'later'">
+              Pay Later
+            </button>
           </div>
 
-
-          <div class="card encryption-card">
-            <h4>Secure Transaction</h4>
-            <p>
-              Your payment is encrypted and protected. We do not store your full
-              payment details.
-            </p>
-          </div>
-        </aside>
-
-        <main class="payment-main">
-          <div class="card checkout-form-card">
-            <div class="checkout-header">
-              <h2>{{ methodTitle }}</h2>
-              <p>{{ methodDescription }}</p>
-            </div>
-
-
-            <div class="form-divider">
-              <span>OR PAY WITH CARD</span>
-            </div>
-
-            <div class="payment-tabs">
-              <button
-                class="tab"
-                :class="{ active: method === 'qr' }"
-                type="button"
-                @click="method = 'qr'"
-              >
-                QR Code
-              </button>
-              <button
-                class="tab"
-                :class="{ active: method === 'later' }"
-                type="button"
-                @click="method = 'later'"
-              >
-                Pay Later
-              </button>
-            </div>
-
-            <div class="date-selection">
-              <div class="input-group phone-input-group">
-                <label>Phone Number <span class="required">*</span></label>
-                <input
-                  type="tel"
-                  v-model="customerPhone"
-                  placeholder="Enter your phone number (e.g. 012345678)"
-                  required
-                />
-              </div>
-
-              <h3>Rental dates</h3>
-              <div class="date-inputs">
-                <div class="input-group">
-                  <label>Pick-up</label>
-                  <input
-                    type="date"
-                    v-model="rental.startDate"
-                    :min="minDate"
-                    @change="validateDates"
-                    required
-                  />
-                </div>
-                <div class="input-group">
-                  <label>Drop-off</label>
-                  <input
-                    type="date"
-                    v-model="rental.endDate"
-                    :min="rental.startDate || minDate"
-                    @change="validateDates"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div class="date-summary" v-if="rental.startDate && rental.endDate">
-                <span class="days-count">{{ calculateDays() }} days</span>
-                <span class="daily-rate">${{ rental.dailyRate.toFixed(2) }}/day</span>
-              </div>
-
-              <p class="date-error" v-if="dateError">{{ dateError }}</p>
-            </div>
-
-            <div v-if="method === 'later'" class="later-payment-info">
-              <div class="info-card">
-                <i class="fa-solid fa-circle-info"></i>
-                <p>You can pay directly at the shop when you pick up your vehicle. We will generate a receipt for you to show the shop owner.</p>
-              </div>
-              <button
-                type="button"
-                class="btn-primary-pay"
-                :disabled="!isFormValid || isSubmittingPayment"
-                @click="handlePayment"
-              >
-                {{ isSubmittingPayment ? "Processing..." : "Booking" }}
-              </button>
-            </div>
-
-            <div v-if="method === 'bank'" class="bank-transfer-payment">
-              <div class="bank-header">
-                <h3>Bank Transfer Payment</h3>
-                <p>Transfer funds directly to our bank account.</p>
-              </div>
-
-
-              <div class="bank-info-card">
-                <div class="bank-row">
-                  <span class="bank-label">Account Name</span>
-                  <span class="bank-value">Moto Rental Pty Ltd</span>
-                </div>
-                <div class="bank-row">
-                  <span class="bank-label">Bank</span>
-                  <span class="bank-value">National Australia Bank</span>
-                </div>
-                <div class="bank-row">
-                  <span class="bank-label">BSB</span>
-                  <span class="bank-value">082-123</span>
-                </div>
-                <div class="bank-row">
-                  <span class="bank-label">Account</span>
-                  <span class="bank-value">1234 5678 9012</span>
-                </div>
-                <div class="bank-row">
-                  <span class="bank-label">Reference</span>
-                  <span class="bank-value reference">{{ paymentId }}</span>
-                </div>
-              </div>
-
-              <div class="transfer-instructions">
-                <h4>How to pay</h4>
-                <ol>
-                  <li>Open your bank app and start a transfer.</li>
-                  <li>Send exactly ${{ totalAmount.toFixed(2) }}.</li>
-                  <li>Use <strong>{{ paymentId }}</strong> as your reference.</li>
-                  <li>Click confirm below after transfer.</li>
-                </ol>
-              </div>
-
-              <div class="important-note">
-                <div class="note-content">
-                  Payment verification may take 1-2 business days.
-                </div>
-              </div>
-
-              <button
-                type="button"
-                class="btn-primary-pay"
-                :disabled="!isFormValid || isSubmittingPayment"
-                @click="handlePayment"
-              >
-                {{ isSubmittingPayment ? "Processing..." : "Booking" }}
-              </button>
-            </div>
-
-            <div v-if="method === 'qr'" class="qr-payment">
-              <div class="qr-payment-card">
-                <div class="qr-header">
-                  <h3>QR Code Payment</h3>
-                  <p>Pay directly with your banking app.</p>
-                </div>
-
-                <div class="qr-amount-section">
-                  <span class="amount-label">Total Amount</span>
-                  <span class="amount-value">${{ totalAmount.toFixed(2) }}</span>
-                </div>
-
-                <div class="qr-code-section">
-                  <div v-if="shopQrOptions.length" class="qr-shop-selection">
-                    <label for="qr-shop-select">Select shop QR code</label>
-                    <select
-                      id="qr-shop-select"
-                      v-model="selectedShopQrId"
-                    >
-                      <option
-                        v-for="option in shopQrOptions"
-                        :key="option.id"
-                        :value="option.id"
-                      >
-                        {{ option.label }}
-                      </option>
-                    </select>
-                    <p v-if="selectedShopQrOption?.ownerName" class="qr-owner-note">
-                      Owner: {{ selectedShopQrOption.ownerName }}
-                    </p>
-                  </div>
-                  <div v-if="!showQR" class="qr-placeholder">
-                    <h4>Ready to generate your QR code</h4>
-                    <p>Click below and scan it with your mobile banking app.</p>
-
-                    <button
-                      type="button"
-                      class="qr-generate-btn"
-                      :disabled="!isFormValid"
-                      @click="generateQRCode"
-                    >
-                      Generate QR Code
-                    </button>
-                  </div>
-
-
-                  <div v-else class="qr-active">
-                    <img
-                      v-if="qrCodeUrl"
-                      :src="qrCodeUrl"
-                      alt="Payment QR Code"
-                      class="qr-code-image"
-                    />
-
-                    <p class="payment-reference">Reference: {{ paymentId }}</p>
-
-
-                    <div class="timer-pill">Code expires in 14:59</div>
-
-                    <div class="steps-grid" style="margin-bottom: 20px;">
-                      <div class="step-item">
-                        <span class="step-number">1</span>
-                        <p>Open your banking app</p>
-                      </div>
-                      <div class="step-item">
-                        <span class="step-number">2</span>
-                        <p>Scan the QR code</p>
-                      </div>
-                      <div class="step-item">
-                        <span class="step-number">3</span>
-                        <p>Confirm payment of ${{ totalAmount.toFixed(2) }}</p>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      class="btn-primary-pay"
-                      @click="handlePayment"
-                    >
-                      Booking
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <!-- Pay Later -->
+          <div v-if="method === 'later'" class="later-info">
+            <p class="info-text">Pay directly at the shop when you pick up your vehicle.</p>
+            <button type="button" class="btn-book" :disabled="!isFormValid || isSubmittingPayment" @click="handlePayment">
+              {{ isSubmittingPayment ? "Processing..." : "Book Now" }}
+            </button>
           </div>
 
+          <!-- QR Code -->
+          <div v-if="method === 'qr'" class="qr-section">
+            <div v-if="!showQR" class="qr-start">
+              <div v-if="shopQrOptions.length" class="qr-shop-select">
+                <label>Shop QR</label>
+                <select v-model="selectedShopQrId">
+                  <option v-for="opt in shopQrOptions" :key="opt.id" :value="opt.id">{{ opt.label }}</option>
+                </select>
+              </div>
+              <button type="button" class="btn-generate-qr" :disabled="!isFormValid" @click="generateQRCode">
+                Generate QR Code
+              </button>
+            </div>
+            <div v-else class="qr-active">
+              <div class="qr-display">
+                <img v-if="qrCodeUrl" :src="qrCodeUrl" alt="QR Code" class="qr-img" />
+              </div>
+              <p class="qr-ref">Ref: {{ paymentId }}</p>
+              <ol class="qr-steps">
+                <li>Open your banking app</li>
+                <li>Scan the QR code</li>
+                <li>Confirm payment</li>
+              </ol>
+              <button type="button" class="btn-book" :disabled="isSubmittingPayment" @click="handlePayment">
+                {{ isSubmittingPayment ? "Processing..." : "Confirm & Book" }}
+              </button>
+            </div>
+          </div>
           <div class="pci-footer">
             <span class="pci-check">PCI Compliant</span>
           </div>
-        </main>
+        </div>
       </div>
     </div>
 
@@ -433,6 +254,15 @@ import "../../assets/user/booking.css";
 // Navigation
 const router = useRouter();
 const route = useRoute();
+
+const goToShop = () => {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/view_shop')
+  }
+}
+
 const userNavItems = [
   { label: "Home", route: "/view_shop" },
   { label: "My Bookings", route: "/my-bookings" },
@@ -653,6 +483,7 @@ const showSuccessModal = ref(false);
 const isSubmittingPayment = ref(false);
 const dateError = ref("");
 const customerPhone = ref("");
+const savePhoneToProfile = ref(false);
 let successRedirectTimer = null;
 const bookingId = ref("");
 const paymentId = ref(
@@ -895,7 +726,6 @@ const formatPeriod = () => {
   const end = new Date(rental.value.endDate);
   const opts = { month: "short", day: "numeric", year: "numeric" };
   const days = calculateDays();
-  rental.value.period = `${start.toLocaleDateString("en-US", opts)} - ${end.toLocaleDateString("en-US", opts)} (${days} ${days === 1 ? "day" : "days"})`;
 };
 
 
@@ -1079,6 +909,22 @@ const handlePayment = async () => {
     if (result.success) {
       bookingId.value = result.bookingId;
       showSuccessModal.value = true;
+
+      // Save phone to user profile if checked
+      if (savePhoneToProfile.value && customerPhone.value) {
+        try {
+          const currentUser = userService.getCurrentUser();
+          if (currentUser?.id) {
+            // Update on backend
+            await api.put(`/users/${currentUser.id}`, { phone: customerPhone.value });
+            // Update in local storage
+            const updatedUser = { ...currentUser, phone: customerPhone.value };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+          }
+        } catch (e) {
+          console.warn('Failed to save phone to profile:', e);
+        }
+      }
     } else {
       alert(result.message || "Payment failed. Please try again.");
     }
@@ -1216,6 +1062,12 @@ const initDates = () => {
 onMounted(() => {
   loadVehicleDetail();
   loadCouponFromRoute();
+  
+  // Pre-fill phone from user profile
+  const currentUser = userService.getCurrentUser();
+  if (currentUser?.phone) {
+    customerPhone.value = currentUser.phone;
+  }
 });
 
 watch(
