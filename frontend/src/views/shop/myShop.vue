@@ -1,12 +1,24 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
-import { shopApi } from "@/services/api";
+import { shopApi, cityApi } from "@/services/api";
 import { extractCoordinatesFromMapUrl } from "@/utils/shopLocation";
 import "../../css/Myshop.css";
+
+const CAMBODIA_PROVINCES = [
+  'Banteay Meanchey', 'Battambang', 'Kampong Cham', 'Kampong Chhnang',
+  'Kampong Speu', 'Kampong Thom', 'Kampot', 'Kandal', 'Kep',
+  'Koh Kong', 'Kratie', 'Mondulkiri', 'Oddar Meanchey', 'Pailin',
+  'Phnom Penh', 'Preah Sihanouk', 'Preah Vihear', 'Prey Veng',
+  'Pursat', 'Ratanakiri', 'Siem Reap', 'Stung Treng', 'Svay Rieng',
+  'Takeo', 'Tboung Khmum'
+]
+
+const provinces = ref([...CAMBODIA_PROVINCES])
 
 const shop = ref(null);
 const ownerName = ref("");
 const ownerEmail = ref("");
+const detectingLocation = ref(false);
 
 // Computed property to check if shop exists
 const hasShop = computed(() => !!shop.value);
@@ -206,6 +218,30 @@ const syncCoordinatesFromMapUrl = () => {
   if (!coords) return
   createForm.latitude = String(coords.lat)
   createForm.longitude = String(coords.lng)
+}
+
+const detectCurrentLocation = () => {
+  if (detectingLocation.value) return
+  if (!navigator?.geolocation) {
+    error.value = "Geolocation is not supported by your browser."
+    return
+  }
+
+  detectingLocation.value = true
+  error.value = ""
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      createForm.latitude = String(position.coords.latitude)
+      createForm.longitude = String(position.coords.longitude)
+      detectingLocation.value = false
+    },
+    () => {
+      detectingLocation.value = false
+      error.value = "Unable to retrieve your location. Please allow location access or enter coordinates manually."
+    },
+    { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
+  )
 }
 
 watch(
@@ -453,8 +489,22 @@ const copyMapUrl = async () => {
   }
 };
 
+const loadCities = async () => {
+  try {
+    const response = await cityApi.getAll()
+    const cities = response.data?.data || response.data || []
+    if (Array.isArray(cities) && cities.length) {
+      const apiNames = cities.map(c => c.name).filter(Boolean)
+      const merged = Array.from(new Set([...CAMBODIA_PROVINCES, ...apiNames]))
+      provinces.value = merged
+    }
+  } catch {
+    // fall back to hardcoded list
+  }
+}
+
 onMounted(async () => {
-  await loadMyShop();
+  await Promise.all([loadMyShop(), loadCities()]);
 });
 
 onBeforeUnmount(() => {
@@ -627,6 +677,47 @@ onBeforeUnmount(() => {
             <textarea rows="2" :value="shop.address || ''" readonly></textarea>
           </label>
         </div>
+
+        <!-- Shop Location Preview -->
+        <div v-if="shop && (shop.latitude || shop.longitude || shop.address)" class="shop-location-preview">
+          <h3 class="location-preview-title">
+            <i class="fa-solid fa-map-location-dot"></i>
+            Shop Location
+          </h3>
+          <div class="location-preview-content">
+            <div class="location-preview-info">
+              <p v-if="shop.address" class="location-address">
+                <i class="fa-solid fa-location-dot"></i>
+                {{ shop.address }}
+              </p>
+              <p v-if="shop.latitude && shop.longitude" class="location-coords">
+                <i class="fa-solid fa-crosshairs"></i>
+                {{ shop.latitude }}, {{ shop.longitude }}
+              </p>
+              <a
+                v-if="shop.latitude && shop.longitude"
+                :href="`https://www.google.com/maps?q=${shop.latitude},${shop.longitude}`"
+                target="_blank"
+                rel="noopener"
+                class="location-map-link"
+              >
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                Open in Google Maps
+              </a>
+            </div>
+            <div class="location-preview-map">
+              <iframe
+                v-if="shop.latitude && shop.longitude"
+                :src="`https://www.openstreetmap.org/export/embed.html?bbox=${Number(shop.longitude)-0.01},${Number(shop.latitude)-0.01},${Number(shop.longitude)+0.01},${Number(shop.latitude)+0.01}&layer=mapnik&marker=${shop.latitude},${shop.longitude}`"
+                width="100%"
+                height="200"
+                style="border: 0; border-radius: 12px;"
+                loading="lazy"
+                title="Shop location map"
+              ></iframe>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -730,14 +821,6 @@ onBeforeUnmount(() => {
                     placeholder="e.g. Berlin Elite Rentals"
                   />
                 </label>
-                <label class="form-field">
-                  <span>Address</span>
-                  <input
-                    v-model="createForm.address"
-                    type="text"
-                    placeholder="Street, City, Country"
-                  />
-                </label>
                 <label class="form-field full">
                   <span>Google Map URL</span>
                   <input
@@ -754,37 +837,57 @@ onBeforeUnmount(() => {
                   <input
                     v-model="createForm.address"
                     type="text"
-                    placeholder="Street, City, Country"
+                    placeholder="Street, building, village"
                   />
                 </label>
                 <label class="form-field">
-                  <span>City / Province</span>
-                  <input
-                    v-model="createForm.location"
-                    type="text"
-                    placeholder="Auto-filled from map link"
-                    :readonly="!!createForm.map_url"
-                  />
+                  <span>Province / City</span>
+                  <select v-model="createForm.location" class="province-select">
+                    <option value="" disabled>Select a province…</option>
+                    <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
+                  </select>
                 </label>
                 <label class="form-field">
                   <span>Latitude</span>
-                  <input
-                    v-model="createForm.latitude"
-                    type="number"
-                    step="any"
-                    placeholder="Auto"
-                    readonly
-                  />
+                  <div class="input-with-action">
+                    <input
+                      v-model="createForm.latitude"
+                      type="number"
+                      step="any"
+                      placeholder="Auto"
+                      readonly
+                    />
+                    <button
+                      type="button"
+                      class="gps-btn"
+                      :disabled="detectingLocation"
+                      @click="detectCurrentLocation"
+                      :title="detectingLocation ? 'Detecting...' : 'Use my current location'"
+                    >
+                      <i class="fa-solid fa-crosshairs"></i>
+                    </button>
+                  </div>
                 </label>
                 <label class="form-field">
                   <span>Longitude</span>
-                  <input
-                    v-model="createForm.longitude"
-                    type="number"
-                    step="any"
-                    placeholder="Auto"
-                    readonly
-                  />
+                  <div class="input-with-action">
+                    <input
+                      v-model="createForm.longitude"
+                      type="number"
+                      step="any"
+                      placeholder="Auto"
+                      readonly
+                    />
+                    <button
+                      type="button"
+                      class="gps-btn"
+                      :disabled="detectingLocation"
+                      @click="detectCurrentLocation"
+                      :title="detectingLocation ? 'Detecting...' : 'Use my current location'"
+                    >
+                      <i class="fa-solid fa-crosshairs"></i>
+                    </button>
+                  </div>
                 </label>
                 <label class="form-field">
                   <span>Phone</span>

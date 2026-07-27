@@ -279,7 +279,7 @@ onMounted(async () => {
         <h1 class="page-title">Vehicle Management</h1>
         <p class="page-subtitle">Manage fleet inventory across all shops.</p>
       </div>
-      <button type="button" class="btn btn-primary" style="max-width: 200px; justify-content: center;" @click="openCreate">
+      <button type="button" class="btn btn-primary btn-block" @click="openCreate">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
         <span>Add Vehicle</span>
       </button>

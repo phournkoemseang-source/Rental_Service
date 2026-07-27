@@ -167,7 +167,7 @@ watch(query, () => {
               </td>
             </tr>
             <tr v-if="!paginatedBookings.length">
-              <td colspan="7" style="text-align: center; padding: 40px; color: var(--mp-muted);">
+              <td colspan="7" class="table-empty">
                 No bookings found matching your criteria.
               </td>
             </tr>
@@ -205,7 +205,7 @@ watch(query, () => {
           <div class="form-grid">
             <div class="field span-2">
               <span class="field-label">Customer Information</span>
-              <div class="pill-input" style="height: auto; padding: 12px;">
+              <div class="pill-input pill-input--loose">
                 <strong>{{ selectedBooking?.user?.name }}</strong><br/>
                 <span class="muted">{{ selectedBooking?.user?.email }}</span><br/>
                 <span class="muted">{{ selectedBooking?.user?.phone || 'No phone provided' }}</span>
@@ -234,7 +234,7 @@ watch(query, () => {
 
             <div class="field">
               <span class="field-label">Total Amount</span>
-              <input :value="formatCurrency(selectedBooking?._total)" readonly style="font-weight: 800; color: var(--mp-cyan);" />
+               <input :value="formatCurrency(selectedBooking?._total)" readonly />
             </div>
 
             <div class="field">

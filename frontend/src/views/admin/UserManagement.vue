@@ -627,7 +627,7 @@ watch(
                 <div class="shop-meta">
                   <div class="shop-name">
                     {{ user.name }}
-                    <span v-if="isSelf(user)" class="badge badge-blue" style="margin-left:8px;">YOU</span>
+                    <span v-if="isSelf(user)" class="badge badge-blue">YOU</span>
                   </div>
                   <div class="shop-id">ID: {{ user.id }}</div>
                 </div>

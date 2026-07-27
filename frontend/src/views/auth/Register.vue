@@ -281,6 +281,7 @@
         </p>
       </div>
     </div>
+    <ToastStack />
   </div>
 </template>
 
@@ -288,15 +289,18 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { registerUser } from "../../services/auth";
+import { registerUser, setSession } from "../../services/auth";
 import { hasLocationAccess, saveLocationAccess } from "../../utils/locationAccess";
+import { useToast } from "../../composables/useToast";
 import "../../css/login.css";
 import Logo from '@/components/Logo.vue'
+import ToastStack from '@/components/ToastStack.vue'
 
 const { t } = useI18n();
 
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
 const isLoading = ref(false);
 const errors = ref({});
 const successMessage = ref("");
@@ -412,6 +416,11 @@ const handleRegister = async () => {
     console.log("Response data:", data);
 
     if (response.ok) {
+      // Store token & user from response so they're auto-logged in
+      if (data.token) {
+        setSession({ token: data.token, user: data.user });
+      }
+
       // Reset form
       form.fullName = "";
       form.email = "";
@@ -419,10 +428,20 @@ const handleRegister = async () => {
       form.password = "";
       form.confirmPassword = "";
 
-      // Show success message and redirect to login
-      successMessage.value = "Registration successful! Redirecting to login...";
+      // Welcome toast to confirm auto-login
+      toast.success('Welcome! You are now signed in.');
+
+      // Redirect based on role — no need to sign in again
+      const userRole = data.user?.role || selectedRole.value || 'customer';
+      successMessage.value = "Registration successful! Redirecting...";
       setTimeout(() => {
-        router.push("/login");
+        if (userRole === 'admin') {
+          router.push('/admin');
+        } else if (userRole === 'shop_owner') {
+          router.push('/dashboard');
+        } else {
+          router.push('/view_shop');
+        }
       }, 1500);
     } else {
       // Handle validation errors from backend

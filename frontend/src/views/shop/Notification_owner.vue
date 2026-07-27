@@ -763,6 +763,39 @@ watch(
   border-color: #2563eb;
 }
 
+/* ─── Icon Button (for reply modal close) ────────────────────── */
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #64748b;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 0.9rem;
+}
+
+.icon-btn:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+/* ─── Screen Reader Only ─────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 @media (max-width: 960px) {
   .owner-notifications {
     padding: 20px;

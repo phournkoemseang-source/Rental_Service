@@ -38,6 +38,8 @@ class ShopController extends Controller
             $rating = $hasRatings ? round($shopRatings->avg('rating'), 1) : null;
             $totalReviews = $hasRatings ? $shopRatings->count() : null;
 
+            $vehicleCount = \App\Models\Vehicle::where('shop_id', $shop->id)->count();
+
             return [
                 'id' => $shop->id,
                 'owner_id' => $shop->owner_id,
@@ -54,6 +56,7 @@ class ShopController extends Controller
                 'longitude' => $shop->longitude,
                 'rating' => $rating,
                 'total_reviews' => $totalReviews,
+                'vehicle_count' => $vehicleCount,
                 'status' => $shop->status,
                 'created_at' => $shop->created_at,
                 'updated_at' => $shop->updated_at,

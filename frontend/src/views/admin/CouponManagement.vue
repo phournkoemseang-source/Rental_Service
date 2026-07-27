@@ -348,7 +348,7 @@ onMounted(async () => {
         <h1 class="page-title">Coupon Management</h1>
         <p class="page-subtitle">Create and manage discount coupons.</p>
       </div>
-      <button type="button" class="btn btn-primary" style="max-width: 200px; justify-content: center;" @click="openCreate">
+      <button type="button" class="btn btn-primary btn-block" @click="openCreate">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
         <span>Add Coupon</span>
       </button>
@@ -433,7 +433,7 @@ onMounted(async () => {
                 {{ shopLabel(shop, shop.id) }}
               </option>
             </select>
-            <small class="muted" style="margin-top: 4px; display: block;">
+            <small class="muted muted-block">
               Leave blank to apply the coupon across all shops.
             </small>
           </label>

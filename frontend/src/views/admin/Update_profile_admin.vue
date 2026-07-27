@@ -384,6 +384,7 @@ const submitForm = async () => {
     persistToLocalStorage(user);
     // Force refresh of profile picture in other components
     localStorage.setItem('profile_picture_timestamp', Date.now());
+    window.dispatchEvent(new Event('user-updated'));
     setMessage('success', 'Profile updated successfully.');
     setTimeout(() => router.push('/admin/settings'), 600);
   } catch (error) {
@@ -416,6 +417,7 @@ const removePhoto = async () => {
     photoFile.value = null;
     if (fileInput.value) fileInput.value.value = '';
     persistToLocalStorage({ profile_picture: '' });
+    window.dispatchEvent(new Event('user-updated'));
     lastUpdated.value = new Date().toISOString();
     setMessage('success', 'Photo removed.');
   } catch (error) {

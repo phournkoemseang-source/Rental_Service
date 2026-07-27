@@ -376,7 +376,7 @@ watch(
             </tr>
           </tbody>
           <tbody v-else>
-            <tr><td colspan="6" style="text-align:center; padding: 30px; color: var(--mp-muted);">No shops registered yet.</td></tr>
+            <tr><td colspan="6" class="table-empty">No shops registered yet.</td></tr>
           </tbody>
         </table>
       </div>
@@ -548,13 +548,13 @@ watch(
 }
 
 .daily-axis-label {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 600;
   fill: #6b7f98;
 }
 
 .daily-axis-label.x {
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .daily-bar {
@@ -588,25 +588,25 @@ watch(
 
 .daily-tooltip-title {
   fill: #e2e8f0;
-  font-size: 12.5px;
+  font-size: 10px;
   font-weight: 700;
 }
 
 .daily-tooltip-net {
   fill: #22c55e;
-  font-size: 12px;
+  font-size: 9px;
   font-weight: 700;
 }
 
 .daily-tooltip-commission {
   fill: #f97316;
-  font-size: 12px;
+  font-size: 9px;
   font-weight: 700;
 }
 
 .daily-tooltip-earnings {
   fill: #3b82f6;
-  font-size: 12px;
+  font-size: 9px;
   font-weight: 700;
 }
 
@@ -621,18 +621,18 @@ watch(
 .daily-legend-item {
   display: inline-flex;
   align-items: center;
-  gap: .35rem;
-  font-size: .78rem;
+  gap: .3rem;
+  font-size: .68rem;
   font-weight: 700;
   color: #43607f;
   background: #eef4ff;
   border-radius: 999px;
-  padding: .3rem .62rem;
+  padding: .2rem .5rem;
 }
 
 .daily-legend .dot {
-  width: 9px;
-  height: 9px;
+  width: 7px;
+  height: 7px;
   border-radius: 999px;
   display: inline-block;
 }

@@ -297,6 +297,7 @@ const normalizeShop = (shop) => {
     map_url: shop.map_url || shop.location || shop.address || '',
     status: shop.status || 'active',
     img_url: shop.img_url || '',
+    img_url_full: shop.img_url_full || '',
     total_reviews: Number(shop.total_reviews || 0),
     vehicleCount: Number(shop.vehicle_count ?? shop.vehicleCount ?? 0),
     vehicleTypes: Array.isArray(shop.vehicle_types) ? shop.vehicle_types : [],
@@ -330,7 +331,7 @@ const provinceChips = computed(() => {
 const selectedCategory = ref('all')
 const loadedImages = ref(new Set())
 const onImageLoad = (id) => { loadedImages.value = new Set([...loadedImages.value, id]) }
-const activeShopTab = ref(null) // null = show all shops
+const selectedShopId = ref(null)
 const categories = computed(() => [
   { key: 'all', label: t('all') },
   { key: 'motorbikes', label: t('motorbikes') },
@@ -356,17 +357,29 @@ const shopVehicleTypeSummary = (shopId) => {
 
 const displayedVehicles = computed(() => {
   let list = provinceVehicles.value
-  // Filter by shop tab
-  if (activeShopTab.value) {
-    list = list.filter(v => v.shop_id === activeShopTab.value)
+  if (selectedShopId.value) {
+    list = list.filter(v => v.shop_id === selectedShopId.value)
   }
-  // Filter by category
   if (selectedCategory.value !== 'all') {
-    const cat = selectedCategory.value.replace(/s$/, '') // motorbikes → motorbike
+    const cat = selectedCategory.value.replace(/s$/, '')
     list = list.filter(v => v.type.includes(cat))
   }
   return list
 })
+
+const selectedShopVehicles = computed(() => {
+  if (!selectedShopId.value) return []
+  return vehiclesByShop(selectedShopId.value)
+})
+
+const selectedShop = computed(() => {
+  if (!selectedShopId.value) return null
+  return selectedProvinceShops.value.find(s => s.id === selectedShopId.value) || null
+})
+
+const selectShop = (shopId) => {
+  selectedShopId.value = selectedShopId.value === shopId ? null : shopId
+}
 
 const goToVehicle = (v) => {
   router.push({ name: 'vehicle-detail', params: { id: String(v.id) } })
@@ -797,14 +810,14 @@ onMounted(async () => {
         </div>
       </section>
 
-      <!-- Vehicles Results (Grouped by Shop in Province) -->
+      <!-- Shop & Vehicle Results -->
       <section class="shop-result-section">
         <div class="section-header">
           <div class="section-header-left">
             <h2>{{ isAllMode ? $t('allBranches') : $t('ourBranchesIn', { province: selectedProvince }) }}</h2>
-            <span class="vehicle-result-count">{{ provinceVehicles.length }} {{ $t('vehicles') }} {{ $t('across') }} {{ selectedProvinceShops.length }} {{ $t('branches') }}</span>
+            <span class="vehicle-result-count">{{ selectedProvinceShops.length }} {{ $t('branches') }}</span>
           </div>
-          <div class="category-filters">
+          <div class="category-filters" v-if="selectedShopId">
             <button
               v-for="cat in categories"
               :key="cat.key"
@@ -823,108 +836,143 @@ onMounted(async () => {
         </p>
 
         <template v-else>
-          <!-- Shop Summary Bar -->
-          <div class="province-shops-bar">
-            <button
-              class="shop-tab"
-              :class="{ active: activeShopTab === null }"
-              @click="activeShopTab = null"
-            >
-              <span class="shop-tab-all-icon"><i class="fa-solid fa-th"></i></span>
-              <span class="shop-tab-name">{{ $t('all') }}</span>
-              <span class="shop-tab-count">{{ provinceVehicles.length }}</span>
-            </button>
-            <button
+          <!-- Shop Cards Grid -->
+          <div class="shops-grid">
+            <article
               v-for="shop in selectedProvinceShops"
               :key="shop.id"
-              class="shop-tab"
-              :class="{ active: activeShopTab === shop.id }"
-              @click="activeShopTab = shop.id"
+              class="shop-card"
+              :class="{ active: selectedShopId === shop.id }"
+              @click="selectShop(shop.id)"
             >
-              <span class="shop-tab-avatar">
-                <img v-if="shop.img_url" :src="shop.img_url" :alt="shop.name" class="shop-tab-img" @error="(e) => e.target.src = '/Images/default-avatar.svg'" />
-                <i v-else class="fa-solid fa-store"></i>
-              </span>
-              <span class="shop-tab-info">
-                <span class="shop-tab-name">{{ shop.name }}</span>
-                <span v-if="shop.distanceKm !== null && Number.isFinite(shop.distanceKm)" class="shop-tab-distance">
-                  <i class="fa-solid fa-location-dot"></i> {{ formatDistance(shop.distanceKm) }}
-                </span>
-              </span>
-              <span v-if="vehiclesByShop(shop.id).length" class="shop-tab-count">{{ vehiclesByShop(shop.id).length }}</span>
-              <span v-if="shopVehicleTypeSummary(shop.id)" class="shop-tab-types">{{ shopVehicleTypeSummary(shop.id) }}</span>
-            </button>
-          </div>
-
-          <!-- Vehicles Grid -->
-          <div v-if="provinceVehicles.length === 0" class="empty-state">
-            {{ isAllMode ? $t('noBranchesAtAll') : $t('noBranchesYet', { province: selectedProvince }) }}
-          </div>
-          <div v-else class="vehicle-grid">
-            <article
-              v-for="v in displayedVehicles"
-              :key="v.id"
-              class="vehicle-card"
-              @click="goToVehicle(v)"
-            >
-              <div class="vehicle-card-img">
-                <!-- Loading Skeleton -->
-                <div v-if="v.imageUrl && !loadedImages.has(v.id)" class="vehicle-card-skeleton">
-                  <div class="skeleton-pulse"></div>
-                </div>
+              <div class="shop-card-img">
                 <img
-                  v-if="v.imageUrl"
-                  :src="v.imageUrl"
-                  :alt="v.name"
-                  :class="{ 'img-loaded': loadedImages.has(v.id) }"
-                  @load="onImageLoad(v.id)"
-                  @error="(e) => { e.target.src = 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800'; onImageLoad(v.id) }"
+                  v-if="resolveImageUrl(shop.img_url_full || shop.img_url)"
+                  :src="resolveImageUrl(shop.img_url_full || shop.img_url)"
+                  :alt="shop.name"
+                  @error="(e) => e.target.style.display='none'"
                 />
-                <div v-else class="vehicle-card-img-placeholder">
-                  <i class="fa-solid fa-motorcycle"></i>
+                <div v-else class="shop-card-placeholder">
+                  <i class="fa-solid fa-store"></i>
                 </div>
-                <!-- Favorite heart button -->
-                <button
-                  class="vehicle-card-fav-btn"
-                  :class="{ favorited: isFavorite(v.id) }"
-                  @click.stop="toggleFavorite($event, v.id)"
-                  :aria-label="isFavorite(v.id) ? 'Remove from favorites' : 'Add to favorites'"
-                >
-                  <i :class="isFavorite(v.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
-                </button>
-                <!-- Image gradient overlay for readability -->
-                <div class="vehicle-card-img-overlay"></div>
-                <!-- Price badge pinned to bottom-left of image -->
-                <div class="vehicle-card-price-badge">
-                  <span class="price-badge-value">${{ v.price_per_day }}</span>
-                  <span class="price-badge-unit">/day</span>
-                </div>
-                <!-- Status badge -->
-                <span class="vehicle-card-status" :class="`status-${String(v.status).toLowerCase()}`">
-                  {{ v.status }}
-                </span>
-                <!-- Hover overlay with quick action -->
-                <div class="vehicle-card-hover-overlay">
-                  <button class="hover-book-btn" @click.stop="goToVehicle(v)">
-                    <i class="fa-solid fa-eye"></i> View Details
-                  </button>
+                <div class="shop-card-badges">
+                  <span v-if="shop.distanceKm !== null && Number.isFinite(shop.distanceKm)" class="shop-distance-badge">
+                    <i class="fa-solid fa-location-dot"></i> {{ formatDistance(shop.distanceKm) }}
+                  </span>
+                  <span v-if="shop.vehicleCount > 0" class="shop-vehicle-count-badge">
+                    <i class="fa-solid fa-car"></i> {{ shop.vehicleCount }} {{ $t('vehicles') }}
+                  </span>
                 </div>
               </div>
-              <div class="vehicle-card-body">
-                <div class="vehicle-card-top">
-                  <h3>{{ v.name }}</h3>
-                  <div class="vehicle-card-shop">
-                    <i class="fa-solid fa-store"></i>
-                    <span>{{ v.shop?.name || 'Shop' }}</span>
-                  </div>
-                </div>
-                <div class="vehicle-card-meta">
-                  <span v-if="v.fuel_type"><i class="fa-solid fa-gas-pump"></i> {{ v.fuel_type }}</span>
-                  <span v-if="v.transmission"><i class="fa-solid fa-gear"></i> {{ v.transmission }}</span>
-                  <span v-if="v.rating > 0"><i class="fa-solid fa-star"></i> {{ v.rating.toFixed(1) }}</span>
+              <div class="shop-card-body">
+                <h3>{{ shop.name }}</h3>
+                <p class="shop-address">
+                  <i class="fa-solid fa-map-pin"></i>
+                  {{ shop.address || shop.location || '' }}
+                </p>
+                <div class="shop-card-footer">
+                  <span v-if="shop.rating" class="shop-rating">
+                    <i class="fa-solid fa-star"></i> {{ shop.rating }}
+                    <small v-if="shop.total_reviews">({{ shop.total_reviews }})</small>
+                  </span>
+                  <span class="shop-view-vehicles">
+                    {{ selectedShopId === shop.id ? 'Hide vehicles' : 'View vehicles' }}
+                    <i class="fa-solid fa-chevron-right"></i>
+                  </span>
                 </div>
               </div>
             </article>
+          </div>
+
+          <!-- Selected Shop Vehicles -->
+          <div v-if="selectedShopId" class="selected-shop-vehicles">
+            <div class="selected-shop-header">
+              <div class="selected-shop-info">
+                <img
+                  v-if="resolveImageUrl(selectedShop?.img_url_full || selectedShop?.img_url)"
+                  :src="resolveImageUrl(selectedShop?.img_url_full || selectedShop?.img_url)"
+                  :alt="selectedShop?.name"
+                  class="selected-shop-avatar"
+                  @error="(e) => e.target.style.display='none'"
+                />
+                <div v-else class="selected-shop-avatar selected-shop-avatar-placeholder">
+                  <i class="fa-solid fa-store"></i>
+                </div>
+                <div>
+                  <h3>{{ selectedShop?.name }}</h3>
+                  <p v-if="selectedShop?.distanceKm !== null && Number.isFinite(selectedShop?.distanceKm)" class="selected-shop-distance">
+                    <i class="fa-solid fa-location-dot"></i> {{ formatDistance(selectedShop.distanceKm) }}
+                  </p>
+                </div>
+              </div>
+              <button class="clear-shop-btn" @click="selectedShopId = null">
+                <i class="fa-solid fa-xmark"></i> {{ $t('close') }}
+              </button>
+            </div>
+
+            <div v-if="displayedVehicles.length === 0" class="empty-state">
+              {{ isAllMode ? $t('noBranchesAtAll') : $t('noBranchesYet', { province: selectedProvince }) }}
+            </div>
+            <div v-else class="vehicle-grid">
+              <article
+                v-for="v in displayedVehicles"
+                :key="v.id"
+                class="vehicle-card"
+                @click="goToVehicle(v)"
+              >
+                <div class="vehicle-card-img">
+                  <div v-if="v.imageUrl && !loadedImages.has(v.id)" class="vehicle-card-skeleton">
+                    <div class="skeleton-pulse"></div>
+                  </div>
+                  <img
+                    v-if="v.imageUrl"
+                    :src="v.imageUrl"
+                    :alt="v.name"
+                    :class="{ 'img-loaded': loadedImages.has(v.id) }"
+                    @load="onImageLoad(v.id)"
+                    @error="(e) => { e.target.src = 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800'; onImageLoad(v.id) }"
+                  />
+                  <div v-else class="vehicle-card-img-placeholder">
+                    <i class="fa-solid fa-motorcycle"></i>
+                  </div>
+                  <button
+                    class="vehicle-card-fav-btn"
+                    :class="{ favorited: isFavorite(v.id) }"
+                    @click.stop="toggleFavorite($event, v.id)"
+                    :aria-label="isFavorite(v.id) ? 'Remove from favorites' : 'Add to favorites'"
+                  >
+                    <i :class="isFavorite(v.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+                  </button>
+                  <div class="vehicle-card-img-overlay"></div>
+                  <div class="vehicle-card-price-badge">
+                    <span class="price-badge-value">${{ v.price_per_day }}</span>
+                    <span class="price-badge-unit">/day</span>
+                  </div>
+                  <span class="vehicle-card-status" :class="`status-${String(v.status).toLowerCase()}`">
+                    {{ v.status }}
+                  </span>
+                  <div class="vehicle-card-hover-overlay">
+                    <button class="hover-book-btn" @click.stop="goToVehicle(v)">
+                      <i class="fa-solid fa-eye"></i> View Details
+                    </button>
+                  </div>
+                </div>
+                <div class="vehicle-card-body">
+                  <div class="vehicle-card-top">
+                    <h3>{{ v.name }}</h3>
+                    <div class="vehicle-card-shop">
+                      <i class="fa-solid fa-store"></i>
+                      <span>{{ v.shop?.name || 'Shop' }}</span>
+                    </div>
+                  </div>
+                  <div class="vehicle-card-meta">
+                    <span v-if="v.fuel_type"><i class="fa-solid fa-gas-pump"></i> {{ v.fuel_type }}</span>
+                    <span v-if="v.transmission"><i class="fa-solid fa-gear"></i> {{ v.transmission }}</span>
+                    <span v-if="v.rating > 0"><i class="fa-solid fa-star"></i> {{ v.rating.toFixed(1) }}</span>
+                  </div>
+                </div>
+              </article>
+            </div>
           </div>
         </template>
       </section>
@@ -1397,51 +1445,227 @@ onMounted(async () => {
   box-shadow: 0 2px 8px rgba(37,99,235,0.2);
 }
 
-/* ── Province Shop Tabs ── */
-.province-shops-bar {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 4px 0 16px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+/* ── Shop Cards Grid ── */
+.shops-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 28px;
 }
-.province-shops-bar::-webkit-scrollbar { display: none; }
 
-.shop-tab {
+.shop-card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  overflow: hidden;
+}
+
+.shop-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+  border-color: var(--ud-primary, #2563eb);
+}
+
+.shop-card.active {
+  border-color: var(--ud-primary, #2563eb);
+  box-shadow: 0 8px 28px rgba(37,99,235,0.18);
+}
+
+.shop-card-img {
+  position: relative;
+  height: 160px;
+  background: #f1f5f9;
+  overflow: hidden;
+}
+
+.shop-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.shop-card:hover .shop-card-img img {
+  transform: scale(1.05);
+}
+
+.shop-card-placeholder {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px 10px 10px;
-  border-radius: 14px;
-  border: 1px solid #e2e8f0;
-  background: #fff;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  flex-shrink: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  position: relative;
-}
-.shop-tab:hover {
-  border-color: var(--ud-primary, #2563eb);
-  background: var(--ud-primary-bg, #eff6ff);
-  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
-  transform: translateY(-1px);
-}
-.shop-tab.active {
-  border-color: var(--ud-primary, #2563eb);
-  background: var(--ud-primary, #2563eb);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(37,99,235,0.25);
-  transform: translateY(0);
+  justify-content: center;
+  font-size: 3rem;
+  color: #cbd5e1;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
 }
 
-.shop-tab-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+.shop-card-badges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  z-index: 2;
+}
+
+.shop-distance-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(6px);
+  color: #16a34a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.shop-distance-badge i {
+  font-size: 0.65rem;
+}
+
+.shop-vehicle-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(6px);
+  color: #2563eb;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.shop-vehicle-count-badge i {
+  font-size: 0.65rem;
+}
+
+.shop-card-body {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.shop-card-body h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-line-orient: vertical;
+  overflow: hidden;
+}
+
+.shop-address {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-line-orient: vertical;
+  overflow: hidden;
+}
+
+.shop-address i {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.shop-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.shop-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.shop-rating i {
+  font-size: 0.72rem;
+}
+
+.shop-rating small {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.shop-view-vehicles {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--ud-primary, #2563eb);
+  font-weight: 600;
+}
+
+.shop-view-vehicles i {
+  font-size: 0.65rem;
+  transition: transform 0.2s ease;
+}
+
+.shop-card:hover .shop-view-vehicles i {
+  transform: translateX(3px);
+}
+
+/* ── Selected Shop Vehicles ── */
+.selected-shop-vehicles {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.selected-shop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.selected-shop-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.selected-shop-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1451,90 +1675,58 @@ onMounted(async () => {
   flex-shrink: 0;
   border: 1px solid #f1f5f9;
 }
-.shop-tab.active .shop-tab-avatar {
-  background: rgba(255,255,255,0.2);
-  border-color: rgba(255,255,255,0.3);
-  color: rgba(255,255,255,0.95);
-}
-.shop-tab-img {
+
+.selected-shop-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.shop-tab-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  min-width: 0;
+.selected-shop-avatar-placeholder {
+  font-size: 1.5rem;
 }
-.shop-tab-name {
-  font-size: 0.88rem;
+
+.selected-shop-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
   font-weight: 700;
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.25;
+  color: #0f172a;
 }
-.shop-tab-distance {
-  font-size: 0.7rem;
+
+.selected-shop-distance {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
   color: #16a34a;
   font-weight: 600;
-  display: flex;
+  margin-top: 4px;
+}
+
+.selected-shop-distance i {
+  font-size: 0.75rem;
+}
+
+.clear-shop-btn {
+  display: inline-flex;
   align-items: center;
-  gap: 3px;
-}
-.shop-tab.active .shop-tab-distance {
-  color: rgba(255,255,255,0.9);
-}
-.shop-tab-distance i {
-  font-size: 0.6rem;
-}
-.shop-tab-count {
-  font-size: 0.72rem;
-  font-weight: 700;
-  background: #f1f5f9;
-  color: #475569;
-  padding: 3px 10px;
-  border-radius: 20px;
-  min-width: 22px;
-  text-align: center;
-  line-height: 1.4;
-}
-.shop-tab.active .shop-tab-count {
-  background: rgba(255,255,255,0.2);
-  color: #fff;
-}
-.shop-tab-types {
-  font-size: 0.62rem;
-  color: #64748b;
-  line-height: 1.3;
-  max-width: 160px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.shop-tab.active .shop-tab-types {
-  color: rgba(255,255,255,0.85);
-}
-.shop-tab-all-icon {
-  width: 36px;
-  height: 36px;
+  gap: 6px;
+  padding: 8px 16px;
   border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  background: #fff;
   color: #475569;
-  font-size: 0.9rem;
-  flex-shrink: 0;
-  border: 1px solid #f1f5f9;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
-.shop-tab.active .shop-tab-all-icon {
-  background: rgba(255,255,255,0.2);
-  color: #fff;
-  border-color: rgba(255,255,255,0.3);
+
+.clear-shop-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: #fef2f2;
 }
 
 /* ── Vehicle Card Grid ── */
@@ -1814,22 +2006,26 @@ onMounted(async () => {
   .search-card-body {
     padding: 14px 18px 16px;
   }
-  .province-shops-bar {
-    gap: 8px;
-    padding-bottom: 12px;
+  .shops-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
-  .shop-tab {
-    padding: 8px 12px 8px 8px;
-    gap: 8px;
+  .shop-card-img {
+    height: 140px;
   }
-  .shop-tab-name {
+  .shop-card-body {
+    padding: 14px 16px;
+  }
+  .selected-shop-avatar {
+    width: 48px;
+    height: 48px;
+  }
+  .selected-shop-info h3 {
+    font-size: 1.05rem;
+  }
+  .clear-shop-btn {
+    padding: 6px 12px;
     font-size: 0.8rem;
-    max-width: 80px;
-  }
-  .shop-tab-avatar,
-  .shop-tab-all-icon {
-    width: 30px;
-    height: 30px;
   }
   .vehicle-grid {
     grid-template-columns: 1fr;
@@ -1860,8 +2056,19 @@ onMounted(async () => {
   .vehicle-card-body {
     padding: 14px 16px;
   }
-  .shop-tab-name {
-    max-width: 60px;
+  .shop-card-body h3 {
+    font-size: 0.95rem;
+  }
+  .shop-card-badges {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    gap: 6px;
+  }
+  .shop-distance-badge,
+  .shop-vehicle-count-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
   }
 }
 </style>

@@ -54,7 +54,16 @@ const navItems = computed(() => [
   { label: t('navSettings'), to: '/admin/settings', icon: 'fa-solid fa-gear' },
 ])
 
-const currentUser = computed(() => userService.getCurrentUser())
+const profileVersion = ref(Date.now())
+
+const refreshProfileData = () => {
+  profileVersion.value = Date.now()
+}
+
+const currentUser = computed(() => {
+  profileVersion.value // eslint-disable-line no-unused-expressions
+  return userService.getCurrentUser()
+})
 const adminName = computed(() => currentUser.value?.name || 'Admin')
 const adminRole = computed(() => (currentUser.value?.role || 'Admin').toString().toUpperCase())
 const isAdmin = computed(() => {
@@ -72,6 +81,7 @@ const adminInitials = computed(() => {
 })
 
 const adminProfilePicture = computed(() => {
+  profileVersion.value // eslint-disable-line no-unused-expressions
   const user = currentUser.value || {}
   const stored = localStorage.getItem('user_profile_picture') || ''
   const path = user.profile_picture || user.avatar_url || stored || ''
@@ -241,6 +251,8 @@ onMounted(() => {
     nowTick.value = Date.now()
   }, 1000)
   document.addEventListener('click', handleDocumentClick)
+  window.addEventListener('storage', refreshProfileData)
+  window.addEventListener('user-updated', refreshProfileData)
 })
 
 // Fetch user profile and store in localStorage
@@ -300,6 +312,8 @@ onBeforeUnmount(() => {
   if (searchTimer) window.clearTimeout(searchTimer)
   if (clockTimer) window.clearInterval(clockTimer)
   document.removeEventListener('click', handleDocumentClick)
+  window.removeEventListener('storage', refreshProfileData)
+  window.removeEventListener('user-updated', refreshProfileData)
 })
 
 const cambodiaClockLabel = computed(() => cambodiaDateTimeLabel(new Date(nowTick.value)))

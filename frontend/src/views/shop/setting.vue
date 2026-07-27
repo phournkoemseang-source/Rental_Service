@@ -119,12 +119,34 @@
 
             <label class="field">
               <span>Latitude</span>
-              <input v-model="form.latitude" type="number" step="any" placeholder="Auto" readonly />
+              <div class="input-with-action">
+                <input v-model="form.latitude" type="number" step="any" placeholder="Auto" readonly />
+                <button
+                  type="button"
+                  class="gps-btn"
+                  :disabled="detectingLocation"
+                  @click="detectCurrentLocation"
+                  :title="detectingLocation ? 'Detecting...' : 'Use my current location'"
+                >
+                  <i class="fa-solid fa-crosshairs"></i>
+                </button>
+              </div>
             </label>
 
             <label class="field">
               <span>Longitude</span>
-              <input v-model="form.longitude" type="number" step="any" placeholder="Auto" readonly />
+              <div class="input-with-action">
+                <input v-model="form.longitude" type="number" step="any" placeholder="Auto" readonly />
+                <button
+                  type="button"
+                  class="gps-btn"
+                  :disabled="detectingLocation"
+                  @click="detectCurrentLocation"
+                  :title="detectingLocation ? 'Detecting...' : 'Use my current location'"
+                >
+                  <i class="fa-solid fa-crosshairs"></i>
+                </button>
+              </div>
             </label>
 
             <!-- Language Selector near Notifications -->
@@ -331,6 +353,32 @@ const syncCoordinatesFromMapUrl = () => {
   if (!coords) return;
   if (!form.latitude) form.latitude = String(coords.lat);
   if (!form.longitude) form.longitude = String(coords.lng);
+};
+
+const detectingLocation = ref(false);
+
+const detectCurrentLocation = () => {
+  if (detectingLocation.value) return;
+  if (!navigator?.geolocation) {
+    error.value = 'Geolocation is not supported by your browser.';
+    return;
+  }
+
+  detectingLocation.value = true;
+  error.value = '';
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      form.latitude = String(position.coords.latitude);
+      form.longitude = String(position.coords.longitude);
+      detectingLocation.value = false;
+    },
+    () => {
+      detectingLocation.value = false;
+      error.value = 'Unable to retrieve your location. Please allow location access or enter coordinates manually.';
+    },
+    { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
+  );
 };
 
 const extractCollection = (responseData) => {

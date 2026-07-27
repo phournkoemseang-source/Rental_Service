@@ -915,11 +915,14 @@ onMounted(fetchProfile)
     align-items: center;
     gap: 1.25rem;
     padding: 12px 24px 70px;
+    position: relative;
 }
 
 .hero-avatar {
     width: 145px;
     height: 145px;
+    min-width: 145px;
+    min-height: 145px;
     border-radius: 50%;
     background: #eef1f7;
     display: grid;
@@ -931,7 +934,14 @@ onMounted(fetchProfile)
     margin-bottom: 8%;
     cursor: pointer;
     border: 4px solid #fff;
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15), 0 10px 25px rgba(15, 23, 42, 0.15);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-avatar:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25), 0 14px 30px rgba(15, 23, 42, 0.2);
 }
 
 .hero-avatar__img {

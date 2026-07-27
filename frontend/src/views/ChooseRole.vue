@@ -19,6 +19,28 @@ const selectRole = (role) => {
 };
 
 onMounted(async () => {
+  // Auto-redirect if user is already logged in
+  const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+  if (token) {
+    try {
+      const raw = localStorage.getItem('user');
+      const user = raw ? JSON.parse(raw) : null;
+      const role = user?.role || '';
+      if (role === 'admin') {
+        router.push('/admin');
+        return;
+      } else if (role === 'shop_owner') {
+        router.push('/dashboard');
+        return;
+      } else {
+        router.push('/view_shop');
+        return;
+      }
+    } catch {
+      // Invalid user data in storage, fall through to role selection
+    }
+  }
+
   try {
     const { data } = await api.get('/admin/exists');
     adminAlreadyRegistered.value = Boolean(data?.has_admin);

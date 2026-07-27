@@ -517,7 +517,7 @@ onMounted(() => {
               </td>
             </tr>
             <tr v-if="!pagedShops.length">
-              <td colspan="8" style="text-align:center; padding: 30px; color: var(--mp-muted);">
+              <td colspan="8" class="table-empty">
                 {{ normalizedQuery ? `No shops matched "${route.query.q}". Try clearing search.` : 'No shops found.' }}
               </td>
             </tr>

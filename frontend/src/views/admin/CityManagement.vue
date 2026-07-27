@@ -189,7 +189,7 @@ onMounted(load)
         <h1 class="page-title">City Management</h1>
         <p class="page-subtitle">Manage supported cities used for shops and filtering.</p>
       </div>
-      <button type="button" class="btn btn-primary" style="max-width: 200px; justify-content: center;" @click="openCreate">
+      <button type="button" class="btn btn-primary btn-block" @click="openCreate">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
         <span>Add City</span>
       </button>

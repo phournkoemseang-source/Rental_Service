@@ -10,7 +10,7 @@ import Coupons from "./Coupons.vue";
 import MyShop from "./myShop.vue";
 import Setting from "./setting.vue";
 import NotificationOwner from "./Notification_owner.vue";
-import api, { bookingApi, shopApi, vehicleApi } from "@/services/api";
+import api, { shopApi, vehicleApi } from "@/services/api";
 import { getSessionUser, logoutUser } from "@/services/auth";
 import { useNotifications } from "@/composables/useNotifications";
 import { setLanguage, getCurrentLanguage } from "@/i18n";
@@ -26,7 +26,7 @@ const SHOP_DASHBOARD_THEME_KEY = "shop-dashboard-theme";
 const toast = ref({ show: false, message: "", type: "success" });
 const showToast = (message, type = "success") => {
   toast.value = { show: true, message, type };
-  setTimeout(() => (toast.value.show = false), 100);
+  setTimeout(() => (toast.value.show = false), 3200);
 };
 
 const { unreadCount, loadNotifications } = useNotifications();
@@ -252,7 +252,7 @@ watch(
   () => route.meta.defaultSection,
   (section) => {
     if (!section) return;
-    const matching = sections.find((s) => s.id === section);
+    const matching = sections.value.find((s) => s.id === section);
     if (matching) {
       active.value = section;
     }
@@ -265,7 +265,7 @@ let initializeShopData = async () => {}
 const refreshSessionUser = () => {
   sessionUser.value = getSessionUser() || {};
   avatarLoadFailed.value = false;
-  initializeShopData().catch(() => {});
+  loadDashboardData().catch(() => {});
 };
 
 const onAvatarError = () => {
@@ -277,6 +277,8 @@ onMounted(() => {
   window.addEventListener("storage", refreshSessionUser);
   window.addEventListener("user-updated", refreshSessionUser);
 
+  // Load all dashboard data in a single unified call (shop → vehicles → bookings → payments)
+  loadDashboardData().catch(() => {});
 
   // Load notifications on mount and poll every 30s for real-time updates
   loadNotifications().catch(() => {});
@@ -383,6 +385,7 @@ const shopForm = reactive({
   location: "",
   latitude: "",
   longitude: "",
+  map_url: "",
   img_url: "",
 });
 const cities = ref([]);
@@ -495,14 +498,38 @@ const fetchShop = async () => {
   }
 };
 
+// Hardcoded 25 Cambodia provinces as fallback when API has no data
+const CAMBODIA_PROVINCES = [
+  'Banteay Meanchey', 'Battambang', 'Kampong Cham', 'Kampong Chhnang',
+  'Kampong Speu', 'Kampong Thom', 'Kampot', 'Kandal', 'Kep',
+  'Koh Kong', 'Kratié', 'Mondulkiri', 'Oddar Meanchey', 'Pailin',
+  'Phnom Penh', 'Preah Vihear', 'Prey Veng', 'Pursat', 'Ratanakiri',
+  'Siem Reap', 'Preah Sihanouk', 'Stung Treng', 'Svay Rieng', 'Takéo',
+  'Tboung Khmum',
+];
+
 // Fetch cities
 const fetchCities = async () => {
   try {
     const response = await api.get("/cities");
-    cities.value = response.data.data || response.data || [];
+    const apiData = response.data.data || response.data || [];
+    if (Array.isArray(apiData) && apiData.length > 0) {
+      // API returned real data — use it
+      cities.value = apiData;
+    } else {
+      // API returned empty — fallback to hardcoded province list
+      cities.value = CAMBODIA_PROVINCES.map((name, idx) => ({
+        id: idx + 1,
+        name,
+      }));
+    }
   } catch (error) {
-    console.error("Error fetching cities:", error);
-    cities.value = [];
+    console.error("Error fetching cities, using fallback:", error);
+    // Network error — use hardcoded list
+    cities.value = CAMBODIA_PROVINCES.map((name, idx) => ({
+      id: idx + 1,
+      name,
+    }));
   }
 };
 
@@ -515,6 +542,7 @@ const openShopModal = () => {
   shopForm.location = shop.value?.location || "";
   shopForm.latitude = shop.value?.latitude || "";
   shopForm.longitude = shop.value?.longitude || "";
+  shopForm.map_url = shop.value?.map_url || "";
   shopForm.img_url = shop.value?.img_url || "";
   // Reset image fields
   shopImageFile.value = null;
@@ -547,6 +575,7 @@ const saveShop = async () => {
       if (shopForm.location) formData.append("location", shopForm.location);
       if (shopForm.latitude) formData.append("latitude", shopForm.latitude);
       if (shopForm.longitude) formData.append("longitude", shopForm.longitude);
+      if (shopForm.map_url) formData.append("map_url", shopForm.map_url);
       formData.append("status", "active");
       // the backend expects the field name img_url
       formData.append("img_url", shopImageFile.value);
@@ -578,6 +607,7 @@ const saveShop = async () => {
         location: shopForm.location || null,
         latitude: shopForm.latitude || null,
         longitude: shopForm.longitude || null,
+        map_url: shopForm.map_url || null,
         status: "active",
         img_url: shopForm.img_url || null,
       };
@@ -603,6 +633,9 @@ const saveShop = async () => {
     await fetchShop();
     await loadOwnerShopName();
     form.shop = savedShop?.name || shop.value?.name || currentShopName.value;
+    
+    // Full dashboard data reload — fetches vehicles, bookings, payments for the new/updated shop
+    await loadDashboardData();
   } catch (error) {
     console.error("Error saving shop:", error);
     const validationErrors = error.response?.data?.errors;
@@ -619,6 +652,7 @@ const saveShop = async () => {
 };
 
 // Load cities on mount
+// Cities are fetched once on script setup (no dependency on shop)
 fetchCities();
 
 // Fetch shop owner bookings for dashboard stats
@@ -682,21 +716,6 @@ const shopPayments = computed(() =>
   payments.value.filter((payment) => shopMatchesEntry(payment)),
 );
 
-const fetchShopBookings = async () => {
-  isLoadingDashboard.value = true;
-  dashboardError.value = null;
-  try {
-    const response = await api.get("/shop-bookings");
-    bookings.value = response.data || [];
-    console.log("Dashboard bookings loaded:", bookings.value.length);
-  } catch (error) {
-    console.error("Error fetching shop bookings:", error);
-    dashboardError.value = "Failed to load bookings. Please refresh.";
-    bookings.value = [];
-  } finally {
-    isLoadingDashboard.value = false;
-  }
-};
 
 const fetchFeedback = async () => {
   try {
@@ -729,78 +748,84 @@ const fetchShopRating = async () => {
   }
 };
 
-const fetchShopPayments = async () => {
+// ─── Unified data loader (called once from onMounted) ───────
+const loadDashboardData = async (skipLoading = false) => {
+  if (!skipLoading) isLoadingDashboard.value = true;
+  dashboardError.value = null;
   try {
-    const response = await api.get("/shop-payments");
-    const data = response.data || [];
-    payments.value = Array.isArray(data) ? data : data.data || [];
-    console.log("Dashboard payments loaded:", payments.value.length);
-  } catch (error) {
-    console.error("Error fetching shop payments:", error);
-    payments.value = [];
-  }
-};
-
-fetchShopBookings();
-fetchShopPayments();
-
-// Fetch vehicles from database
-const fetchVehicles = async () => {
-  try {
-    // First get the shop to filter vehicles by shop_id
-    await fetchShop();
-    const shopId = shop.value?.id;
+    // Step 1: Resolve shop first — everything depends on it
+    await initializeShopData();
     
-    // If no shop exists, don't fetch vehicles
-    if (!shopId) {
-      vehicles.value = [];
-      return;
+    const hasShop = Boolean(shop.value?.id);
+    
+    // Step 2: Fetch vehicles (requires shop)
+    if (hasShop) {
+      const response = await vehicleApi.getAll();
+      const allVehicles = response.data.data || response.data || [];
+      const shopId = Number(shop.value.id);
+      vehicles.value = allVehicles
+        .filter((v) => Number(v.shop_id) === shopId)
+        .map((v) => {
+          const normalizedStatus = typeof v.status === "string" ? v.status.trim() : v.status;
+          const createdAtValue = v.created_at || v.create_at || v.createdAt || "";
+          return {
+            ...v,
+            name: v.name,
+            type: v.type,
+            category: v.type || v.category,
+            brand: v.brand,
+            model: v.model,
+            plate: v.plate_number,
+            plate_number: v.plate_number,
+            price: v.price_per_day,
+            price_per_day: v.price_per_day,
+            status: normalizedStatus || "Available",
+            description: v.description,
+            fuel: v.fuel_type,
+            fuel_type: v.fuel_type,
+            transmission: v.transmission,
+            totalVehiclesInput: v.total_vehicles ?? 1,
+            riderDetails: v.rider_details ?? "",
+            insuranceFee: v.insurance_fee ?? "",
+            taxesFee: v.taxes_fee ?? "",
+            createdAt: createdAtValue,
+            updatedAt: v.updated_at,
+            image: normalizeVehicleImageUrl(v.image_url_full) || normalizeVehicleImageUrl(v.image_url || ""),
+            image_url:
+              normalizeVehicleImageUrl(v.image_url_full) || normalizeVehicleImageUrl(v.image_url || ""),
+          };
+        });
     }
     
-    const response = await vehicleApi.getAll();
-    const allVehicles = response.data.data || response.data || [];
+    // Step 3: Fetch bookings (requires shop)
+    if (hasShop) {
+      try {
+        const response = await api.get("/shop-bookings");
+        bookings.value = response.data || [];
+      } catch (error) {
+        console.error("Error fetching shop bookings:", error);
+        bookings.value = [];
+      }
+    }
     
-    vehicles.value = allVehicles
-      .filter((v) => Number(v.shop_id) === Number(shopId))
-      .map((v) => {
-        const normalizedStatus =
-          typeof v.status === "string" ? v.status.trim() : v.status;
-        const createdAtValue = v.created_at || v.create_at || v.createdAt || "";
-        return {
-          ...v,
-          name: v.name,
-          type: v.type,
-          category: v.type || v.category,
-          brand: v.brand,
-          model: v.model,
-          plate: v.plate_number,
-          plate_number: v.plate_number,
-          price: v.price_per_day,
-          price_per_day: v.price_per_day,
-          status: normalizedStatus || "Available",
-          description: v.description,
-          fuel: v.fuel_type,
-          fuel_type: v.fuel_type,
-          transmission: v.transmission,
-          totalVehiclesInput: v.total_vehicles ?? 1,
-          riderDetails: v.rider_details ?? "",
-          insuranceFee: v.insurance_fee ?? "",
-          taxesFee: v.taxes_fee ?? "",
-          createdAt: createdAtValue,
-          updatedAt: v.updated_at,
-          image: normalizeVehicleImageUrl(v.image_url_full) || normalizeVehicleImageUrl(v.image_url || ""),
-          image_url:
-            normalizeVehicleImageUrl(v.image_url_full) || normalizeVehicleImageUrl(v.image_url || ""),
-        };
-      });
+    // Step 4: Fetch payments (requires shop)
+    if (hasShop) {
+      try {
+        const response = await api.get("/shop-payments");
+        const data = response.data || [];
+        payments.value = Array.isArray(data) ? data : data.data || [];
+      } catch (error) {
+        console.error("Error fetching shop payments:", error);
+        payments.value = [];
+      }
+    }
   } catch (error) {
-    console.error("Error fetching vehicles:", error);
-    vehicles.value = [];
+    console.error("Dashboard load error:", error);
+    dashboardError.value = "Failed to load dashboard data.";
+  } finally {
+    isLoadingDashboard.value = false;
   }
 };
-
-// Load vehicles on mount
-fetchVehicles();
 
 const histories = ref([
   { id: 1, action: "New booking received for Toyota Camry", time: "2 min ago" },
@@ -906,8 +931,6 @@ initializeShopData = async () => {
   await fetchShop();
   await loadOwnerShopName();
 };
-
-initializeShopData().catch(() => {});
 
 watch(
   shop,
@@ -1834,7 +1857,7 @@ const iconSvg = (name) => {
               </div>
             </div>
             <!-- Vehicle Information -->
-            <div class="form-card">
+            <div class="form-card" v-if="form.category !== 'Bike'">
               <h3 class="card-title">Booking</h3>
               <div class="form-group">
 
@@ -1875,7 +1898,7 @@ const iconSvg = (name) => {
                   <label>Plate Number</label>
                   <input v-model="form.plate" placeholder="e.g. ABC-1234" />
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-if="form.category !== 'Bike'">
                   <label>Fuel Type</label>
                   <select v-model="form.fuel">
                     <option value="" disabled>Select Fuel</option>
@@ -1885,7 +1908,7 @@ const iconSvg = (name) => {
                     <option>Hybrid</option>
                   </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-if="form.category !== 'Bike'">
                   <label>Transmission</label>
                   <select v-model="form.transmission">
                     <option value="" disabled>Select Transmission</option>
@@ -2277,6 +2300,15 @@ const iconSvg = (name) => {
                     v-model="shopForm.location"
                     type="text"
                     placeholder="e.g. Street 123, Khan ..."
+                  />
+                </label>
+                <label class="field full">
+                  <span>Google Map URL</span>
+                  <input
+                    class="rounded-input"
+                    v-model="shopForm.map_url"
+                    type="url"
+                    placeholder="Paste your Google Maps link here"
                   />
                 </label>
                 <label class="field">

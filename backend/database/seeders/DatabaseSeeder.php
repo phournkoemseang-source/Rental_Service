@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {     
+        // Seed cities (25 Cambodia provinces)
+        $this->call(CitySeeder::class);
+
         // Create admin@choul.com user
         \App\Models\User::updateOrCreate(
             ['email' => 'admin@choul.com'],
@@ -29,5 +32,5 @@ class DatabaseSeeder extends Seeder
                 'is_verified' => true,
             ]
         );
-        }
     }
+}

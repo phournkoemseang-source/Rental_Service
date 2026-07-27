@@ -172,6 +172,36 @@ const summary = computed(() => ({
   shopsToPay: payableRows.value.length,
 }))
 
+// Period-based income/expense aggregates for the summary bar
+const commissionRate = computed(() => Number(admin.state.commission_rate || 0.15))
+
+const periodCommission = computed(() => {
+  let total = 0
+  ;(admin.state.bookings || []).forEach((booking) => {
+    if (!isBookingInSelectedPeriod(booking)) return
+    total += toAmount(booking) * commissionRate.value
+  })
+  return total
+})
+
+const periodNetPayout = computed(() => {
+  let total = 0
+  ;(admin.state.bookings || []).forEach((booking) => {
+    if (!isBookingInSelectedPeriod(booking)) return
+    total += toAmount(booking) * (1 - commissionRate.value)
+  })
+  return total
+})
+
+const periodGrossRevenue = computed(() => {
+  let total = 0
+  ;(admin.state.bookings || []).forEach((booking) => {
+    if (!isBookingInSelectedPeriod(booking)) return
+    total += toAmount(booking)
+  })
+  return total
+})
+
 const totalPages = computed(() => Math.max(1, Math.ceil(payoutRows.value.length / perPage)))
 const pagedRows = computed(() => {
   const start = (page.value - 1) * perPage
@@ -241,8 +271,6 @@ const filteredBookings = computed(() => {
     return category === selectedCategory.value
   })
 })
-
-const commissionRate = computed(() => Number(admin.state.commission_rate || 0.15))
 
 const trendSeries = computed(() => {
   const buckets = []
@@ -449,6 +477,79 @@ const initials = (name) => {
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
   return `${parts[0][0] || ''}${parts[parts.length - 1][0] || ''}`.toUpperCase()
 }
+const formatDateLabel = () => {
+  const now = new Date()
+  const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  return dateStr
+}
+
+const safeCSV = (value) => {
+  const str = String(value ?? '')
+  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+    return `"${str.replace(/"/g, '""')}"`
+  }
+  return str
+}
+
+const exportCSV = () => {
+  const periodLabel = periodMode.value === 'month' ? 'Monthly' : periodMode.value === 'all' ? 'All Time' : 'Daily'
+  const dateLabel = formatDateLabel()
+  const rows = []
+
+  // ── Header ──
+  rows.push(`"Chong Choul — Income & Expense Report (${periodLabel})"`)
+  rows.push(`"Generated: ${dateLabel}"`)
+  rows.push(`"Period filter: ${selectedCategoryLabel}"`)
+  rows.push('')
+
+  // ── Summary ──
+  rows.push('SUMMARY')
+  rows.push(`Platform Income (Commission),${Number(periodCommission).toFixed(2)}`)
+  rows.push(`Shop Payouts (Net),${Number(periodNetPayout).toFixed(2)}`)
+  rows.push(`Total Revenue (Gross),${Number(periodGrossRevenue).toFixed(2)}`)
+  rows.push(`Pending Payout Amount,${Number(summary.pendingAmount).toFixed(2)}`)
+  rows.push(`Shops to Pay,${summary.shopsToPay}`)
+  rows.push('')
+
+  // ── Daily / Period Trend ──
+  if (trendSeries.value.length) {
+    rows.push('TREND BREAKDOWN')
+    rows.push('Period,Total Earnings,Platform Commission,Net Payout')
+    trendSeries.value.forEach((b) => {
+      rows.push(`${safeCSV(b.label)},${Number(b.earnings).toFixed(2)},${Number(b.commission).toFixed(2)},${Number(b.net).toFixed(2)}`)
+    })
+    rows.push('')
+  }
+
+  // ── Per-Shop Breakdown ──
+  const allRows = allPayoutRows.value
+  rows.push('SHOP BREAKDOWN')
+  rows.push('Shop Name,Category,Total Earnings,Platform Commission,Net Payout,Bookings,Status')
+  allRows.forEach((r) => {
+    rows.push(`${safeCSV(r.name)},${safeCSV(r.category)},${Number(r.gross).toFixed(2)},${Number(r.commission).toFixed(2)},${Number(r.payout).toFixed(2)},${r.bookingsCount},${r.processed ? 'Processed' : r.gross > 0 ? 'Pending' : 'No Earnings'}`)
+  })
+  rows.push('')
+
+  // ── Totals ──
+  const totalGross = allRows.reduce((s, r) => s + Number(r.gross), 0)
+  const totalCommission = allRows.reduce((s, r) => s + Number(r.commission), 0)
+  const totalNet = allRows.reduce((s, r) => s + Number(r.payout), 0)
+  const totalBookings = allRows.reduce((s, r) => s + r.bookingsCount, 0)
+  rows.push(`TOTALS,,${totalGross.toFixed(2)},${totalCommission.toFixed(2)},${totalNet.toFixed(2)},${totalBookings},`)
+
+  const csvContent = rows.join('\n')
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  const filename = `chong-choul-report-${periodMode.value}-${new Date().toISOString().slice(0, 10)}.csv`
+  link.setAttribute('download', filename)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
 const processShop = (shopId) => {
   const key = processedScopeKey(shopId)
   const set = new Set(state.value.processed_keys || [])
@@ -518,6 +619,35 @@ onMounted(async () => {
       <header class="page-head clean-head">
         <h1 class="page-title">Admin Process Payouts</h1>
       </header>
+
+    <!-- ─── Income vs Expenses Summary ─────────────────────────── -->
+    <div class="income-expense-bar">
+      <div class="ie-card ie-income">
+        <div class="ie-icon"><i class="fa-solid fa-arrow-up"></i></div>
+        <div class="ie-body">
+          <span class="ie-label">Platform Income ({{ periodMode === 'month' ? 'Monthly' : 'Today' }} Commission)</span>
+          <span class="ie-value">{{ fmtMoney(periodCommission) }}</span>
+        </div>
+      </div>
+      <div class="ie-arrow">
+        <i class="fa-solid fa-minus"></i>
+      </div>
+      <div class="ie-card ie-expense">
+        <div class="ie-icon"><i class="fa-solid fa-arrow-down"></i></div>
+        <div class="ie-body">
+          <span class="ie-label">Shop Payouts ({{ periodMode === 'month' ? 'Monthly' : 'Today' }} Net)</span>
+          <span class="ie-value">{{ fmtMoney(periodNetPayout) }}</span>
+        </div>
+      </div>
+      <div class="ie-arrow"><i class="fa-solid fa-equals"></i></div>
+      <div class="ie-card ie-total">
+        <div class="ie-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="ie-body">
+          <span class="ie-label">Total Revenue ({{ periodMode === 'month' ? 'Monthly' : 'Today' }} Gross)</span>
+          <span class="ie-value">{{ fmtMoney(periodGrossRevenue) }}</span>
+        </div>
+      </div>
+    </div>
 
     <div class="split-stats three compact-stats">
       <section class="card stat-wide">
@@ -795,6 +925,10 @@ onMounted(async () => {
       <div class="card-head table-head-clean">
         <h2 class="card-title">Pending Payouts List</h2>
         <div class="filters">
+          <button type="button" class="btn-export" @click="exportCSV" title="Download CSV report">
+            <i class="fa-solid fa-download" aria-hidden="true"></i>
+            <span>Export CSV</span>
+          </button>
           <label class="chip-select" title="Choose day or month">
             <i class="fa-regular fa-calendar" aria-hidden="true"></i>
             <select v-model="periodMode" aria-label="Choose period mode">
@@ -1097,6 +1231,77 @@ onMounted(async () => {
   animation: point-pop 0.42s ease forwards;
 }
 
+.income-expense-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.ie-card {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  border: 1px solid var(--report-stroke);
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(15, 36, 64, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ie-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(15, 36, 64, 0.1);
+}
+
+.ie-income { border-left: 4px solid #22c55e; }
+.ie-expense { border-left: 4px solid #ef4444; }
+.ie-total { border-left: 4px solid #1f7bff; }
+
+.ie-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.ie-income .ie-icon { background: #f0fdf4; color: #16a34a; }
+.ie-expense .ie-icon { background: #fef2f2; color: #dc2626; }
+.ie-total .ie-icon { background: #eff6ff; color: #2563eb; }
+
+.ie-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ie-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--report-muted);
+}
+
+.ie-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--report-text);
+}
+
+.ie-arrow {
+  font-size: 1rem;
+  color: var(--report-muted);
+  flex-shrink: 0;
+}
+
 .status-wrap {
   width: min(200px, 100%);
   margin: 0 auto 0.35rem;
@@ -1146,6 +1351,34 @@ onMounted(async () => {
 .chip-select i:last-child {
   color: var(--mp-muted);
   font-size: 12px;
+}
+
+.btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--report-stroke);
+  background: #fff;
+  color: var(--report-text);
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.btn-export:hover {
+  background: #eef4ff;
+  border-color: var(--report-primary);
+  color: var(--report-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(31, 123, 255, 0.15);
+}
+
+.btn-export i {
+  font-size: 0.9rem;
 }
 
 .table-empty {
