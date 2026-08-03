@@ -1,0 +1,11 @@
+fix(deploy): point production build at live API instead of localhost
+
+- api.js now reads VITE_API_BASE_URL with a same-origin /api fallback,
+  which works through the Vite dev proxy locally and on the live domain
+- Add frontend/.env.production setting VITE_API_BASE_URL=https://chongchoul.online/api
+  so a plain `npm run build` produces a working production bundle
+- Replace hardcoded http://127.0.0.1:8000 API origins in ShopVehicles,
+  ViewDetail, Booking, VehiclesByShop, VehicleDetail, and myShop with
+  window.location.origin-based fallbacks
+- Verified the built bundle contains chongchoul.online/api and no
+  127.0.0.1:8000 references

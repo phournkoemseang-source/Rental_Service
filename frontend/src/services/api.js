@@ -2,7 +2,10 @@ import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
+  // Overridable via VITE_API_BASE_URL at build time (e.g. https://chongchoul.online/api).
+  // Defaults to a same-origin relative path: works in dev through the Vite proxy
+  // and in production because the Laravel backend is served from the same domain.
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'

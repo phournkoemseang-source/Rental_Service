@@ -170,7 +170,7 @@ const normalizeType = (raw, fallback = '') => {
   return t;
 };
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || `${window.location.origin}/api`;
 const API_ROOT = API_BASE_URL.replace(/\/api\/?$/, '');
 const fallbackImageByType = {
   motorbike: 'https://i.pinimg.com/1200x/61/68/42/61684256edbd26664520bdfcf379c762.jpg',

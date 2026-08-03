@@ -65,11 +65,11 @@ const getApiOrigin = () => {
   try {
     const currentOrigin = window.location.origin
     if (currentOrigin.includes('5173')) {
-      return 'http://127.0.0.1:8000'
+      return import.meta.env.VITE_API_BASE_URL?.replace(/\/api\/?$/, '') || 'http://127.0.0.1:8000'
     }
     return currentOrigin
   } catch {
-    return 'http://127.0.0.1:8000'
+    return import.meta.env.VITE_API_BASE_URL?.replace(/\/api\/?$/, '') || 'http://127.0.0.1:8000'
   }
 }
 
@@ -190,7 +190,8 @@ const fetchActiveBookings = async () => {
   }
 
   try {
-    const response = await fetch(`http://127.0.0.1:8000/api/bookings?shop_id=${shopId.value}`, {
+    const apiBase = import.meta.env.VITE_API_BASE_URL || '/api'
+    const response = await fetch(`${apiBase}/bookings?shop_id=${shopId.value}`, {
       headers: {
         Accept: 'application/json',
         Authorization: `Bearer ${token}`,
