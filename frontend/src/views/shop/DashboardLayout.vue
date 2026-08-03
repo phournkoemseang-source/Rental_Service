@@ -13,8 +13,8 @@ import NotificationOwner from "./Notification_owner.vue";
 import api, { shopApi, vehicleApi } from "@/services/api";
 import { getSessionUser, logoutUser } from "@/services/auth";
 import { useNotifications } from "@/composables/useNotifications";
-import { setLanguage, getCurrentLanguage } from "@/i18n";
 import ToastStack from "@/components/ToastStack.vue";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 
 const { t } = useI18n();
 
@@ -86,15 +86,6 @@ watch(unreadCount, (newCount, oldCount) => {
     playNotificationSound();
   }
 });
-
-// Language state
-const currentShopLang = ref(getCurrentLanguage())
-const switchShopLang = (lang) => {
-  if (lang !== currentShopLang.value) {
-    setLanguage(lang)
-    currentShopLang.value = lang
-  }
-}
 
 const themeModeLabel = computed(() =>
   isDarkMode.value ? t('darkMode') : t('lightMode'),
@@ -1459,7 +1450,7 @@ const iconSvg = (name) => {
       </div>
       <button class="menu-item logout-item" @click="showLogoutModal = true">
         <span class="menu-icon logout-icon" v-html="iconSvg('logout')"></span>
-        <span class="menu-label">Logout</span>
+        <span class="menu-label">{{ $t('logout') }}</span>
       </button>
     </aside>
 
@@ -1476,25 +1467,7 @@ const iconSvg = (name) => {
         </div>
         <div class="topbar-right">
           <!-- Language Toggle -->
-          <div class="header-lang-toggle-shop">
-            <button
-              class="hl-btn-shop"
-              :class="{ active: currentShopLang === 'en' }"
-              @click="switchShopLang('en')"
-              title="English"
-            >
-              EN
-            </button>
-            <span class="hl-sep-shop">|</span>
-            <button
-              class="hl-btn-shop"
-              :class="{ active: currentShopLang === 'kh' }"
-              @click="switchShopLang('kh')"
-              title="ភាសាខ្មែរ"
-            >
-              KH
-            </button>
-          </div>
+          <LanguageSwitcher />
           <button
             type="button"
             class="theme-toggle"
@@ -1577,9 +1550,7 @@ const iconSvg = (name) => {
                     <path
                       d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V20a2 2 0 0 1-4 0v-.2a1 1 0 0 0-.6-.9 1 1 0 0 0-1.1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H4a2 2 0 0 1 0-4h.2a1 1 0 0 0 .9-.6 1 1 0 0 0-.2-1.1l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1 1 0 0 0 1.1.2 1 1 0 0 0 .6-.9V4a2 2 0 0 1 4 0v.2a1 1 0 0 0 .6.9 1 1 0 0 0 1.1-.2l.1-.1a2 2 0 0 1 2.8 2.8l-.1.1a1 1 0 0 0-.2 1.1 1 1 0 0 0 .9.6H20a2 2 0 0 1 0 4h-.2a1 1 0 0 0-.9.6z"
                     />
-                  </svg>
-                  Settings
-                </button>
+                  </svg>{{ $t('shopSettings') }}</button>
                 <button
                   class="dropdown-item"
                   @click="
@@ -1597,9 +1568,7 @@ const iconSvg = (name) => {
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                     <polyline points="16 17 21 12 16 7" />
                     <line x1="21" y1="12" x2="9" y2="12" />
-                  </svg>
-                  Logout
-                </button>
+                  </svg>{{ $t('logout') }}</button>
               </div>
             </div>
           </div>
@@ -1609,7 +1578,7 @@ const iconSvg = (name) => {
       <section v-if="active === 'dashboard'" class="shop-dash-section">
         <div v-if="isLoadingDashboard" class="shop-loading">
           <div class="shop-spinner"></div>
-          <p>Loading your dashboard...</p>
+          <p>{{ $t('loadingYourDashboard') }}</p>
         </div>
         <ShopDashboard
           v-else
@@ -1647,29 +1616,28 @@ const iconSvg = (name) => {
 
       <section v-else-if="active === 'vehicles'" class="panel">
         <div class="panel-top">
-          <h3>Manage Vehicles</h3>
-          <button class="primary" @click="openCreate">Add New Vehicle</button>
+          <h3>{{ $t('manageVehicles') }}</h3>
+          <button class="primary" @click="openCreate">{{ $t('addNewVehicle') }}</button>
         </div>
         <div class="stats compact">
           <article class="card">
-            <span>Total Vehicles</span>
+            <span>{{ $t('totalVehicles') }}</span>
             <h3>{{ totalVehicles }}</h3>
           </article>
           <article class="card">
             <span
-              ><span v-html="getStatusIcon('Available')"></span> Available</span
+              ><span v-html="getStatusIcon('Available')"></span>{{ $t('available') }}</span
             >
             <h3>{{ availableVehicles }}</h3>
           </article>
           <article class="card">
             <span
-              ><span v-html="getStatusIcon('Maintenance')"></span>
-              Maintenance</span
+              ><span v-html="getStatusIcon('Maintenance')"></span>{{ $t('maintenance') }}</span
             >
             <h3>{{ maintenanceVehicles }}</h3>
           </article>
           <article class="card">
-            <span>Potential/Day</span>
+            <span>{{ $t('potentialDay') }}</span>
             <h3>${{ potentialPerDay }}</h3>
           </article>
         </div>
@@ -1679,11 +1647,11 @@ const iconSvg = (name) => {
             placeholder="Search vehicle name or model or branch"
           />
           <select v-model="categoryFilter">
-            <option>All Categories</option>
+            <option>{{ $t('allCategories') }}</option>
             <option v-for="c in categories" :key="c">{{ c }}</option>
           </select>
           <select v-model="statusFilter">
-            <option>All Status</option>
+            <option>{{ $t('allStatus') }}</option>
             <option v-for="s in statuses" :key="s">{{ s }}</option>
           </select>
         </div>
@@ -1691,15 +1659,15 @@ const iconSvg = (name) => {
           <table>
             <thead>
               <tr>
-                <th>Image</th>
-                <th>Vehicle</th>
-                <th>Category</th>
-                <th>Plate Number</th>
-                <th>Stock</th>
-                <th>Price/Day</th>
-                <th>Status</th>
-                <th>Created At</th>
-                <th>Actions</th>
+                <th>{{ $t('image') }}</th>
+                <th>{{ $t('vehicle') }}</th>
+                <th>{{ $t('category') }}</th>
+                <th>{{ $t('plateNumber') }}</th>
+                <th>{{ $t('stock') }}</th>
+                <th>{{ $t('pricePerDay') }}</th>
+                <th>{{ $t('status') }}</th>
+                <th>{{ $t('createdAt') }}</th>
+                <th>{{ $t('actions') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -1778,7 +1746,7 @@ const iconSvg = (name) => {
                 </td>
               </tr>
               <tr v-if="filteredVehicles.length === 0">
-                <td colspan="8" class="empty">No vehicles yet.</td>
+                <td colspan="8" class="empty">{{ $t('noVehiclesYet') }}</td>
               </tr>
             </tbody>
           </table>
@@ -1820,16 +1788,16 @@ const iconSvg = (name) => {
           <div class="add-vehicle-left">
             <!-- Vehicle Information -->
             <div class="form-card">
-              <h3 class="card-title">Vehicle Identification</h3>
+              <h3 class="card-title">{{ $t('vehicleIdentification') }}</h3>
               <div class="form-group">
-                <label>Vehicle Name</label>
+                <label>{{ $t('vehicleName') }}</label>
                 <input
                   v-model="form.name"
                   placeholder="e.g. 2023 Luxury Sedan White"
                 />
               </div>
               <div class="form-group">
-                  <label>Total Vehicles</label>
+                  <label>{{ $t('totalVehicles') }}</label>
                   <input
                     v-model="form.totalVehiclesInput"
                     type="number"
@@ -1839,16 +1807,16 @@ const iconSvg = (name) => {
                 </div>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Category</label>
+                  <label>{{ $t('category') }}</label>
                   <select v-model="form.type">
-                    <option value="" disabled>Select Category</option>
-                    <option>Car</option>
-                    <option>Moto</option>
-                    <option>Bike</option>
+                    <option value="" disabled>{{ $t('selectCategory') }}</option>
+                    <option>{{ $t('car') }}</option>
+                    <option>{{ $t('moto') }}</option>
+                    <option>{{ $t('bike') }}</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>Brand</label>
+                  <label>{{ $t('brand') }}</label>
                   <input
                     v-model="form.brand"
                     placeholder="e.g. Toyota, Honda"
@@ -1858,21 +1826,21 @@ const iconSvg = (name) => {
             </div>
             <!-- Vehicle Information -->
             <div class="form-card" v-if="form.category !== 'Bike'">
-              <h3 class="card-title">Booking</h3>
+              <h3 class="card-title">{{ $t('booking') }}</h3>
               <div class="form-group">
 
-                  <label>Rider Details</label>
+                  <label>{{ $t('riderDetails') }}</label>
                   <select v-model="form.riderDetails">
-                    <option value="" disabled>Select Rider Details</option>
-                    <option>1 Rider</option>
-                    <option>2 Riders</option>
-                    <option>3 Riders</option>
-                    <option>4+ Riders</option>
+                    <option value="" disabled>{{ $t('selectRiderDetails') }}</option>
+                    <option>{{ $t('oneRider') }}</option>
+                    <option>{{ $t('twoRiders') }}</option>
+                    <option>{{ $t('threeRiders') }}</option>
+                    <option>{{ $t('fourRiders') }}</option>
                   </select>
               </div>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Insurance Fee ($)</label>
+                  <label>{{ $t('insuranceFee') }}</label>
                   <input
                     v-model="form.insuranceFee"
                     type="number"
@@ -1880,7 +1848,7 @@ const iconSvg = (name) => {
                   />
                 </div>
                 <div class="form-group">
-                  <label>Taxes & Fees ($)</label>
+                  <label>{{ $t('taxesFees') }}</label>
                   <input
                     v-model="form.taxesFee"
                     type="number"
@@ -1892,33 +1860,33 @@ const iconSvg = (name) => {
 
             <!-- Description -->
             <div class="form-card">
-              <h3 class="card-title">Description</h3>
+              <h3 class="card-title">{{ $t('shopDescription') }}</h3>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Plate Number</label>
+                  <label>{{ $t('plateNumber') }}</label>
                   <input v-model="form.plate" placeholder="e.g. ABC-1234" />
                 </div>
                 <div class="form-group" v-if="form.category !== 'Bike'">
-                  <label>Fuel Type</label>
+                  <label>{{ $t('fuelType') }}</label>
                   <select v-model="form.fuel">
-                    <option value="" disabled>Select Fuel</option>
-                    <option>Petrol</option>
-                    <option>Diesel</option>
-                    <option>Electric</option>
-                    <option>Hybrid</option>
+                    <option value="" disabled>{{ $t('selectFuel') }}</option>
+                    <option>{{ $t('petrol') }}</option>
+                    <option>{{ $t('diesel') }}</option>
+                    <option>{{ $t('electric') }}</option>
+                    <option>{{ $t('hybrid') }}</option>
                   </select>
                 </div>
                 <div class="form-group" v-if="form.category !== 'Bike'">
-                  <label>Transmission</label>
+                  <label>{{ $t('transmission') }}</label>
                   <select v-model="form.transmission">
-                    <option value="" disabled>Select Transmission</option>
-                    <option>Automatic</option>
-                    <option>Manual</option>
+                    <option value="" disabled>{{ $t('selectTransmission') }}</option>
+                    <option>{{ $t('automatic') }}</option>
+                    <option>{{ $t('manual') }}</option>
                   </select>
                 </div>
               </div>
               <div class="form-group mt-12">
-                <label>Vehicle Description</label>
+                <label>{{ $t('vehicleDescription') }}</label>
                 <textarea
                   v-model="form.description"
                   placeholder="Provide a detailed description of the vehicle features..."
@@ -1931,10 +1899,10 @@ const iconSvg = (name) => {
           <div class="add-vehicle-right">
             <!-- Pricing & Status -->
             <div class="form-card">
-              <h3 class="card-title">Pricing & Status</h3>
+              <h3 class="card-title">{{ $t('pricingAndStatus') }}</h3>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Price per Day ($)</label>
+                  <label>{{ $t('pricePerDayLabel') }}</label>
                   <input
                     v-model="form.price"
                     type="number"
@@ -1942,23 +1910,23 @@ const iconSvg = (name) => {
                   />
                 </div>
                 <div class="form-group">
-                  <label>Status</label>
+                  <label>{{ $t('status') }}</label>
                   <select v-model="form.status">
-                    <option>Available</option>
-                    <option>Rented</option>
-                    <option>Maintenance</option>
+                    <option>{{ $t('available') }}</option>
+                    <option>{{ $t('rented') }}</option>
+                    <option>{{ $t('maintenance') }}</option>
                   </select>
                 </div>
               </div>
               <div class="form-group mt-12">
-                <label>Shop Name</label>
+                <label>{{ $t('shopName3') }}</label>
                 <input v-model="form.shop" class="shop-name-input" readonly />
               </div>
             </div>
 
             <!-- Vehicle Photos -->
             <div class="form-card">
-              <h3 class="card-title">Vehicle Photos</h3>
+              <h3 class="card-title">{{ $t('vehiclePhotos') }}</h3>
               <div
                 class="photo-upload-area"
                 @click="$refs.photoInput && $refs.photoInput.click()"
@@ -1984,13 +1952,13 @@ const iconSvg = (name) => {
                     <polyline points="7 10 12 5 17 10"></polyline>
                     <line x1="12" y1="5" x2="12" y2="16"></line>
                   </svg>
-                  <p>Click to upload or drag and drop</p>
-                  <span>PNG, JPG up to 10MB</span>
+                  <p>{{ $t('clickToUpload') }}</p>
+                  <span>{{ $t('uploadHint') }}</span>
                 </div>
                 <div v-else class="photo-preview">
                   <img :src="form.image" alt="Vehicle preview" />
                   <div class="photo-overlay">
-                    <span>Click to change</span>
+                    <span>{{ $t('clickToChange') }}</span>
                   </div>
                 </div>
               </div>
@@ -2011,9 +1979,7 @@ const iconSvg = (name) => {
             >
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-            Cancel
-          </button>
+            </svg>{{ $t('cancel') }}</button>
           <button class="store-btn" @click="saveVehicle">
             <svg
               viewBox="0 0 24 24"
@@ -2066,22 +2032,13 @@ const iconSvg = (name) => {
             <line x1="14" y1="11" x2="14" y2="17"></line>
           </svg>
         </div>
-        <h3 class="delete-title">Delete Vehicle</h3>
-        <p class="delete-message">
-          Are you sure you want to delete this vehicle?
-        </p>
+        <h3 class="delete-title">{{ $t('deleteVehicle') }}</h3>
+        <p class="delete-message">{{ $t('deleteVehicleConfirm') }}</p>
         <p class="delete-vehicle-name">{{ deleteVehicleName }}</p>
-        <p class="delete-warning">
-          This action cannot be undone. All associated data (maintenance
-          history, documents, photos, assignments) will be permanently removed.
-        </p>
+        <p class="delete-warning">{{ $t('thisActionCannotBeUndoneAllAssociatedDataMaintenanceHistoryDocumentsPhotosAssignmentsWillBePermanentlyRemoved') }}</p>
         <div class="delete-actions">
-          <button class="delete-cancel-btn" @click="cancelDelete">
-            Cancel
-          </button>
-          <button class="delete-confirm-btn" @click="removeVehicle">
-            Delete
-          </button>
+          <button class="delete-cancel-btn" @click="cancelDelete">{{ $t('cancel') }}</button>
+          <button class="delete-confirm-btn" @click="removeVehicle">{{ $t('delete') }}</button>
         </div>
       </div>
     </div>
@@ -2107,16 +2064,14 @@ const iconSvg = (name) => {
             <line x1="21" y1="12" x2="9" y2="12"></line>
           </svg>
         </div>
-        <h3 class="delete-title">Logout</h3>
-        <p class="delete-message">Are you sure you want to logout?</p>
+        <h3 class="delete-title">{{ $t('logout') }}</h3>
+        <p class="delete-message">{{ $t('confirmLogout') }}</p>
         <div class="delete-actions">
-          <button class="delete-cancel-btn" @click="cancelLogout">No</button>
+          <button class="delete-cancel-btn" @click="cancelLogout">{{ $t('no') }}</button>
           <button
             class="delete-confirm-btn logout-confirm-btn"
             @click="confirmLogout"
-          >
-            Yes
-          </button>
+          >{{ $t('yes') }}</button>
         </div>
       </div>
     </div>
@@ -2131,7 +2086,7 @@ const iconSvg = (name) => {
         <div class="shop-modal-header">
           <div>
             <h2>{{ shop ? "Edit Shop" : "Create New Shop" }}</h2>
-            <p class="shop-modal-sub">Add a new rental shop (pending approval by default).</p>
+            <p class="shop-modal-sub">{{ $t('addANewRentalShopPendingApprovalByDefault') }}</p>
           </div>
           <button class="close-btn" @click="shopModal = false">
             <svg
@@ -2184,7 +2139,7 @@ const iconSvg = (name) => {
                 </p>
               </div>
               <div class="shop-preview-status">
-                <span>Status</span>
+                <span>{{ $t('status') }}</span>
                 <strong>{{ shop?.status || "Draft" }}</strong>
               </div>
             </article>
@@ -2193,8 +2148,8 @@ const iconSvg = (name) => {
             <div class="upload-card">
               <div class="upload-card__header">
                 <div>
-                  <h3>Upload shop cover</h3>
-                  <p>Drop an image or click to browse files.</p>
+                  <h3>{{ $t('uploadShopCover') }}</h3>
+                  <p>{{ $t('dropAnImageOrClickToBrowseFiles2') }}</p>
                 </div>
               </div>
               <input
@@ -2217,7 +2172,7 @@ const iconSvg = (name) => {
                     :src="shopImagePreview || shopForm.img_url"
                     alt="Shop preview"
                   />
-                  <span>Click to change</span>
+                  <span>{{ $t('clickToChange') }}</span>
                 </div>
                 <div v-else class="upload-placeholder">
                   <svg
@@ -2232,8 +2187,8 @@ const iconSvg = (name) => {
                     <path d="M9 15l7-8 7 8"></path>
                     <path d="M26 22v3a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-3"></path>
                   </svg>
-                  <p>Drop an image or click to browse files</p>
-                  <span>PNG, JPG or WebP up to 5MB</span>
+                  <p>{{ $t('dropAnImageOrClickToBrowseFiles') }}</p>
+                  <span>{{ $t('pngJpgOrWebpUpTo5mb') }}</span>
                 </div>
               </div>
             </div>
@@ -2241,14 +2196,14 @@ const iconSvg = (name) => {
             <div class="form-card">
               <div class="form-card__header">
                 <div>
-                  <h3>Shop Information</h3>
-                  <p>Fill in the key details to publish your shop listing quickly.</p>
+                  <h3>{{ $t('shopInformation') }}</h3>
+                  <p>{{ $t('fillInTheKeyDetailsToPublishYourShopListingQuickly') }}</p>
                 </div>
               </div>
               <div class="form-card__body">
                 <div class="field-grid two-column">
                   <label class="field">
-                    <span>Shop Name</span>
+                    <span>{{ $t('shopName3') }}</span>
                     <input
                       class="rounded-input"
                       v-model="shopForm.name"
@@ -2257,7 +2212,7 @@ const iconSvg = (name) => {
                     />
                   </label>
                   <label class="field">
-                    <span>Address</span>
+                    <span>{{ $t('address') }}</span>
                     <input
                       class="rounded-input"
                       v-model="shopForm.address"
@@ -2268,12 +2223,12 @@ const iconSvg = (name) => {
                 </div>
                 <div class="field-grid two-column">
                   <label class="field">
-                    <span>Province / City</span>
+                    <span>{{ $t('provinceCity2') }}</span>
                     <select
                       class="rounded-input"
                       v-model="shopForm.city_id"
                     >
-                      <option value="" disabled>Select province</option>
+                      <option value="" disabled>{{ $t('selectProvince2') }}</option>
                       <option
                         v-for="city in cities"
                         :key="city.id"
@@ -2284,7 +2239,7 @@ const iconSvg = (name) => {
                     </select>
                   </label>
                   <label class="field">
-                    <span>Phone</span>
+                    <span>{{ $t('shopPhone') }}</span>
                     <input
                       class="rounded-input"
                       v-model="shopForm.phone"
@@ -2294,7 +2249,7 @@ const iconSvg = (name) => {
                   </label>
                 </div>
                 <label class="field">
-                  <span>Area / Location hint</span>
+                  <span>{{ $t('areaLocationHint') }}</span>
                   <input
                     class="rounded-input"
                     v-model="shopForm.location"
@@ -2303,7 +2258,7 @@ const iconSvg = (name) => {
                   />
                 </label>
                 <label class="field full">
-                  <span>Google Map URL</span>
+                  <span>{{ $t('googleMapUrl') }}</span>
                   <input
                     class="rounded-input"
                     v-model="shopForm.map_url"
@@ -2312,7 +2267,7 @@ const iconSvg = (name) => {
                   />
                 </label>
                 <label class="field">
-                  <span>Description</span>
+                  <span>{{ $t('shopDescription') }}</span>
                   <textarea
                     class="rounded-input"
                     v-model="shopForm.description"
@@ -2326,9 +2281,7 @@ const iconSvg = (name) => {
         </div>
         </div>
         <div class="shop-modal-footer">
-          <button class="cancel-btn-modal" @click="shopModal = false">
-            Cancel
-          </button>
+          <button class="cancel-btn-modal" @click="shopModal = false">{{ $t('cancel') }}</button>
           <button
             class="save-shop-btn"
             @click="saveShop"
@@ -4921,47 +4874,6 @@ textarea {
 
 .page.sidebar-collapsed .sidebar-profile {
   display: none;
-}
-
-/* Header Language Toggle for Shop */
-.header-lang-toggle-shop {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  background: rgba(59, 130, 246, 0.08);
-  border-radius: 8px;
-  border: 1px solid rgba(59, 130, 246, 0.12);
-}
-
-.hl-btn-shop {
-  background: transparent;
-  border: none;
-  padding: 5px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.78rem;
-  color: #64748b;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  letter-spacing: 0.06em;
-}
-
-.hl-btn-shop:hover {
-  color: #2563eb;
-}
-
-.hl-btn-shop.active {
-  background: #ffffff;
-  color: #2563eb;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.hl-sep-shop {
-  color: #cbd5e1;
-  font-size: 0.7rem;
-  user-select: none;
 }
 
 .sidebar-footer {

@@ -302,21 +302,21 @@ onMounted(async () => {
       <div class="detail-back-bar">
         <button class="btn-back" @click="goBack">
           <i class="fa-solid fa-arrow-left"></i>
-          <span>Back</span>
+          <span>{{ $t('back') }}</span>
         </button>
       </div>
 
       <!-- ── Loading ── -->
       <div v-if="loading" class="state-box">
         <div class="loading-spinner" />
-        <p>Loading vehicle details...</p>
+        <p>{{ $t('loadingVehicleDetails') }}</p>
       </div>
 
       <!-- ── Error ── -->
       <div v-else-if="error" class="state-box error-state">
         <i class="fa-solid fa-triangle-exclamation"></i>
         <p>{{ error }}</p>
-        <button class="btn-primary" @click="goBack">Go Back</button>
+        <button class="btn-primary" @click="goBack">{{ $t('goBack') }}</button>
       </div>
 
       <!-- ── Main Content ── -->
@@ -363,8 +363,7 @@ onMounted(async () => {
                 ></iframe>
               </div>
               <a v-if="googleMapsUrl" :href="googleMapsUrl" target="_blank" rel="noopener" class="map-directions-link">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in Google Maps
-              </a>
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>{{ $t('openInGoogleMaps') }}</a>
             </div>
           </div>
 
@@ -384,7 +383,7 @@ onMounted(async () => {
             <!-- Price Display -->
             <div class="price-block">
               <span class="price-value">${{ dailyRate }}</span>
-              <span class="price-unit">/ day</span>
+              <span class="price-unit">{{ $t('day2') }}</span>
             </div>
 
             <!-- Shop Info Bar -->
@@ -439,11 +438,11 @@ onMounted(async () => {
 
             <!-- Quick Booking Pane -->
             <div class="booking-pane">
-              <h3 class="pane-title">Quick Booking</h3>
+              <h3 class="pane-title">{{ $t('quickBooking') }}</h3>
 
               <div class="date-row">
                 <div class="date-field">
-                  <label>Pick-up</label>
+                  <label>{{ $t('pickUp') }}</label>
                   <input
                     type="date"
                     v-model="pickupDate"
@@ -455,7 +454,7 @@ onMounted(async () => {
                   <i class="fa-solid fa-arrow-right"></i>
                 </div>
                 <div class="date-field">
-                  <label>Drop-off</label>
+                  <label>{{ $t('dropOff') }}</label>
                   <input
                     type="date"
                     v-model="dropoffDate"
@@ -481,15 +480,15 @@ onMounted(async () => {
                   <span>${{ subtotal.toFixed(2) }}</span>
                 </div>
                 <div v-if="insurance > 0" class="breakdown-row">
-                  <span>Insurance</span>
+                  <span>{{ $t('insurance3') }}</span>
                   <span>${{ insurance.toFixed(2) }}</span>
                 </div>
                 <div class="breakdown-row total-row">
-                  <span>Total</span>
+                  <span>{{ $t('total3') }}</span>
                   <span class="total-amount">${{ totalAmount.toFixed(2) }}</span>
                 </div>
               </div>
-              <p v-else class="select-dates-hint">Select pickup & drop-off dates to see price</p>
+              <p v-else class="select-dates-hint">{{ $t('selectPickupDropOffDatesToSeePrice') }}</p>
 
               <!-- CTA Buttons -->
               <div class="cta-buttons">
@@ -503,26 +502,26 @@ onMounted(async () => {
             <!-- Specs Grid -->
             <div class="specs-grid">
               <div v-if="vehicle.plate_number" class="spec-item">
-                <span class="spec-label">Plate</span>
+                <span class="spec-label">{{ $t('plate') }}</span>
                 <span class="spec-value">{{ vehicle.plate_number }}</span>
               </div>
               <div v-if="vehicle.total_vehicles" class="spec-item">
-                <span class="spec-label">Available</span>
+                <span class="spec-label">{{ $t('available') }}</span>
                 <span class="spec-value">{{ vehicle.total_vehicles }} unit{{ vehicle.total_vehicles > 1 ? 's' : '' }}</span>
               </div>
               <div v-if="vehicle.rider_details" class="spec-item">
-                <span class="spec-label">Riders</span>
+                <span class="spec-label">{{ $t('riders') }}</span>
                 <span class="spec-value">{{ vehicle.rider_details }}</span>
               </div>
               <div v-if="vehicle.taxes_fee" class="spec-item">
-                <span class="spec-label">Taxes fee</span>
+                <span class="spec-label">{{ $t('taxesFee') }}</span>
                 <span class="spec-value">${{ Number(vehicle.taxes_fee).toFixed(2) }}</span>
               </div>
             </div>
 
             <!-- Description -->
             <div v-if="vehicle.description" class="description-block">
-              <h3>About this vehicle</h3>
+              <h3>{{ $t('aboutVehicle') }}</h3>
               <p>{{ vehicle.description }}</p>
             </div>
 
@@ -530,9 +529,7 @@ onMounted(async () => {
             <div class="reviews-section">
               <div class="reviews-header">
                 <h3>
-                  <i class="fa-solid fa-star" style="color: #f59e0b;"></i>
-                  Reviews
-                </h3>
+                  <i class="fa-solid fa-star" style="color: #f59e0b;"></i>{{ $t('reviews') }}</h3>
                 <span v-if="!ratingsLoading && totalRatings > 0" class="reviews-summary-badge">
                   {{ avgRating.toFixed(1) }} · {{ totalRatings }} review{{ totalRatings > 1 ? 's' : '' }}
                 </span>
@@ -555,13 +552,13 @@ onMounted(async () => {
               <!-- Loading -->
               <div v-if="ratingsLoading" class="reviews-loading">
                 <div class="loading-spinner-sm" />
-                <span>Loading reviews...</span>
+                <span>{{ $t('loadingReviews') }}</span>
               </div>
 
               <!-- No reviews -->
               <div v-else-if="totalRatings === 0" class="reviews-empty">
                 <i class="fa-regular fa-message"></i>
-                <p>No reviews yet for this vehicle.</p>
+                <p>{{ $t('noReviewsYetForThisVehicle') }}</p>
               </div>
 
               <!-- Review List -->
@@ -606,11 +603,11 @@ onMounted(async () => {
       <div class="related-section" v-if="!loading && vehicle">
         <template v-if="relatedLoading">
           <div class="related-header">
-            <h3>More from this shop</h3>
+            <h3>{{ $t('moreFromShop') }}</h3>
           </div>
           <div class="related-loading">
             <div class="loading-spinner-sm" />
-            <span>Loading similar vehicles...</span>
+            <span>{{ $t('loadingSimilarVehicles') }}</span>
           </div>
         </template>
         <template v-else-if="relatedVehicles.length > 0">

@@ -14,7 +14,7 @@
         <div class="section-header">
           <div class="section-badge">
             <i class="fa-solid fa-car"></i>
-            <span>AVAILABLE VEHICLES</span>
+            <span>{{ $t('availableVehicles2') }}</span>
           </div>
 
            <h2>{{ displayedVehicles.length }} vehicles found in {{ selectedShopName || location }}</h2>
@@ -33,7 +33,7 @@
           </div>
         </div>
 
-        <p v-if="isLoading" class="action-message">Loading vehicles from database...</p>
+        <p v-if="isLoading" class="action-message">{{ $t('loadingVehiclesFromDatabase') }}</p>
         <p v-else-if="loadingError" class="action-message">{{ loadingError }}</p>
         <p v-if="actionMessage" class="action-message">{{ actionMessage }}</p>
 
@@ -41,7 +41,7 @@
           <article class="promo-card" v-for="vehicle in displayedVehicles" :key="vehicle.id">
             <div class="promo-media">
               <img :src="getVehicleImage(vehicle)" :alt="getVehicleName(vehicle)" />
-              <span v-if="vehicle.bestValue" class="promo-ribbon">BEST VALUE</span>
+              <span v-if="vehicle.bestValue" class="promo-ribbon">{{ $t('bestValue') }}</span>
               <span class="promo-type" @click="toggleFavorite(vehicle.id, getVehicleName(vehicle))" style="cursor: pointer;">
                 <i :class="favoriteIds.has(vehicle.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'" aria-hidden="true"></i>
               </span>
@@ -70,9 +70,9 @@
               <div class="promo-meta">
                 <div class="promo-value">
                   <strong>${{ vehicle.price_per_day }}</strong>
-                  <span>per day</span>
+                  <span>{{ $t('perDay') }}</span>
                 </div>
-                <button class="book-btn" @click="bookNow(vehicle)">Book Now</button>
+                <button class="book-btn" @click="bookNow(vehicle)">{{ $t('bookNow') }}</button>
               </div>
             </div>
           </article>
@@ -83,12 +83,12 @@
       <section class="map-section">
         <div class="map">
             <div class="map-controls">
-              <button class="btn-reset open-map-btn" :class="{ active: mapMode === 'satellite' }" @click="mapMode = 'satellite'">Satellite</button>
-              <button class="btn-reset open-map-btn" :class="{ active: mapMode === 'road' }" @click="mapMode = 'road'">Roadmap</button>
-              <button class="btn-reset open-map-btn" :class="{ active: mapMode === 'route' }" @click="mapMode = 'route'">Show Route</button>
-              <button class="btn-reset open-map-btn secondary" @click="useMyLocation">Use My Location</button>
+              <button class="btn-reset open-map-btn" :class="{ active: mapMode === 'satellite' }" @click="mapMode = 'satellite'">{{ $t('satellite') }}</button>
+              <button class="btn-reset open-map-btn" :class="{ active: mapMode === 'road' }" @click="mapMode = 'road'">{{ $t('roadmap') }}</button>
+              <button class="btn-reset open-map-btn" :class="{ active: mapMode === 'route' }" @click="mapMode = 'route'">{{ $t('showRoute') }}</button>
+              <button class="btn-reset open-map-btn secondary" @click="useMyLocation">{{ $t('useMyLocation') }}</button>
               <div class="distance-info" v-if="distanceKm !== null">
-                <strong>Distance:</strong> {{ distanceKm.toFixed(2) }} km
+                <strong>{{ $t('distance2') }}</strong> {{ distanceKm.toFixed(2) }} km
               </div>
             </div>
 
@@ -102,8 +102,8 @@
             ></iframe>
 
             <div class="map-actions">
-              <button class="btn-reset open-map-btn" @click="openMainLocation">Open in Google Maps</button>
-              <button v-if="selectedShopLocationLink" class="btn-reset open-map-btn secondary" @click="openCustomLocation">Open Saved Location</button>
+              <button class="btn-reset open-map-btn" @click="openMainLocation">{{ $t('openInGoogleMaps') }}</button>
+              <button v-if="selectedShopLocationLink" class="btn-reset open-map-btn secondary" @click="openCustomLocation">{{ $t('openSavedLocation') }}</button>
             </div>
         </div>
       </section>

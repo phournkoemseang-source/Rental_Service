@@ -42,18 +42,7 @@
             <h3 class="card-title">{{ $t('generalPreferences') }}</h3>
             <div class="preference-section">
               <label class="preference-label">{{ $t('language') }}</label>
-              <div class="toggle-group">
-                <button 
-                  class="toggle-btn" 
-                  :class="{ active: activeLanguage === 'English' }"
-                  @click="handleLanguageChange('English')"
-                >English</button>
-                <button 
-                  class="toggle-btn" 
-                  :class="{ active: activeLanguage === 'Khmer' }"
-                  @click="handleLanguageChange('Khmer')"
-                >Khmer</button>
-              </div>
+              <LanguageSwitcher variant="wide" />
             </div>
             <div class="preference-section">
               <label class="preference-label">{{ $t('displayTheme') }}</label>
@@ -146,7 +135,7 @@
           <div class="status-content">
             <span class="status-label">{{ $t('activeSessions') }}</span>
             <span class="status-value">01 {{ $t('device') }}</span>
-            <span class="status-detail">Windows</span>
+            <span class="status-detail">{{ $t('windows') }}</span>
           </div>
         </div>
 
@@ -176,17 +165,13 @@
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { applyAutoTranslate } from '@/services/autoTranslate'
+import { useRouter } from 'vue-router'
 import '@/css/Admin_setting.css'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
-const { locale } = useI18n()
 const router = useRouter()
-const route = useRoute()
 
 const activeTab = ref('profile')
-const activeLanguage = ref('English')
 const activeTheme = ref(localStorage.getItem('admin_theme') || 'Light')
 const currentDateTime = ref('')
 const userUsagePercent = ref(0)
@@ -455,26 +440,7 @@ const getCurrentDateTime = () => {
   return `${date} ${time}`
 }
 
-// Check localStorage to determine initial language and set i18n
-// Set initial language based on saved preference
-const setInitialLanguage = () => {
-  // First check localStorage for saved language
-  const savedLang = localStorage.getItem('app_language')
-  if (savedLang === 'kh') {
-    activeLanguage.value = 'Khmer'
-    locale.value = 'kh'
-  } else if (savedLang === 'en') {
-    activeLanguage.value = 'English'
-    locale.value = 'en'
-  } else {
-    // Default to English
-    activeLanguage.value = 'English'
-    locale.value = 'en'
-  }
-}
-
 onMounted(() => {
-  setInitialLanguage()
   currentDateTime.value = getCurrentDateTime()
   fetchAdminStats()
   fetchUserProfile()
@@ -503,11 +469,6 @@ watch(activeTheme, (newTheme) => {
   }
 })
 
-// Watch for route changes
-watch(() => route.path, () => {
-  setInitialLanguage()
-})
-
 const goToUpdateProfile = () => {
   router.push('/admin/profile')
 }
@@ -525,22 +486,6 @@ const menuItems = [
   { id: 'reports', label: 'Reports', icon: 'file-text' },
   { id: 'settings', label: 'Settings', icon: 'settings', active: true }
 ]
-
-const handleLanguageChange = (lang) => {
-  // Use 'en' or 'kh' for the i18n function
-  const i18nLang = lang === 'English' ? 'en' : 'kh'
-  
-  // Update button state
-  activeLanguage.value = lang
-  
-  // Set locale in i18n
-  locale.value = i18nLang
-  localStorage.setItem('app_language', i18nLang)
-  document.documentElement.lang = i18nLang
-  
-  // Trigger Google Translate for dynamic content
-  applyAutoTranslate(i18nLang)
-}
 
 const setTheme = (theme) => {
   console.log('Setting theme to:', theme)

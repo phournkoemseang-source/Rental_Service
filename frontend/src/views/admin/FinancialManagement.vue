@@ -617,7 +617,7 @@ onMounted(async () => {
 <template>
     <section class="admin-page financial-page">
       <header class="page-head clean-head">
-        <h1 class="page-title">Admin Process Payouts</h1>
+        <h1 class="page-title">{{ $t('adminProcessPayouts') }}</h1>
       </header>
 
     <!-- ─── Income vs Expenses Summary ─────────────────────────── -->
@@ -653,7 +653,7 @@ onMounted(async () => {
       <section class="card stat-wide">
         <div class="wide-stat">
           <div>
-            <div class="stat-label">PENDING PAYOUT AMOUNT</div>
+            <div class="stat-label">{{ $t('pendingPayoutAmount') }}</div>
             <div class="wide-value"><CountUp :value="Number(summary.pendingAmount || 0)" :formatter="fmtMoney" /></div>
           </div>
           <div class="stat-icon tint-red" aria-hidden="true"><i class="fa-solid fa-dollar-sign"></i></div>
@@ -663,7 +663,7 @@ onMounted(async () => {
       <section class="card stat-wide">
         <div class="wide-stat">
           <div>
-            <div class="stat-label">SHOPS TO PAY</div>
+            <div class="stat-label">{{ $t('shopsToPay') }}</div>
             <div class="wide-value"><CountUp :value="Number(summary.shopsToPay || 0)" /></div>
           </div>
           <div class="stat-icon tint-slate" aria-hidden="true"><i class="fa-regular fa-building"></i></div>
@@ -673,7 +673,7 @@ onMounted(async () => {
       <section class="card stat-wide">
         <div class="wide-stat">
           <div>
-            <div class="stat-label">LAST PAYOUT DATE</div>
+            <div class="stat-label">{{ $t('lastPayoutDate') }}</div>
             <div class="wide-value">{{ lastPayoutDate }}</div>
           </div>
           <div class="stat-icon tint-green" aria-hidden="true"><i class="fa-regular fa-calendar"></i></div>
@@ -683,7 +683,7 @@ onMounted(async () => {
         <div class="financial-grid">
       <section class="card chart-card span-2">
         <div class="card-head chart-head">
-          <h2 class="card-title">Total Earnings & Net Payouts</h2>
+          <h2 class="card-title">{{ $t('totalEarningsNetPayouts') }}</h2>
           <div class="card-chip">{{ selectedCategoryLabel }}</div>
         </div>
 
@@ -762,14 +762,14 @@ onMounted(async () => {
         </svg>
 
         <div class="legend-row">
-          <span class="legend-chip"><span class="dot earnings"></span>Total Earnings</span>
-          <span class="legend-chip"><span class="dot commission"></span>Platform Commission</span>
-          <span class="legend-chip"><span class="dot net"></span>Net Payout</span>
+          <span class="legend-chip"><span class="dot earnings"></span>{{ $t('totalEarnings') }}</span>
+          <span class="legend-chip"><span class="dot commission"></span>{{ $t('platformCommission') }}</span>
+          <span class="legend-chip"><span class="dot net"></span>{{ $t('netPayout') }}</span>
         </div>
       </section>
       <section class="card chart-card">
         <div class="card-head chart-head">
-          <h2 class="card-title">Payout Distribution</h2>
+          <h2 class="card-title">{{ $t('payoutDistribution') }}</h2>
         </div>
                 <div class="donut-wrap" @mouseleave="hoveredDonutCategory = ''">
           <svg class="chart-svg" viewBox="0 0 220 220">
@@ -822,7 +822,7 @@ onMounted(async () => {
 
       <section class="card chart-card span-2">
         <div class="card-head chart-head">
-          <h2 class="card-title">Pending Payout Trend</h2>
+          <h2 class="card-title">{{ $t('pendingPayoutTrend') }}</h2>
           <div class="card-chip">{{ selectedCategoryLabel }}</div>
         </div>
 
@@ -887,7 +887,7 @@ onMounted(async () => {
 
       <section class="card chart-card">
         <div class="card-head chart-head">
-          <h2 class="card-title">Payout Status</h2>
+          <h2 class="card-title">{{ $t('payoutStatus') }}</h2>
         </div>
 
         <div class="status-wrap">
@@ -923,18 +923,18 @@ onMounted(async () => {
 
     <section class="card">
       <div class="card-head table-head-clean">
-        <h2 class="card-title">Pending Payouts List</h2>
+        <h2 class="card-title">{{ $t('pendingPayoutsList') }}</h2>
         <div class="filters">
           <button type="button" class="btn-export" @click="exportCSV" title="Download CSV report">
             <i class="fa-solid fa-download" aria-hidden="true"></i>
-            <span>Export CSV</span>
+            <span>{{ $t('exportCsv') }}</span>
           </button>
           <label class="chip-select" title="Choose day or month">
             <i class="fa-regular fa-calendar" aria-hidden="true"></i>
             <select v-model="periodMode" aria-label="Choose period mode">
-              <option value="day">Per Day (Today)</option>
-              <option value="month">Per Month (This Month)</option>
-              <option value="all">All time</option>
+              <option value="day">{{ $t('perDayToday') }}</option>
+              <option value="month">{{ $t('perMonthThisMonth') }}</option>
+              <option value="all">{{ $t('allTime') }}</option>
             </select>
             <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
           </label>
@@ -953,11 +953,11 @@ onMounted(async () => {
         <table class="data-table">
           <thead>
             <tr>
-              <th>SHOP NAME</th>
-              <th class="num">TOTAL EARNINGS</th>
-              <th class="num">PLATFORM COMMISSION</th>
-              <th class="num">NET PAYOUT</th>
-              <th class="actions">ACTION</th>
+              <th>{{ $t('shopName2') }}</th>
+              <th class="num">{{ $t('totalEarnings2') }}</th>
+              <th class="num">{{ $t('platformCommission2') }}</th>
+              <th class="num">{{ $t('netPayout2') }}</th>
+              <th class="actions">{{ $t('action') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -987,7 +987,7 @@ onMounted(async () => {
               </td>
             </tr>
             <tr v-if="!pagedRows.length">
-              <td colspan="5" class="table-empty">No shops found for this filter.</td>
+              <td colspan="5" class="table-empty">{{ $t('noShopsFoundForThisFilter') }}</td>
             </tr>
           </tbody>
         </table>

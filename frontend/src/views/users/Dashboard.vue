@@ -953,8 +953,7 @@ onMounted(async () => {
                   </span>
                   <div class="vehicle-card-hover-overlay">
                     <button class="hover-book-btn" @click.stop="goToVehicle(v)">
-                      <i class="fa-solid fa-eye"></i> View Details
-                    </button>
+                      <i class="fa-solid fa-eye"></i>{{ $t('viewDetails') }}</button>
                   </div>
                 </div>
                 <div class="vehicle-card-body">

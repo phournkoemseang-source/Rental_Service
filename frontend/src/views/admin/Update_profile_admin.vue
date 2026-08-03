@@ -2,8 +2,8 @@
   <section class="admin-page">
     <header class="page-head">
       <div>
-        <h1 class="page-title">Update Profile</h1>
-        <p class="page-subtitle">Manage your personal information and public profile details.</p>
+        <h1 class="page-title">{{ $t('updateProfile') }}</h1>
+        <p class="page-subtitle">{{ $t('manageYourPersonalInformationAndPublicProfileDetails') }}</p>
       </div>
     </header>
 
@@ -34,32 +34,28 @@
                 @change="onFileChange"
               />
             </div>
-            <div class="profile-photo-label">Your Photo</div>
-            <div class="profile-photo-hint">Recommended: 400x400px (JPG, PNG)</div>
+            <div class="profile-photo-label">{{ $t('yourPhoto') }}</div>
+            <div class="profile-photo-hint">{{ $t('recommended400x400pxJpgPng') }}</div>
             
             <button class="btn-primary" type="button" @click="triggerFileDialog" :disabled="loading">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                 <polyline points="17 8 12 3 7 8"/>
                 <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-              Upload New Photo
-            </button>
+              </svg>{{ $t('uploadNewPhoto') }}</button>
             
             <button class="btn-remove" type="button" @click="removePhoto" :disabled="removingPhoto || loading || !photoPreview">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="3 6 5 6 21 6"/>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-              </svg>
-              Remove
-            </button>
+              </svg>{{ $t('remove') }}</button>
             
             <div class="security-status">
               <svg class="shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
               <div class="security-info">
-                <span class="security-label">Account Security</span>
+                <span class="security-label">{{ $t('accountSecurity') }}</span>
                 <span class="security-date">Last updated: {{ lastUpdatedLabel }}</span>
               </div>
             </div>
@@ -67,7 +63,7 @@
 
           <!-- Right Column - Personal Information Card -->
           <div class="personal-info-card">
-            <h2 class="card-header">Personal Information</h2>
+            <h2 class="card-header">{{ $t('personalInformation') }}</h2>
             
             <form class="personal-form">
               <div v-if="message.text" :class="['alert', message.type === 'error' ? 'alert-error' : 'alert-success']">
@@ -75,17 +71,17 @@
               </div>
               <div class="form-grid">
                 <div class="form-group">
-                  <label>Full Name</label>
+                  <label>{{ $t('fullName2') }}</label>
                   <input type="text" v-model="formData.fullName" placeholder="Enter your full name" />
                 </div>
                 
                 <div class="form-group">
-                  <label>Job Title/Role</label>
+                  <label>{{ $t('jobTitleRole') }}</label>
                   <input type="text" v-model="formData.jobTitle" placeholder="Enter your job title" />
                 </div>
                 
                 <div class="form-group">
-                  <label>Email Address</label>
+                  <label>{{ $t('email') }}</label>
                   <div class="input-with-icon">
                     <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
@@ -96,7 +92,7 @@
                 </div>
                 
                 <div class="form-group">
-                  <label>Phone Number</label>
+                  <label>{{ $t('phoneNumber3') }}</label>
                   <div class="input-with-icon">
                     <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
@@ -107,20 +103,18 @@
               </div>
               
               <div class="form-group full-width">
-                <label>Bio/Description</label>
+                <label>{{ $t('bioDescription') }}</label>
                 <textarea v-model="formData.bio" placeholder="Describe your role and responsibilities..." rows="4"></textarea>
               </div>
               
               <div class="form-actions">
-                <button type="button" class="btn-cancel" @click="navigateTo('/admin/settings')">Cancel</button>
+                <button type="button" class="btn-cancel" @click="navigateTo('/admin/settings')">{{ $t('cancel') }}</button>
                 <button type="button" class="btn-save" :disabled="loading" @click="handleSaveClick">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
                     <polyline points="17 21 17 13 7 13 7 21"/>
                     <polyline points="7 3 7 8 15 8"/>
-                  </svg>
-                  Save Changes
-                </button>
+                  </svg>{{ $t('saveChanges') }}</button>
               </div>
             </form>
           </div>
@@ -135,7 +129,7 @@
                 <polyline points="22,6 12,13 2,6"/>
               </svg>
             </div>
-            <span class="badge-enabled">Enabled</span>
+            <span class="badge-enabled">{{ $t('enabled') }}</span>
           </div>
           <h3 class="card-title">{{ $t('emailNotifications') }}</h3>
           <div class="notification-row">

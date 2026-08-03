@@ -27,13 +27,11 @@ const currentYear = new Date().getFullYear()
           <img src="/Images/logo-removebg.png" alt="Chong Choul" class="common-footer__brand-img" />
         </div>
         <h4>Chong Choul</h4>
-        <p>
-          Connecting adventurous travelers with the best local vehicle rentals across the Kingdom of Wonder.
-        </p>
+        <p>{{ $t('connectingAdventurousTravelersWithTheBestLocalVehicleRentalsAcrossTheKingdomOfWonder') }}</p>
       </div>
 
       <div class="common-footer__col">
-        <h5><i class="fa-solid fa-link" aria-hidden="true"></i> Quick Links</h5>
+        <h5><i class="fa-solid fa-link" aria-hidden="true"></i>{{ $t('quickLinks') }}</h5>
         <RouterLink
           v-for="item in quickLinks"
           :key="item.label"
@@ -46,7 +44,7 @@ const currentYear = new Date().getFullYear()
       </div>
 
       <div class="common-footer__col">
-        <h5><i class="fa-solid fa-credit-card" aria-hidden="true"></i> Payment Methods</h5>
+        <h5><i class="fa-solid fa-credit-card" aria-hidden="true"></i>{{ $t('paymentMethods') }}</h5>
         <span v-for="method in paymentMethods" :key="method.name" class="common-footer__link">
           <i :class="method.icon" aria-hidden="true"></i>
           {{ method.name }}
@@ -54,7 +52,7 @@ const currentYear = new Date().getFullYear()
       </div>
 
       <div class="common-footer__col">
-        <h5><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Social Medias</h5>
+        <h5><i class="fa-solid fa-share-nodes" aria-hidden="true"></i>{{ $t('socialMedias') }}</h5>
         <a
           v-for="social in socialLinks"
           :key="social.label"
@@ -74,18 +72,12 @@ const currentYear = new Date().getFullYear()
     <div class="common-footer__bottom">
       <span>
         &copy; {{ currentYear }} Chong Choul Rides. Made with
-        <span class="common-footer__heart" aria-hidden="true">&hearts;</span>
-        in Cambodia.
-      </span>
+        <span class="common-footer__heart" aria-hidden="true">&hearts;</span>{{ $t('inCambodia') }}</span>
       <div class="common-footer__legal">
         <a href="#" class="common-footer__legal-link">
-          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-          Privacy Policy
-        </a>
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>{{ $t('privacyPolicy') }}</a>
         <a href="#" class="common-footer__legal-link">
-          <i class="fa-solid fa-file-contract" aria-hidden="true"></i>
-          Terms of Service
-        </a>
+          <i class="fa-solid fa-file-contract" aria-hidden="true"></i>{{ $t('termsOfService') }}</a>
       </div>
     </div>
   </footer>

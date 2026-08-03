@@ -236,8 +236,8 @@ const getRatingDistribution = (ratings) => {
   <div class="reviews-container">
     <!-- Page Title -->
     <div class="page-header">
-      <h1 class="page-title">Reviews & Feedback</h1>
-      <p class="page-subtitle">Manage customer feedback and vehicle ratings</p>
+      <h1 class="page-title">{{ $t('reviewsFeedback') }}</h1>
+      <p class="page-subtitle">{{ $t('manageCustomerFeedbackAndVehicleRatings') }}</p>
     </div>
     <!-- Tab Navigation -->
     <div class="tab-navigation">
@@ -249,9 +249,7 @@ const getRatingDistribution = (ratings) => {
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          Customer Feedback
-          <span class="tab-badge" v-if="combinedFeedback.length">{{ combinedFeedback.length }}</span>
+          </svg>{{ $t('customerFeedback') }}<span class="tab-badge" v-if="combinedFeedback.length">{{ combinedFeedback.length }}</span>
         </button>
         <button 
           class="tab-btn" 
@@ -263,9 +261,7 @@ const getRatingDistribution = (ratings) => {
             <path d="M6 12l2-5h8l2 5"></path>
             <circle cx="7" cy="17" r="2"></circle>
             <circle cx="17" cy="17" r="2"></circle>
-          </svg>
-          Vehicle Ratings
-          <span class="tab-badge" v-if="totalVehicleRatings">{{ totalVehicleRatings }}</span>
+          </svg>{{ $t('vehicleRatings') }}<span class="tab-badge" v-if="totalVehicleRatings">{{ totalVehicleRatings }}</span>
         </button>
       </div>
       <div class="search-bar" v-if="(activeTab === 'vehicles' && vehicleRatings.length > 0) || (activeTab === 'feedback' && combinedFeedback.length > 0)">
@@ -289,29 +285,29 @@ const getRatingDistribution = (ratings) => {
       <!-- Loading State -->
       <div v-if="loading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading reviews...</p>
+        <p>{{ $t('loadingReviews') }}</p>
       </div>
       
       <!-- Error State -->
       <div v-else-if="error" class="error-state">
         <p>{{ error }}</p>
-        <button class="retry-btn" @click="fetchFeedback">Retry</button>
+        <button class="retry-btn" @click="fetchFeedback">{{ $t('retry') }}</button>
       </div>
 
       <!-- Reviews Table -->
       <div v-else class="reviews-table-wrapper">
         <div class="feedback-card">
           <div class="feedback-card-heading">
-            <h2>Feedback</h2>
-            <p>All reviews, starting with the most recent, are listed here.</p>
+            <h2>{{ $t('feedback') }}</h2>
+            <p>{{ $t('allReviewsStartingWithTheMostRecentAreListedHere') }}</p>
           </div>
           <div class="feedback-table">
             <div class="feedback-table-row header">
-              <div class="cell date">Date</div>
-              <div class="cell provider">Provider</div>
-              <div class="cell vehicle">Vehicle</div>
-              <div class="cell rating">Rating</div>
-              <div class="cell comment">Comment</div>
+              <div class="cell date">{{ $t('date') }}</div>
+              <div class="cell provider">{{ $t('provider') }}</div>
+              <div class="cell vehicle">{{ $t('vehicle') }}</div>
+              <div class="cell rating">{{ $t('rating') }}</div>
+              <div class="cell comment">{{ $t('comment2') }}</div>
             </div>
             <div v-for="f in filteredFeedback" :key="f.id" class="feedback-table-row">
               <div class="cell date">
@@ -342,7 +338,7 @@ const getRatingDistribution = (ratings) => {
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 4h16v12H5.17L4 17.17z"></path>
                   </svg>
-                  <span class="comment-label">View</span>
+                  <span class="comment-label">{{ $t('view') }}</span>
                 </div>
               </div>
             </div>
@@ -356,13 +352,13 @@ const getRatingDistribution = (ratings) => {
       <!-- Loading State -->
       <div v-if="vehicleLoading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading vehicle ratings...</p>
+        <p>{{ $t('loadingVehicleRatings') }}</p>
       </div>
       
       <!-- Error State -->
       <div v-else-if="vehicleError" class="error-state">
         <p>{{ vehicleError }}</p>
-        <button class="retry-btn" @click="fetchVehicleRatings">Retry</button>
+        <button class="retry-btn" @click="fetchVehicleRatings">{{ $t('retry') }}</button>
       </div>
 
       <!-- Vehicle Ratings Table -->
@@ -376,7 +372,7 @@ const getRatingDistribution = (ratings) => {
               </svg>
             </div>
             <div class="stat-value">{{ vehicleAvgRating }}</div>
-            <div class="stat-label">Average Rating</div>
+            <div class="stat-label">{{ $t('avgRating') }}</div>
             <div class="star-rating small">
               <span v-for="(filled, index) in getStars(Math.round(vehicleAvgRating))" :key="index" class="star" :class="{ filled: filled }">
                 ★
@@ -391,7 +387,7 @@ const getRatingDistribution = (ratings) => {
               </svg>
             </div>
             <div class="stat-value">{{ totalVehicleRatings }}</div>
-            <div class="stat-label">Total Reviews</div>
+            <div class="stat-label">{{ $t('totalReviews') }}</div>
           </div>
           <div class="stat-card border-purple">
             <div class="stat-icon secondary">
@@ -403,7 +399,7 @@ const getRatingDistribution = (ratings) => {
               </svg>
             </div>
             <div class="stat-value">{{ vehicleRatings.filter(v => v.total_ratings > 0).length }}</div>
-            <div class="stat-label">Vehicles Rated</div>
+            <div class="stat-label">{{ $t('vehiclesRated') }}</div>
           </div>
         </div>
 
@@ -413,8 +409,8 @@ const getRatingDistribution = (ratings) => {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
-            <p>No vehicle ratings yet</p>
-            <p class="empty-subtitle">Customer ratings will appear here after completing rentals</p>
+            <p>{{ $t('noVehicleRatingsYet') }}</p>
+            <p class="empty-subtitle">{{ $t('customerRatingsWillAppearHereAfterCompletingRentals') }}</p>
           </div>
         </div>
 

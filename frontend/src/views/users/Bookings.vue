@@ -231,17 +231,17 @@ const detailTotalAmount = computed(() => Number(selectedBooking.value?.total_pri
     <div class="bookings-page">
       <section class="bookings-panel">
       <div class="panel-head">
-        <h1>My Bookings</h1>
-        <p>View and manage your vehicle rentals.</p>
+        <h1>{{ $t('myBookings') }}</h1>
+        <p>{{ $t('viewAndManageYourVehicleRentals') }}</p>
       </div>
 
       <div class="controls-row">
         <div class="tabs-row">
-          <button class="tab-btn" :class="{ active: activeTab === 'all' }" @click="activeTab = 'all'">All Bookings</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'pending' }" @click="activeTab = 'pending'">Pending</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'confirmed' }" @click="activeTab = 'confirmed'">Confirmed</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'completed' }" @click="activeTab = 'completed'">Completed</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'cancelled' }" @click="activeTab = 'cancelled'">Cancelled</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'all' }" @click="activeTab = 'all'">{{ $t('allBookings') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'pending' }" @click="activeTab = 'pending'">{{ $t('pending') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'confirmed' }" @click="activeTab = 'confirmed'">{{ $t('confirmed') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'completed' }" @click="activeTab = 'completed'">{{ $t('completed') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'cancelled' }" @click="activeTab = 'cancelled'">{{ $t('cancelled') }}</button>
         </div>
 
         <div class="search-row">
@@ -262,9 +262,7 @@ const detailTotalAmount = computed(() => Number(selectedBooking.value?.total_pri
     </section>
 
       <section class="booking-list-wrap">
-      <div v-if="filteredBookings.length === 0" class="empty-state">
-        No bookings found for your search.
-      </div>
+      <div v-if="filteredBookings.length === 0" class="empty-state">{{ $t('noBookingsFound') }}</div>
       <article v-for="booking in filteredBookings" :key="booking.id" class="booking-card">
         <div class="booking-image">
           <img :src="getBookingImage(booking)" :alt="booking.vehicle_name" class="vehicle-img" />
@@ -276,15 +274,15 @@ const detailTotalAmount = computed(() => Number(selectedBooking.value?.total_pri
             <span :class="['status-pill', getStatusClass(booking.status)]">{{ getStatusLabel(booking.status) }}</span>
           </div>
 
-          <p><span class="meta-label">Booking ID:</span> {{ booking.booking_code }}</p>
-          <p><span class="meta-label">Shop:</span> {{ booking.shop_name }}</p>
+          <p><span class="meta-label">{{ $t('bookingId4') }}</span> {{ booking.booking_code }}</p>
+          <p><span class="meta-label">{{ $t('shop3') }}</span> {{ booking.shop_name }}</p>
           <p>
-            <span class="meta-label">Date:</span>
+            <span class="meta-label">{{ $t('date2') }}</span>
             {{ formatDate(booking.start_date) }} to {{ formatDate(booking.end_date) }}
             ({{ getTotalDays(booking.start_date, booking.end_date) }} days)
           </p>
 
-          <button class="details-btn" @click="openDetails(booking)">View Details</button>
+          <button class="details-btn" @click="openDetails(booking)">{{ $t('viewDetails') }}</button>
         </div>
 
         <div class="booking-price">
@@ -323,34 +321,34 @@ const detailTotalAmount = computed(() => Number(selectedBooking.value?.total_pri
           </div>
 
           <div class="detail-section">
-            <h3>Vehicle Details</h3>
+            <h3>{{ $t('vehicleDetails') }}</h3>
             <div class="detail-grid">
-              <div class="detail-item"><span>Type</span><strong>{{ selectedVehicle.category || 'N/A' }}</strong></div>
-              <div class="detail-item"><span>Year</span><strong>{{ selectedVehicle.year || 'N/A' }}</strong></div>
-              <div class="detail-item"><span>Brand</span><strong>{{ selectedVehicle.brand || 'N/A' }}</strong></div>
-              <div class="detail-item"><span>Model</span><strong>{{ selectedVehicle.model || 'N/A' }}</strong></div>
-              <div class="detail-item"><span>Fuel Type</span><strong>{{ selectedVehicle.fuel_type || 'N/A' }}</strong></div>
-              <div class="detail-item"><span>Transmission</span><strong>{{ selectedVehicle.transmission || 'N/A' }}</strong></div>
+              <div class="detail-item"><span>{{ $t('type') }}</span><strong>{{ selectedVehicle.category || 'N/A' }}</strong></div>
+              <div class="detail-item"><span>{{ $t('year') }}</span><strong>{{ selectedVehicle.year || 'N/A' }}</strong></div>
+              <div class="detail-item"><span>{{ $t('brand') }}</span><strong>{{ selectedVehicle.brand || 'N/A' }}</strong></div>
+              <div class="detail-item"><span>{{ $t('model') }}</span><strong>{{ selectedVehicle.model || 'N/A' }}</strong></div>
+              <div class="detail-item"><span>{{ $t('fuelType') }}</span><strong>{{ selectedVehicle.fuel_type || 'N/A' }}</strong></div>
+              <div class="detail-item"><span>{{ $t('transmission') }}</span><strong>{{ selectedVehicle.transmission || 'N/A' }}</strong></div>
             </div>
           </div>
 
           <div class="detail-section">
-            <h3>Booking Details</h3>
+            <h3>{{ $t('bookingDetails') }}</h3>
             <div class="detail-rows">
-              <div class="detail-row"><span>Shop</span><strong>{{ selectedBooking?.shop_name || 'N/A' }}</strong></div>
-              <div class="detail-row"><span>Rental Date</span><strong>{{ formatDate(selectedBooking?.start_date) }} - {{ formatDate(selectedBooking?.end_date) }}</strong></div>
-              <div class="detail-row"><span>Duration</span><strong>{{ detailDays }} day(s)</strong></div>
+              <div class="detail-row"><span>{{ $t('shop') }}</span><strong>{{ selectedBooking?.shop_name || 'N/A' }}</strong></div>
+              <div class="detail-row"><span>{{ $t('rentalDate') }}</span><strong>{{ formatDate(selectedBooking?.start_date) }} - {{ formatDate(selectedBooking?.end_date) }}</strong></div>
+              <div class="detail-row"><span>{{ $t('duration') }}</span><strong>{{ detailDays }} day(s)</strong></div>
             </div>
           </div>
 
           <div class="detail-section">
-            <h3>Payment Summary</h3>
+            <h3>{{ $t('paymentSummary') }}</h3>
             <div class="detail-rows">
-              <div class="detail-row"><span>Price per day</span><strong>{{ formatCurrency(detailPricePerDay) }}</strong></div>
-              <div class="detail-row"><span>Days</span><strong>x {{ detailDays }}</strong></div>
+              <div class="detail-row"><span>{{ $t('pricePerDay2') }}</span><strong>{{ formatCurrency(detailPricePerDay) }}</strong></div>
+              <div class="detail-row"><span>{{ $t('days2') }}</span><strong>x {{ detailDays }}</strong></div>
             </div>
             <div class="detail-total-row">
-              <span>Total Amount</span>
+              <span>{{ $t('totalAmount2') }}</span>
               <strong>{{ formatCurrency(detailTotalAmount) }}</strong>
             </div>
           </div>

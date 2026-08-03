@@ -125,7 +125,7 @@ const formatNotificationTitle = (item) => {
     <header class="notification-panel__header">
       <div>
         <h3>{{ $t('notifications') }}</h3>
-        <p class="notification-panel__subtitle">Stay on top of incoming orders and updates.</p>
+        <p class="notification-panel__subtitle">{{ $t('stayOnTopOfIncomingOrdersAndUpdates') }}</p>
       </div>
       <button class="header-menu" type="button" aria-label="Open menu">
         <span class="dot" />
@@ -148,7 +148,7 @@ const formatNotificationTitle = (item) => {
 
 
     <div class="notification-panel__list">
-      <div v-if="isLoading" class="notification-panel__state">Loading notifications...</div>
+      <div v-if="isLoading" class="notification-panel__state">{{ $t('loadingNotifications') }}</div>
       <div v-else-if="error" class="notification-panel__state notification-panel__state--error">
         {{ error }}
       </div>
@@ -170,17 +170,13 @@ const formatNotificationTitle = (item) => {
             <span class="notification-item__time">{{ formatRelativeTime(item.timestamp) }}</span>
           </div>
         </article>
-        <p v-if="!filteredForTab.length" class="notification-panel__empty">
-          No notifications yet. Check back after you receive activity.
-        </p>
+        <p v-if="!filteredForTab.length" class="notification-panel__empty">{{ $t('noNotificationsYetCheckBackAfterYouReceiveActivity') }}</p>
       </template>
     </div>
 
     <footer class="notification-panel__footer">
-      <button class="mark-read" :disabled="!hasUnread || isLoading" @click="markAllAsRead(props.shopId)">
-        Mark all as read
-      </button>
-      <router-link :to="{ name: 'notifications' }" class="view-all">View all notifications</router-link>
+      <button class="mark-read" :disabled="!hasUnread || isLoading" @click="markAllAsRead(props.shopId)">{{ $t('markAllAsRead') }}</button>
+      <router-link :to="{ name: 'notifications' }" class="view-all">{{ $t('viewAllNotifications') }}</router-link>
     </footer>
   </div>
 </template>

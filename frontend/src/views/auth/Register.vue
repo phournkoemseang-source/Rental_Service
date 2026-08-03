@@ -11,22 +11,16 @@
           <div class="hero-badge">              <span class="hero-badge-dot"></span>
             {{ $t('appTagline') }}
           </div>
-          <h1>Start your journey<br /><span class="journey-highlight">in minutes.</span></h1>
-          <p>
-            Access a fleet of premium vehicles at your fingertips. Rent for an
-            hour, drive for a lifetime.
-          </p>
+          <h1>{{ $t('startYourJourney') }}<br /><span class="journey-highlight">{{ $t('inMinutes') }}</span></h1>
+          <p>{{ $t('accessAFleetOfPremiumVehiclesAtYourFingertipsRentForAnHourDriveForALifetime2') }}</p>
         </div>
 
         <div class="review-card">
           <div class="stars">★★★★★</div>
-          <p class="review-text">
-            "The easiest rental experience I've ever had. No paperwork, just
-            pure driving pleasure."
-          </p>
+          <p class="review-text">{{ $t('theEasiestRentalExperienceIVeEverHadNoPaperworkJustPureDrivingPleasure2') }}</p>
           <div class="review-user">
-            <strong>Alex Rivera</strong>
-            <span>Platinum Member</span>
+            <strong>{{ $t('alexRivera') }}</strong>
+            <span>{{ $t('platinumMember') }}</span>
           </div>
         </div>
       </div>
@@ -61,9 +55,7 @@
               ? "Shop Owner"
               : "Admin"
           }}</span>
-          <button type="button" @click="changeRole" class="change-role-btn">
-            Change
-          </button>
+          <button type="button" @click="changeRole" class="change-role-btn">{{ $t('changeRole') }}</button>
         </div>
 
         <!-- Success Message -->
@@ -78,7 +70,7 @@
           v-if="Object.keys(errors).length > 0 && !successMessage"
         >
           <span class="message-icon">✗</span>
-          <span class="message-text">Please fix errors below to continue.</span>
+          <span class="message-text">{{ $t('pleaseFixErrorsBelowToContinue') }}</span>
         </div>
 
         <form @submit.prevent="handleRegister" novalidate>

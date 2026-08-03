@@ -115,8 +115,8 @@ const navLinks = [
 <template>
   <nav class="admin-navbar">
     <div class="admin-navbar__brand">
-      <strong>Chong Choul Admin</strong>
-      <small>Control Center</small>
+      <strong>{{ $t('chongChoulAdmin') }}</strong>
+      <small>{{ $t('controlCenter') }}</small>
     </div>
     <div class="admin-navbar__links">
       <RouterLink
@@ -151,8 +151,8 @@ const navLinks = [
       <div v-if="isProfileMenuOpen" class="admin-navbar__dropdown" role="menu">
         <button class="admin-navbar__dropdown-item" type="button" @click="openSettings" role="menuitem">
           <div>
-            <strong>Settings</strong>
-            <small>Profile & account</small>
+            <strong>{{ $t('shopSettings') }}</strong>
+            <small>{{ $t('profileAccount') }}</small>
           </div>
           <span class="admin-navbar__dropdown-icon" aria-hidden="true">➜</span>
         </button>
@@ -161,9 +161,7 @@ const navLinks = [
           type="button"
           @click="handleLogout"
           role="menuitem"
-        >
-          Logout
-        </button>
+        >{{ $t('logout') }}</button>
       </div>
     </div>
   </nav>

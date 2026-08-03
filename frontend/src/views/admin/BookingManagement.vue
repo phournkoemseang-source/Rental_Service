@@ -105,10 +105,10 @@ watch(query, () => {
     <header class="page-head">
       <div>
         <div class="breadcrumb">
-          <span>Admin</span> <span class="dot">•</span> <span>Management</span>
+          <span>{{ $t('admin') }}</span> <span class="dot">•</span> <span>{{ $t('management') }}</span>
         </div>
-        <h1 class="page-title">Booking Management</h1>
-        <p class="page-subtitle">View and monitor all customer rental bookings across the platform.</p>
+        <h1 class="page-title">{{ $t('bookingManagement') }}</h1>
+        <p class="page-subtitle">{{ $t('viewAndMonitorAllCustomerRentalBookingsAcrossThePlatform') }}</p>
       </div>
     </header>
 
@@ -116,7 +116,7 @@ watch(query, () => {
       <div class="card-toolbar">
         <div class="filters">
           <div class="tabs">
-            <button class="tab active">All Bookings</button>
+            <button class="tab active">{{ $t('allBookings') }}</button>
           </div>
         </div>
         <div class="toolbar-right">
@@ -128,13 +128,13 @@ watch(query, () => {
         <table class="data-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>CUSTOMER</th>
-              <th>VEHICLE</th>
-              <th>RENTAL PERIOD</th>
-              <th class="num">TOTAL</th>
-              <th>STATUS</th>
-              <th class="actions">ACTIONS</th>
+              <th>{{ $t('id') }}</th>
+              <th>{{ $t('customer2') }}</th>
+              <th>{{ $t('vehicle3') }}</th>
+              <th>{{ $t('rentalPeriod') }}</th>
+              <th class="num">{{ $t('total') }}</th>
+              <th>{{ $t('status2') }}</th>
+              <th class="actions">{{ $t('actions2') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -167,9 +167,7 @@ watch(query, () => {
               </td>
             </tr>
             <tr v-if="!paginatedBookings.length">
-              <td colspan="7" class="table-empty">
-                No bookings found matching your criteria.
-              </td>
+              <td colspan="7" class="table-empty">{{ $t('noBookingsFoundMatchingYourCriteria') }}</td>
             </tr>
           </tbody>
         </table>
@@ -197,14 +195,14 @@ watch(query, () => {
         <div class="modal-head">
           <div>
             <div class="modal-title">Booking Details #{{ selectedBooking?.id }}</div>
-            <div class="modal-sub">Comprehensive overview of the rental transaction.</div>
+            <div class="modal-sub">{{ $t('comprehensiveOverviewOfTheRentalTransaction') }}</div>
           </div>
           <button type="button" class="icon-action" @click="closeView"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body">
           <div class="form-grid">
             <div class="field span-2">
-              <span class="field-label">Customer Information</span>
+              <span class="field-label">{{ $t('customerInformation') }}</span>
               <div class="pill-input pill-input--loose">
                 <strong>{{ selectedBooking?.user?.name }}</strong><br/>
                 <span class="muted">{{ selectedBooking?.user?.email }}</span><br/>
@@ -213,38 +211,38 @@ watch(query, () => {
             </div>
             
             <div class="field">
-              <span class="field-label">Vehicle</span>
+              <span class="field-label">{{ $t('vehicle') }}</span>
               <input :value="`${selectedBooking?.vehicle?.brand} ${selectedBooking?.vehicle?.model}`" readonly />
             </div>
             
             <div class="field">
-              <span class="field-label">Rental Shop</span>
+              <span class="field-label">{{ $t('rentalShop') }}</span>
               <input :value="selectedBooking?.shop?.name || 'N/A'" readonly />
             </div>
 
             <div class="field">
-              <span class="field-label">Start Date</span>
+              <span class="field-label">{{ $t('startDate') }}</span>
               <input :value="formatDate(selectedBooking?.start_date)" readonly />
             </div>
 
             <div class="field">
-              <span class="field-label">Duration</span>
+              <span class="field-label">{{ $t('duration') }}</span>
               <input :value="`${selectedBooking?._days || 1} Days`" readonly />
             </div>
 
             <div class="field">
-              <span class="field-label">Total Amount</span>
+              <span class="field-label">{{ $t('totalAmount2') }}</span>
                <input :value="formatCurrency(selectedBooking?._total)" readonly />
             </div>
 
             <div class="field">
-              <span class="field-label">Status</span>
+              <span class="field-label">{{ $t('status') }}</span>
               <input :value="selectedBooking?._statusLabel || 'PENDING'" readonly />
             </div>
           </div>
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn btn-primary" @click="closeView">Close</button>
+          <button type="button" class="btn btn-primary" @click="closeView">{{ $t('close') }}</button>
         </div>
       </div>
     </div>

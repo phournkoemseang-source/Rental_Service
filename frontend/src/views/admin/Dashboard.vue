@@ -376,7 +376,7 @@ watch(
             </tr>
           </tbody>
           <tbody v-else>
-            <tr><td colspan="6" class="table-empty">No shops registered yet.</td></tr>
+            <tr><td colspan="6" class="table-empty">{{ $t('noBranches') }}</td></tr>
           </tbody>
         </table>
       </div>
@@ -475,20 +475,20 @@ watch(
     <div v-if="showView" class="modal-backdrop" role="dialog" aria-modal="true" @click.self="closeView">
       <div class="modal">
         <div class="modal-head">
-          <div><div class="modal-title">{{ selectedShop?.name }}</div><div class="modal-sub">Read-only view</div></div>
+          <div><div class="modal-title">{{ selectedShop?.name }}</div><div class="modal-sub">{{ $t('readOnlyView') }}</div></div>
           <button type="button" class="icon-action" @click="closeView"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body">
           <div class="form-grid">
-            <label class="field"><span class="field-label">ID</span><input :value="selectedShop?.id" readonly /></label>
-            <label class="field"><span class="field-label">Name</span><input :value="selectedShop?.name" readonly /></label>
-            <label class="field"><span class="field-label">Owner</span><input :value="ownerName(selectedShop)" readonly /></label>
-            <label class="field"><span class="field-label">Location</span><input :value="shopLocation(selectedShop)" readonly /></label>
-            <label class="field"><span class="field-label">Status</span><input :value="statusLabel(selectedShop?.status)" readonly /></label>
-            <label class="field span-2"><span class="field-label">Fleet Size</span><input :value="fleetCountMap[String(selectedShop?.id)] || selectedShop?.fleet_size || 0" readonly /></label>
+            <label class="field"><span class="field-label">{{ $t('id') }}</span><input :value="selectedShop?.id" readonly /></label>
+            <label class="field"><span class="field-label">{{ $t('name') }}</span><input :value="selectedShop?.name" readonly /></label>
+            <label class="field"><span class="field-label">{{ $t('owner') }}</span><input :value="ownerName(selectedShop)" readonly /></label>
+            <label class="field"><span class="field-label">{{ $t('shopLocation') }}</span><input :value="shopLocation(selectedShop)" readonly /></label>
+            <label class="field"><span class="field-label">{{ $t('status') }}</span><input :value="statusLabel(selectedShop?.status)" readonly /></label>
+            <label class="field span-2"><span class="field-label">{{ $t('fleetSize') }}</span><input :value="fleetCountMap[String(selectedShop?.id)] || selectedShop?.fleet_size || 0" readonly /></label>
           </div>
         </div>
-        <div class="modal-actions"><button type="button" class="btn btn-primary" @click="closeView">Close</button></div>
+        <div class="modal-actions"><button type="button" class="btn btn-primary" @click="closeView">{{ $t('close') }}</button></div>
       </div>
     </div>
 
@@ -496,22 +496,22 @@ watch(
     <div v-if="showEdit" class="modal-backdrop" role="dialog" aria-modal="true">
       <div class="modal">
         <div class="modal-head">
-          <div><div class="modal-title">Edit Shop</div><div class="modal-sub">Update shop information.</div></div>
+          <div><div class="modal-title">{{ $t('editShop') }}</div><div class="modal-sub">{{ $t('updateShopInformation') }}</div></div>
           <button type="button" class="icon-action" @click="closeEdit"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body form-grid">
-          <label class="field"><span class="field-label">Shop ID</span><input v-model="editForm.id" readonly /></label>
-          <label class="field"><span class="field-label">Name *</span><input v-model="editForm.name" type="text" /></label>
-          <label class="field"><span class="field-label">Location</span><input v-model="editForm.location" type="text" /></label>
+          <label class="field"><span class="field-label">{{ $t('shopId') }}</span><input v-model="editForm.id" readonly /></label>
+          <label class="field"><span class="field-label">{{ $t('name2') }}</span><input v-model="editForm.name" type="text" /></label>
+          <label class="field"><span class="field-label">{{ $t('shopLocation') }}</span><input v-model="editForm.location" type="text" /></label>
           <label class="field">
-            <span class="field-label">Status</span>
+            <span class="field-label">{{ $t('status') }}</span>
             <select v-model="editForm.status">
-              <option value="inactive">Pending</option>
-              <option value="active">Active</option>
+              <option value="inactive">{{ $t('pending') }}</option>
+              <option value="active">{{ $t('active') }}</option>
             </select>
           </label>
           <label class="field span-2">
-            <span class="field-label">Shop Image</span>
+            <span class="field-label">{{ $t('shopImage') }}</span>
             <input type="file" accept="image/*" @change="onEditImageChange" />
             <div v-if="editImagePreview || shopImage(editForm)" class="image-preview">
               <img :src="editImagePreview || shopImage(editForm)" alt="Shop preview" />
@@ -519,7 +519,7 @@ watch(
           </label>
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" :disabled="editSaving" @click="closeEdit">Cancel</button>
+          <button type="button" class="btn btn-ghost" :disabled="editSaving" @click="closeEdit">{{ $t('cancel') }}</button>
           <button type="button" class="btn btn-primary" :disabled="editSaving" @click="submitEdit">
             {{ editSaving ? 'Saving...' : 'Save Changes' }}
           </button>

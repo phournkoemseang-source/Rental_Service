@@ -2,12 +2,12 @@
   <div class="owner-notifications">
     <header class="owner-notifications__header">
       <div>
-        <h1>Actions that need your attention</h1>
+        <h1>{{ $t('actionsThatNeedYourAttention') }}</h1>
       </div>
       <div class="owner-notifications__header-actions">
         <div class="owner-notifications__unread-pill">
           <span class="unread-count">{{ unreadCountDisplay }}</span>
-          <span class="unread-label">unread</span>
+          <span class="unread-label">{{ $t('unread') }}</span>
         </div>
       </div>
     </header>
@@ -27,15 +27,13 @@
 
     <section class="notification-list">
       <template v-if="isLoading">
-        <div class="empty-state">Loading notifications…</div>
+        <div class="empty-state">{{ $t('loadingNotifications2') }}</div>
       </template>
       <template v-else-if="error">
         <div class="empty-state error">{{ error }}</div>
       </template>
       <template v-else-if="!visibleNotifications.length">
-        <div class="empty-state">
-          No notifications yet. Once customers book, message, or cancel, you&apos;ll see the updates here.
-        </div>
+        <div class="empty-state">{{ $t('noNotificationsYetOnceCustomersBookMessageOrCancelYouAposLlSeeTheUpdatesHere') }}</div>
       </template>
       <template v-else>
         <article
@@ -90,34 +88,32 @@
         type="button"
         @click="markAllAsRead(props.shopId)"
         :disabled="!filteredNotifications.length || isLoading"
-      >
-        See Past Notifications
-      </button>
+      >{{ $t('seePastNotifications') }}</button>
     </footer>
     <div v-if="replyModalVisible" class="reply-modal" role="dialog" aria-modal="true">
       <div class="reply-modal__panel">
         <header class="reply-modal__header">
           <div>
-            <p class="reply-modal__title">Reply to customer</p>
-            <p class="reply-modal__subtitle">Send a quick response to keep them informed.</p>
+            <p class="reply-modal__title">{{ $t('replyToCustomer') }}</p>
+            <p class="reply-modal__subtitle">{{ $t('sendAQuickResponseToKeepThemInformed') }}</p>
           </div>
           <button type="button" class="icon-btn" @click="closeReplyModal">
             <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-            <span class="sr-only">Close</span>
+            <span class="sr-only">{{ $t('close') }}</span>
           </button>
         </header>
         <div class="reply-modal__body">
           <label>
-            <span>Subject</span>
+            <span>{{ $t('subject') }}</span>
             <input v-model="replySubject" type="text" placeholder="Subject" />
           </label>
           <label>
-            <span>Message</span>
+            <span>{{ $t('message') }}</span>
             <textarea v-model="replyBody" rows="4" placeholder="Type your reply here..."></textarea>
           </label>
         </div>
         <div class="reply-modal__actions">
-          <button type="button" class="ghost-btn" :disabled="isSendingReply" @click="closeReplyModal">Cancel</button>
+          <button type="button" class="ghost-btn" :disabled="isSendingReply" @click="closeReplyModal">{{ $t('cancel') }}</button>
           <button type="button" class="btn btn-primary" :disabled="isSendingReply" @click="sendReply">
             {{ isSendingReply ? 'Sending…' : 'Send reply' }}
           </button>

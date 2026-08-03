@@ -12,17 +12,17 @@
       <div class="booking-back-bar">
         <button class="btn-back-top" @click="goToShop">
           <i class="fa-solid fa-arrow-left"></i>
-          <span>Back</span>
+          <span>{{ $t('back') }}</span>
         </button>
       </div>
 
       <div class="page-heading-row">
         <div class="title-block">
-          <h1>Checkout</h1>
+          <h1>{{ $t('checkout') }}</h1>
         </div>
       </div>
 
-      <p v-if="isLoading" class="page-subtitle">Loading vehicle details...</p>
+      <p v-if="isLoading" class="page-subtitle">{{ $t('loadingVehicleDetails') }}</p>
       <p v-else-if="loadingError" class="page-subtitle">{{ loadingError }}</p>
       <p v-else class="page-subtitle">
         Complete your booking for the {{ rental.title }}
@@ -64,23 +64,23 @@
         <!-- Contact & Dates -->
         <div class="section-block">
           <div class="form-row">
-            <label>Phone Number <span class="required">*</span></label>
+            <label>{{ $t('phoneNumber3') }}<span class="required">*</span></label>
             <input type="tel" v-model="customerPhone" placeholder="012345678" required />
           </div>
           <label class="save-phone-check">
             <input type="checkbox" v-model="savePhoneToProfile" />
             <span class="check-box"><i class="fa-solid fa-check"></i></span>
-            <span>Save to my profile</span>
+            <span>{{ $t('saveToMyProfile') }}</span>
           </label>
 
           <div class="date-row">
             <div class="form-row date-field">
-              <label>Pick-up</label>
+              <label>{{ $t('pickUp') }}</label>
               <input type="date" v-model="rental.startDate" :min="minDate" @change="validateDates" required />
             </div>
             <span class="date-arrow">→</span>
             <div class="form-row date-field">
-              <label>Drop-off</label>
+              <label>{{ $t('dropOff') }}</label>
               <input type="date" v-model="rental.endDate" :min="rental.startDate || minDate" @change="validateDates" required />
             </div>
           </div>
@@ -98,9 +98,7 @@
             </div>
             <div class="insurance-toggle">
               <label>
-                <input type="checkbox" v-model="includeInsurance" />
-                Include Insurance
-              </label>
+                <input type="checkbox" v-model="includeInsurance" />{{ $t('includeInsurance') }}</label>
               <span>${{ insuranceAmount.toFixed(2) }}</span>
             </div>
             <div v-if="appliedCoupon && couponDiscount > 0" class="price-row coupon-row">
@@ -109,7 +107,7 @@
             </div>
           </div>
           <div class="total-row">
-            <span>Total</span>
+            <span>{{ $t('total3') }}</span>
             <span class="total-amount">${{ totalAmount.toFixed(2) }}</span>
           </div>
         </div>
@@ -119,17 +117,13 @@
         <!-- Payment Method -->
         <div class="section-block">
           <div class="payment-tabs-single">
-            <button class="tab" :class="{ active: method === 'qr' }" type="button" @click="method = 'qr'">
-              QR Code
-            </button>
-            <button class="tab" :class="{ active: method === 'later' }" type="button" @click="method = 'later'">
-              Pay Later
-            </button>
+            <button class="tab" :class="{ active: method === 'qr' }" type="button" @click="method = 'qr'">{{ $t('qrCode') }}</button>
+            <button class="tab" :class="{ active: method === 'later' }" type="button" @click="method = 'later'">{{ $t('payLater') }}</button>
           </div>
 
           <!-- Pay Later -->
           <div v-if="method === 'later'" class="later-info">
-            <p class="info-text">Pay directly at the shop when you pick up your vehicle.</p>
+            <p class="info-text">{{ $t('payDirectlyAtTheShopWhenYouPickUpYourVehicle') }}</p>
             <button type="button" class="btn-book" :disabled="!isFormValid || isSubmittingPayment" @click="handlePayment">
               {{ isSubmittingPayment ? "Processing..." : "Book Now" }}
             </button>
@@ -139,14 +133,12 @@
           <div v-if="method === 'qr'" class="qr-section">
             <div v-if="!showQR" class="qr-start">
               <div v-if="shopQrOptions.length" class="qr-shop-select">
-                <label>Shop QR</label>
+                <label>{{ $t('shopQr') }}</label>
                 <select v-model="selectedShopQrId">
                   <option v-for="opt in shopQrOptions" :key="opt.id" :value="opt.id">{{ opt.label }}</option>
                 </select>
               </div>
-              <button type="button" class="btn-generate-qr" :disabled="!isFormValid" @click="generateQRCode">
-                Generate QR Code
-              </button>
+              <button type="button" class="btn-generate-qr" :disabled="!isFormValid" @click="generateQRCode">{{ $t('generateQrCode') }}</button>
             </div>
             <div v-else class="qr-active">
               <div class="qr-display">
@@ -154,9 +146,9 @@
               </div>
               <p class="qr-ref">Ref: {{ paymentId }}</p>
               <ol class="qr-steps">
-                <li>Open your banking app</li>
-                <li>Scan the QR code</li>
-                <li>Confirm payment</li>
+                <li>{{ $t('openYourBankingApp') }}</li>
+                <li>{{ $t('scanTheQrCode') }}</li>
+                <li>{{ $t('confirmPayment') }}</li>
               </ol>
               <button type="button" class="btn-book" :disabled="isSubmittingPayment" @click="handlePayment">
                 {{ isSubmittingPayment ? "Processing..." : "Confirm & Book" }}
@@ -164,7 +156,7 @@
             </div>
           </div>
           <div class="pci-footer">
-            <span class="pci-check">PCI Compliant</span>
+            <span class="pci-check">{{ $t('pciCompliant') }}</span>
           </div>
         </div>
       </div>
@@ -180,7 +172,7 @@
           <div class="success-check-icon">
             <i class="fas fa-check-circle"></i>
           </div>
-          <h2 class="success-title">Successfully Booked!</h2>
+          <h2 class="success-title">{{ $t('successfullyBooked') }}</h2>
         </div>
 
         <div class="receipt-preview-container">
@@ -228,11 +220,8 @@
 
         <div class="modal-actions">
           <button class="btn-download" type="button" @click="downloadReceipt">
-            <i class="fas fa-download"></i> Download Receipt
-          </button>
-          <button class="btn-close" type="button" @click="returnToShopViewAfterSuccess">
-            Return to Shop
-          </button>
+            <i class="fas fa-download"></i>{{ $t('downloadReceipt') }}</button>
+          <button class="btn-close" type="button" @click="returnToShopViewAfterSuccess">{{ $t('returnToShop') }}</button>
         </div>
       </div>
     </div>

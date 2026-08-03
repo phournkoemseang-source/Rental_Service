@@ -2,12 +2,9 @@
   <section class="admin-notifications-page">
     <header class="admin-notifications-page__header">
       <div>
-        <p class="eyebrow">Notifications</p>
-        <h1>System activity</h1>
-        <p class="subhead">
-          Receive real-time updates when users register, shops go live, or reports land so you can manage the
-          platform with confidence.
-        </p>
+        <p class="eyebrow">{{ $t('notifications') }}</p>
+        <h1>{{ $t('systemActivity') }}</h1>
+        <p class="subhead">{{ $t('receiveRealTimeUpdatesWhenUsersRegisterShopsGoLiveOrReportsLandSoYouCanManageThePlatformWithConfidence') }}</p>
       </div>
       <div class="admin-notifications-page__header-actions">
         <div class="unread-pill" aria-live="polite">
@@ -25,9 +22,7 @@
           type="search"
           placeholder="Search notifications (title, message, type)"
         />
-        <button v-if="hasSearchTerm" type="button" class="ghost-pill ghost-pill--mini" @click="clearSearch">
-          Clear
-        </button>
+        <button v-if="hasSearchTerm" type="button" class="ghost-pill ghost-pill--mini" @click="clearSearch">{{ $t('clear') }}</button>
       </div>
       <button
         type="button"
@@ -41,7 +36,7 @@
 
     <div class="admin-notifications-page__tabs">
       <div class="category-filters">
-        <span class="category-filters__label">Filter</span>
+        <span class="category-filters__label">{{ $t('filter') }}</span>
         <button
           v-for="option in categoryFilters"
           :key="option.value"
@@ -57,16 +52,13 @@
 
     <div class="admin-notifications-page__list">
       <template v-if="isLoading">
-        <div class="empty-state">Loading notifications…</div>
+        <div class="empty-state">{{ $t('loadingNotifications2') }}</div>
       </template>
       <template v-else-if="error">
         <div class="empty-state error">{{ error }}</div>
       </template>
       <template v-else-if="!filteredNotifications.length">
-        <div class="empty-state">
-          No notifications yet. Once the platform registers a user, creates a shop, or receives a report, the
-          activity appears here.
-        </div>
+        <div class="empty-state">{{ $t('noNotificationsYetOnceThePlatformRegistersAUserCreatesAShopOrReceivesAReportTheActivityAppearsHere') }}</div>
       </template>
       <template v-else>
         <article
@@ -102,38 +94,33 @@
     <div class="platform-popup__panel">
       <header class="platform-popup__header">
         <div>
-          <p class="platform-popup__title">Share platform updates</p>
-          <p class="platform-popup__subtitle">Send a direct message to the selected recipient.</p>
+          <p class="platform-popup__title">{{ $t('sharePlatformUpdates') }}</p>
+          <p class="platform-popup__subtitle">{{ $t('sendADirectMessageToTheSelectedRecipient') }}</p>
         </div>
         <button class="icon-btn platform-popup__close" type="button" @click="handlePlatformCancel">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-          <span class="sr-only">Close</span>
+          <span class="sr-only">{{ $t('close') }}</span>
         </button>
       </header>
-      <p class="platform-popup__summary">
-        Choose whether to notify a specific user or a shop owner, then pick the recipient from the list. If
-        you want to send a ping to multiple recipients, repeat the action for each one.
-      </p>
+      <p class="platform-popup__summary">{{ $t('chooseWhetherToNotifyASpecificUserOrAShopOwnerThenPickTheRecipientFromTheListIfYouWantToSendAPingToMultipleRecipientsRepeatTheActionForEachOne') }}</p>
       <div class="platform-popup__selectors">
         <div class="platform-popup__selector-card">
-          <span class="platform-popup__selector-label">Recipient type</span>
+          <span class="platform-popup__selector-label">{{ $t('recipientType') }}</span>
           <select v-model="platformTargetType" class="platform-popup__select">
-            <option value="user">User</option>
-            <option value="shop">Shop owner</option>
+            <option value="user">{{ $t('user') }}</option>
+            <option value="shop">{{ $t('shopOwner3') }}</option>
           </select>
-          <span class="platform-popup__selector-hint">
-            Selecting “Shop owner” lets you notify a specific shop instead of a single account.
-          </span>
+          <span class="platform-popup__selector-hint">{{ $t('selectingShopOwnerLetsYouNotifyASpecificShopInsteadOfASingleAccount') }}</span>
         </div>
         <div class="platform-popup__selector-card">
-          <span class="platform-popup__selector-label">Recipient</span>
+          <span class="platform-popup__selector-label">{{ $t('recipient') }}</span>
           <select
             id="platform-recipient-popup"
             v-model="platformSelectedKey"
             :disabled="!platformOptionsForType.length"
             class="platform-popup__select"
           >
-            <option value="" disabled>Select recipient</option>
+            <option value="" disabled>{{ $t('selectRecipient') }}</option>
             <option
               v-for="recipient in platformOptionsForType"
               :key="`${recipient.type}-${recipient.id}`"
@@ -148,23 +135,23 @@
         </div>
       </div>
       <label class="platform-popup__field">
-        <span>Title</span>
+        <span>{{ $t('title') }}</span>
         <input
           v-model="platformTitle"
           type="text"
           maxlength="128"
           placeholder="E.g. Welcome to the platform"
         />
-        <small class="platform-popup__helper">Keep it short—aim for 5-7 words so recipients can scan quickly.</small>
+        <small class="platform-popup__helper">{{ $t('keepItShortAimFor57WordsSoRecipientsCanScanQuickly') }}</small>
       </label>
       <label class="platform-popup__field">
-        <span>Message</span>
+        <span>{{ $t('message') }}</span>
         <textarea
           v-model="platformMessage"
           rows="4"
           placeholder="Enter the details you want to share."
         ></textarea>
-        <small class="platform-popup__helper">Share the key updates and next steps; recipients will see this in their inbox.</small>
+        <small class="platform-popup__helper">{{ $t('shareTheKeyUpdatesAndNextStepsRecipientsWillSeeThisInTheirInbox') }}</small>
       </label>
       <div class="platform-popup__actions">
         <button
@@ -172,9 +159,7 @@
           class="ghost-pill platform-popup__cancel"
           :disabled="isSendingInfo"
           @click="handlePlatformCancel"
-        >
-          Cancel
-        </button>
+        >{{ $t('cancel') }}</button>
         <button
           type="button"
           class="primary-pill platform-popup__send"
@@ -203,7 +188,7 @@
         </div>
         <button class="icon-btn notification-detail-modal__close" type="button" @click="closeDetailModal">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-          <span class="sr-only">Close</span>
+          <span class="sr-only">{{ $t('close') }}</span>
         </button>
       </header>
       <div class="notification-detail-modal__meta">
@@ -213,11 +198,11 @@
       <p class="notification-detail-modal__body">{{ detailNotificationInfo.body || 'No additional details provided.' }}</p>
       <div class="notification-detail-modal__extras">
         <div class="detail-extra-card">
-          <span class="detail-extra-label">Type</span>
+          <span class="detail-extra-label">{{ $t('type') }}</span>
           <strong>{{ notificationContextInfo(detailNotification.value).badge }}</strong>
         </div>
         <div class="detail-extra-card">
-          <span class="detail-extra-label">Context</span>
+          <span class="detail-extra-label">{{ $t('context') }}</span>
           <p>{{ notificationContextInfo(detailNotification.value).body }}</p>
         </div>
       </div>
@@ -226,9 +211,7 @@
           class="primary-pill notification-detail-modal__goto"
           type="button"
           @click="handleNotificationClick(detailNotification.value)"
-        >
-          View related data
-        </button>
+        >{{ $t('viewRelatedData') }}</button>
       </div>
     </div>
   </div>

@@ -475,9 +475,9 @@ const removeSelectedPayments = async () => {
   <div class="payments-shell">
     <section class="payments-hero">
       <div class="hero-copy">
-        <span class="hero-kicker">Shop Finance</span>
-        <h1>Payments Overview</h1>
-        <p>Track booking revenue, monitor payment activity, and review shop collection status in one place.</p>
+        <span class="hero-kicker">{{ $t('shopFinance') }}</span>
+        <h1>{{ $t('paymentsOverview') }}</h1>
+        <p>{{ $t('trackBookingRevenueMonitorPaymentActivityAndReviewShopCollectionStatusInOnePlace') }}</p>
       </div>
     </section>
 
@@ -490,7 +490,7 @@ const removeSelectedPayments = async () => {
           </svg>
         </div>
         <div class="stat-content">
-          <span class="stat-label">Total Earnings</span>
+          <span class="stat-label">{{ $t('totalEarnings') }}</span>
           <strong class="stat-number">{{ formatCurrency(totalEarnings) }}</strong>
         </div>
       </article>
@@ -503,7 +503,7 @@ const removeSelectedPayments = async () => {
           </svg>
         </div>
         <div class="stat-content">
-          <span class="stat-label">Monthly Income</span>
+          <span class="stat-label">{{ $t('monthlyIncome') }}</span>
           <strong class="stat-number">{{ formatCurrency(monthlyIncome) }}</strong>
         </div>
       </article>
@@ -518,7 +518,7 @@ const removeSelectedPayments = async () => {
           </svg>
         </div>
         <div class="stat-content">
-          <span class="stat-label">Today's Earnings</span>
+          <span class="stat-label">{{ $t('todaySEarnings') }}</span>
           <strong class="stat-number">{{ formatCurrency(todayEarnings) }}</strong>
         </div>
       </article>
@@ -530,7 +530,7 @@ const removeSelectedPayments = async () => {
           </svg>
         </div>
         <div class="stat-content">
-          <span class="stat-label">Average Ticket</span>
+          <span class="stat-label">{{ $t('averageTicket') }}</span>
           <strong class="stat-number">{{ formatCurrency(averageTicket) }}</strong>
         </div>
       </article>
@@ -560,12 +560,12 @@ const removeSelectedPayments = async () => {
       <div class="table-container">
         <div v-if="loading" class="loading-state">
           <div class="spinner"></div>
-          <p>Loading payment activity...</p>
+          <p>{{ $t('loadingPaymentActivity') }}</p>
         </div>
 
         <div v-else-if="error" class="error-state">
           <p>{{ error }}</p>
-          <button class="retry-btn" @click="fetchPayments">Retry</button>
+          <button class="retry-btn" @click="fetchPayments">{{ $t('retry') }}</button>
         </div>
 
         <table v-else class="payments-table">
@@ -581,12 +581,12 @@ const removeSelectedPayments = async () => {
                   @change="toggleSelectAllFiltered"
                 />
               </th>
-              <th>Payment</th>
-              <th>Customer</th>
-              <th>Vehicle</th>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Status</th>
+              <th>{{ $t('payment2') }}</th>
+              <th>{{ $t('customer') }}</th>
+              <th>{{ $t('vehicle') }}</th>
+              <th>{{ $t('date') }}</th>
+              <th>{{ $t('amount') }}</th>
+              <th>{{ $t('status') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -597,8 +597,8 @@ const removeSelectedPayments = async () => {
                     <line x1="12" y1="1" x2="12" y2="23"></line>
                     <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                   </svg>
-                  <h3>No payment activity found</h3>
-                  <p>Try changing the filters or wait for new booking activity to appear.</p>
+                  <h3>{{ $t('noPaymentActivityFound') }}</h3>
+                  <p>{{ $t('tryChangingTheFiltersOrWaitForNewBookingActivityToAppear') }}</p>
                 </div>
               </td>
             </tr>

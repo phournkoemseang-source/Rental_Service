@@ -47,10 +47,10 @@
             </label>
 
             <label class="field">
-              <span>Status</span>
+              <span>{{ $t('status') }}</span>
               <select v-model="form.shop_status">
-                <option value="active">active</option>
-                <option value="inactive">inactive</option>
+                <option value="active">{{ $t('active2') }}</option>
+                <option value="inactive">{{ $t('inactive2') }}</option>
               </select>
             </label>
 
@@ -101,7 +101,7 @@
             </label>
 
             <label class="field full">
-              <span>Google Map URL</span>
+              <span>{{ $t('googleMapUrl') }}</span>
               <input
                 v-model="form.map_url"
                 type="url"
@@ -118,7 +118,7 @@
             </label>
 
             <label class="field">
-              <span>Latitude</span>
+              <span>{{ $t('latitude') }}</span>
               <div class="input-with-action">
                 <input v-model="form.latitude" type="number" step="any" placeholder="Auto" readonly />
                 <button
@@ -134,7 +134,7 @@
             </label>
 
             <label class="field">
-              <span>Longitude</span>
+              <span>{{ $t('longitude') }}</span>
               <div class="input-with-action">
                 <input v-model="form.longitude" type="number" step="any" placeholder="Auto" readonly />
                 <button
@@ -158,24 +158,7 @@
                   <p>{{ t('languageDescription') }}</p>
                 </div>
                 <div class="language-options">
-                  <button 
-                    type="button" 
-                    class="lang-btn notranslate"
-                    translate="no"
-                    :class="{ active: currentLanguage === 'en' }"
-                    @click="changeLanguage('en')"
-                  >
-                    English
-                  </button>
-                  <button 
-                    type="button" 
-                    class="lang-btn notranslate"
-                    translate="no"
-                    :class="{ active: currentLanguage === 'kh' }"
-                    @click="changeLanguage('kh')"
-                  >
-                    Khmer
-                  </button>
+                  <LanguageSwitcher variant="wide" />
                 </div>
               </div>
             </div>
@@ -254,7 +237,7 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import api from '../../services/api';
 import { logoutUser } from '../../services/auth';
-import { setLanguage, getCurrentLanguage, syncAutoTranslateWithCurrentLanguage } from '../../i18n';
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
 import { extractCoordinatesFromMapUrl } from '@/utils/shopLocation';
 import "../../css/setting.css";
 import '../../css/setting_dashboard.css'
@@ -262,22 +245,10 @@ import '../../css/setting_dashboard.css'
 const { t } = useI18n();
 const router = useRouter();
 
-const currentLanguage = ref(getCurrentLanguage());
 const confirmLogoutText = computed(() => {
   const msg = t('confirmLogout');
   return msg === 'confirmLogout' ? 'Are you sure you want to logout?' : msg;
 });
-
-const changeLanguage = (lang) => {
-  setLanguage(lang);
-  currentLanguage.value = lang;
-  const delays = [120, 450, 1000];
-  delays.forEach((delay) => {
-    setTimeout(() => {
-      syncAutoTranslateWithCurrentLanguage();
-    }, delay);
-  });
-};
 
 const loading = ref(false);
 const avatarUploadLoading = ref(false);

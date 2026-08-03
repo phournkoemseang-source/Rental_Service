@@ -484,8 +484,8 @@ const openMap = () => {
 
     <main class="vehicles-content">
       <div class="page-header">
-        <h1>Available Vehicles</h1>
-        <p>Browse vehicles from this shop</p>
+        <h1>{{ $t('availableVehicles') }}</h1>
+        <p>{{ $t('browseVehiclesFromThisShop') }}</p>
       </div>
 
       <div v-if="shopError" class="status-box error" style="margin-bottom: 1rem;">
@@ -501,8 +501,8 @@ const openMap = () => {
             </div>
           </div>
           <div class="owner-actions">
-            <button class="owner-btn primary-btn" type="button">Change Image</button>
-            <button class="owner-btn secondary-btn" type="button">Delete Image</button>
+            <button class="owner-btn primary-btn" type="button">{{ $t('changeImage') }}</button>
+            <button class="owner-btn secondary-btn" type="button">{{ $t('deleteImage') }}</button>
           </div>
           <span class="owner-status" :class="shop?.status === 'active' ? 'is-active' : 'is-inactive'">
             {{ shop?.status ? shop.status.charAt(0).toUpperCase() + shop.status.slice(1) : 'Draft' }}
@@ -510,19 +510,19 @@ const openMap = () => {
         </div>
         <div class="owner-info-grid">
           <div class="owner-info-card">
-            <p>Shop Name</p>
+            <p>{{ $t('shopName3') }}</p>
             <strong>{{ shop?.name || 'Your Shop' }}</strong>
           </div>
           <div class="owner-info-card">
-            <p>Owner</p>
+            <p>{{ $t('owner') }}</p>
             <strong>{{ shop?.owner_name || 'Owner Name' }}</strong>
           </div>
           <div class="owner-info-card">
-            <p>Phone</p>
+            <p>{{ $t('shopPhone') }}</p>
             <strong>{{ shop?.phone || 'N/A' }}</strong>
           </div>
           <div class="owner-info-card">
-            <p>Address</p>
+            <p>{{ $t('address') }}</p>
             <strong>{{ shop?.address || 'Add address' }}</strong>
           </div>
         </div>
@@ -547,15 +547,11 @@ const openMap = () => {
       </div>
 
 
-      <div v-if="isLoading" class="status-box">Loading vehicles...</div>
+      <div v-if="isLoading" class="status-box">{{ $t('loadingVehicles') }}</div>
       <div v-else-if="error" class="status-box error">{{ error }}</div>
-      <div v-else-if="vehicles.length === 0" class="status-box">
-        No vehicles available at this shop yet.
-      </div>
+      <div v-else-if="vehicles.length === 0" class="status-box">{{ $t('noVehiclesAvailableAtThisShopYet') }}</div>
 
-      <div v-else-if="filteredVehicles.length === 0" class="status-box">
-        No vehicles match this category.
-      </div>
+      <div v-else-if="filteredVehicles.length === 0" class="status-box">{{ $t('noVehiclesMatchThisCategory') }}</div>
 
       <div v-else class="vehicles-grid">
         <article v-for="vehicle in filteredVehicles" :key="vehicle.id" class="vehicle-card">
@@ -624,17 +620,16 @@ const openMap = () => {
         <div class="map">
           <div class="map-toolbar">
             <div class="map-modes">
-              <button class="map-mode-btn" :class="{ active: mapMode === 'satellite' }" @click="mapMode = 'satellite'">Satellite</button>
-              <button class="map-mode-btn" :class="{ active: mapMode === 'road' }" @click="mapMode = 'road'">Roadmap</button>
-              <button class="map-mode-btn" :class="{ active: mapMode === 'route' }" @click="mapMode = 'route'">Route</button>
+              <button class="map-mode-btn" :class="{ active: mapMode === 'satellite' }" @click="mapMode = 'satellite'">{{ $t('satellite') }}</button>
+              <button class="map-mode-btn" :class="{ active: mapMode === 'road' }" @click="mapMode = 'road'">{{ $t('roadmap') }}</button>
+              <button class="map-mode-btn" :class="{ active: mapMode === 'route' }" @click="mapMode = 'route'">{{ $t('route') }}</button>
             </div>
             <button class="map-locate-btn" :disabled="isLocating" @click="useMyLocation">
               {{ isLocating ? 'Locating...' : 'Use My Location' }}
             </button>
           </div>
 
-          <p v-if="distanceKm !== null" class="distance-chip">
-            Distance to shop: <strong>{{ distanceKm.toFixed(2) }} km</strong>
+          <p v-if="distanceKm !== null" class="distance-chip">{{ $t('distanceToShop') }}<strong>{{ distanceKm.toFixed(2) }} km</strong>
           </p>
 
           <iframe
@@ -645,7 +640,7 @@ const openMap = () => {
             referrerpolicy="no-referrer-when-downgrade"
           ></iframe>
           <div class="map-actions">
-            <button class="btn-reset open-map-btn" @click="openMap">Open in Google Maps</button>
+            <button class="btn-reset open-map-btn" @click="openMap">{{ $t('openInGoogleMaps') }}</button>
           </div>
         </div>
       </section>

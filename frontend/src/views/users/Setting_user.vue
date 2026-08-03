@@ -458,7 +458,7 @@ onMounted(fetchProfile)
         <div class="settings-back-bar">
             <button class="btn-back-top" @click="handleBack">
                 <i class="fa-solid fa-arrow-left"></i>
-                <span>Back</span>
+                <span>{{ $t('back') }}</span>
             </button>
         </div>
         <div :class="styles['page']">
@@ -528,9 +528,7 @@ onMounted(fetchProfile)
                     </div>
                 </div>
                 <button type="button" :class="styles['status-btn']">
-                    <i class="fa-solid fa-user-check" aria-hidden="true"></i>
-                    Connected
-                </button>
+                    <i class="fa-solid fa-user-check" aria-hidden="true"></i>{{ $t('connected') }}</button>
             </div>
             <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
                 style="display:none" @change="handleFileChange" />
@@ -547,8 +545,8 @@ onMounted(fetchProfile)
             <div :class="styles['left-column']">
                 <!-- <div :class="styles['info-card']">
                     <div :class="styles['card-header']">
-                        <p :class="styles['card-title']">About</p>
-                        <p :class="styles['card-subtitle']">Profile highlights</p>
+                        <p :class="styles['card-title']">{{ $t('about') }}</p>
+                        <p :class="styles['card-subtitle']">{{ $t('profileHighlights') }}</p>
                     </div>
                     <ul :class="styles['info-list']">
                         <li v-for="item in aboutItems" :key="item.label">
@@ -559,8 +557,8 @@ onMounted(fetchProfile)
                 </div> -->
                 <div :class="styles['info-card']">
                     <!-- <div :class="styles['card-header']">
-                        <p :class="styles['card-title']">Contacts</p>
-                        <p :class="styles['card-subtitle']">How to reach you</p>
+                        <p :class="styles['card-title']">{{ $t('contacts') }}</p>
+                        <p :class="styles['card-subtitle']">{{ $t('howToReachYou') }}</p>
                     </div> -->
                     <ul :class="styles['info-list']">
                         <li v-for="item in contactItems" :key="item.label">
@@ -571,8 +569,8 @@ onMounted(fetchProfile)
                 </div>
                 <!-- <div :class="styles['info-card']">
                     <div :class="styles['card-header']">
-                        <p :class="styles['card-title']">Overview</p>
-                        <p :class="styles['card-subtitle']">Your impact in numbers</p>
+                        <p :class="styles['card-title']">{{ $t('overview') }}</p>
+                        <p :class="styles['card-subtitle']">{{ $t('yourImpactInNumbers') }}</p>
                     </div>
                     <div :class="styles['overview-grid']">
                         <div v-for="metric in overviewMetrics" :key="metric.label" :class="styles['overview-item']">
@@ -585,8 +583,8 @@ onMounted(fetchProfile)
             <!-- <div :class="styles['right-column']">
                 <div :class="styles['activity-card']">
                     <div :class="styles['card-header']">
-                        <p :class="styles['card-title']">Activity Timeline</p>
-                        <p :class="styles['card-subtitle']">Latest updates</p>
+                        <p :class="styles['card-title']">{{ $t('activityTimeline') }}</p>
+                        <p :class="styles['card-subtitle']">{{ $t('latestUpdates') }}</p>
                     </div>
                     <div :class="styles['timeline']">
                         <div v-for="event in timelineEvents" :key="event.id" :class="styles['timeline-event']">
@@ -601,8 +599,8 @@ onMounted(fetchProfile)
                 </div>
                 <div :class="styles['activity-card']">
                     <div :class="styles['card-header']">
-                        <p :class="styles['card-title']">Connections</p>
-                        <p :class="styles['card-subtitle']">Your network</p>
+                        <p :class="styles['card-title']">{{ $t('connections') }}</p>
+                        <p :class="styles['card-subtitle']">{{ $t('yourNetwork') }}</p>
                     </div>
                     <div :class="styles['connections-list']">
                         <div v-for="connection in connectionList" :key="connection.name" :class="styles['connection-item']">
@@ -622,8 +620,8 @@ onMounted(fetchProfile)
                 </div>
                 <div :class="styles['activity-card']">
                     <div :class="styles['card-header']">
-                        <p :class="styles['card-title']">Teams</p>
-                        <p :class="styles['card-subtitle']">Groups you collaborate with</p>
+                        <p :class="styles['card-title']">{{ $t('teams') }}</p>
+                        <p :class="styles['card-subtitle']">{{ $t('groupsYouCollaborateWith') }}</p>
                     </div>
                     <div :class="styles['teams-list']">
                         <div v-for="team in teamList" :key="team.name" :class="styles['team-item']">
@@ -642,13 +640,13 @@ onMounted(fetchProfile)
             <div :class="styles['form-card']">
                 <div :class="styles['form-card__header']">
                     <div>
-                        <p :class="styles['form-card__title']">Personal Information</p>
-                        <p :class="styles['form-card__sub']">Update your contact details.</p>
+                        <p :class="styles['form-card__title']">{{ $t('personalInformation') }}</p>
+                        <p :class="styles['form-card__sub']">{{ $t('updateYourContactDetails') }}</p>
                     </div>
                 </div>
                 <div :class="styles['form-card__content']">
                     <div :class="styles['field-group']">
-                        <label :class="styles['field-label']">Full Name</label>
+                        <label :class="styles['field-label']">{{ $t('fullName2') }}</label>
                         <div :class="styles['input-wrap']">
                             <svg :class="styles['input-icon']" width="16" height="16" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -661,7 +659,7 @@ onMounted(fetchProfile)
                         <p v-if="profileErrors.name" :class="styles['field-error']">{{ profileErrors.name }}</p>
                     </div>
                     <div :class="styles['field-group']">
-                        <label :class="styles['field-label']">Email Address</label>
+                        <label :class="styles['field-label']">{{ $t('email') }}</label>
                         <div :class="styles['input-wrap']">
                             <svg :class="styles['input-icon']" width="16" height="16" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -675,7 +673,7 @@ onMounted(fetchProfile)
                     </div>
                     <div :class="styles['field-group']">
 
-                        <label :class="styles['field-label']">Phone Number</label>
+                        <label :class="styles['field-label']">{{ $t('phoneNumber3') }}</label>
                         <div :class="styles['input-wrap']">
                             <svg :class="styles['input-icon']" width="16" height="16" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -704,13 +702,13 @@ onMounted(fetchProfile)
             <div :class="styles['form-card']">
                 <div :class="styles['form-card__header']">
                     <div>
-                        <p :class="styles['form-card__title']">Change Password</p>
-                        <p :class="styles['form-card__sub']">Keep your account secure with a strong password.</p>
+                        <p :class="styles['form-card__title']">{{ $t('changePassword') }}</p>
+                        <p :class="styles['form-card__sub']">{{ $t('keepYourAccountSecureWithAStrongPassword') }}</p>
                     </div>
                 </div>
                 <div :class="styles['form-card__content']">
                     <div :class="styles['field-group']">
-                        <label :class="[styles['field-label'], styles['field-label--danger']]">Current Password</label>
+                        <label :class="[styles['field-label'], styles['field-label--danger']]">{{ $t('currentPassword') }}</label>
                         <div :class="styles['input-wrap']">
                             <svg :class="styles['input-icon']" width="16" height="16" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -739,7 +737,7 @@ onMounted(fetchProfile)
                         <p v-if="passwordErrors.current_password" :class="styles['field-error']">{{ passwordErrors.current_password }}</p>
                     </div>
                     <div :class="styles['field-group']">
-                        <label :class="[styles['field-label'], styles['field-label--danger']]">New Password</label>
+                        <label :class="[styles['field-label'], styles['field-label--danger']]">{{ $t('newPassword') }}</label>
                         <div :class="styles['input-wrap']">
                             <svg :class="styles['input-icon']" width="16" height="16" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -776,11 +774,11 @@ onMounted(fetchProfile)
                                 pwdStrength.label }}</span>
                         </div>
 
-                        <p v-else-if="touched.newPassword" :class="styles['field-hint']">Min 8 chars · Uppercase · Lowercase · Number · Special character</p>
+                        <p v-else-if="touched.newPassword" :class="styles['field-hint']">{{ $t('min8CharsUppercaseLowercaseNumberSpecialCharacter') }}</p>
                         <p v-if="passwordErrors.new_password" :class="styles['field-error']">{{ passwordErrors.new_password }}</p>
                     </div>
                     <div :class="styles['field-group']">
-                        <label :class="[styles['field-label'], styles['field-label--danger']]">Confirm New Password</label>
+                        <label :class="[styles['field-label'], styles['field-label--danger']]">{{ $t('confirmNewPassword') }}</label>
                         <div :class="styles['input-wrap']">
                             <svg :class="styles['input-icon']" width="16" height="16" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

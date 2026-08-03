@@ -508,13 +508,13 @@ watch(
   <section class="admin-page" @click="closeFilterMenus">
     <header class="page-head">
       <div>
-        <h1 class="page-title">User Management</h1>
-        <p class="page-subtitle">Manage platform participants, monitor activity, and regulate access.</p>
+        <h1 class="page-title">{{ $t('userManagement') }}</h1>
+        <p class="page-subtitle">{{ $t('managePlatformParticipantsMonitorActivityAndRegulateAccess') }}</p>
       </div>
       <div class="head-actions">
         <button type="button" class="btn btn-primary" @click="openCreate">
           <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
-          <span>Create User</span>
+          <span>{{ $t('createUser') }}</span>
         </button>
       </div>
     </header>
@@ -523,7 +523,7 @@ watch(
       <section class="card stat-wide">
         <div class="wide-stat">
           <div>
-            <div class="stat-label">TOTAL ACTIVE USERS</div>
+            <div class="stat-label">{{ $t('totalActiveUsers') }}</div>
             <div class="wide-value">
               <CountUp :value="Number(totals.activeUsers || 0)" :formatter="(n) => admin.formatted.fmtNumber(n)" />
             </div>
@@ -536,7 +536,7 @@ watch(
       <section class="card stat-wide">
         <div class="wide-stat">
           <div>
-            <div class="stat-label">NEWLY JOINED TODAY</div>
+            <div class="stat-label">{{ $t('newlyJoinedToday') }}</div>
             <div class="wide-value">
               <CountUp :value="Number(totals.joinedToday || 0)" :formatter="(n) => admin.formatted.fmtNumber(n)" />
             </div>
@@ -550,8 +550,8 @@ watch(
     <section class="card">
       <div class="card-head">
         <div>
-          <h2 class="card-title">User List</h2>
-          <p class="card-subtitle"><strong>94%</strong> Active Rate</p>
+          <h2 class="card-title">{{ $t('userList') }}</h2>
+          <p class="card-subtitle"><strong>94%</strong>{{ $t('activeRate') }}</p>
         </div>
         <div class="filters">
           <button
@@ -603,12 +603,12 @@ watch(
         <table class="data-table">
           <thead>
             <tr>
-              <th>USER DETAILS</th>
-              <th>EMAIL</th>
-              <th>DATE JOINED</th>
-              <th>ROLE</th>
-              <th>STATUS</th>
-              <th class="actions">ACTIONS</th>
+              <th>{{ $t('userDetails') }}</th>
+              <th>{{ $t('email2') }}</th>
+              <th>{{ $t('dateJoined') }}</th>
+              <th>{{ $t('role2') }}</th>
+              <th>{{ $t('status2') }}</th>
+              <th class="actions">{{ $t('actions2') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -627,7 +627,7 @@ watch(
                 <div class="shop-meta">
                   <div class="shop-name">
                     {{ user.name }}
-                    <span v-if="isSelf(user)" class="badge badge-blue">YOU</span>
+                    <span v-if="isSelf(user)" class="badge badge-blue">{{ $t('you') }}</span>
                   </div>
                   <div class="shop-id">ID: {{ user.id }}</div>
                 </div>
@@ -675,8 +675,8 @@ watch(
       <div class="modal modal--profile">
         <div class="modal-head">
           <div>
-            <div class="modal-title">User Details</div>
-            <div class="modal-sub">Read-only profile snapshot</div>
+            <div class="modal-title">{{ $t('userDetails2') }}</div>
+            <div class="modal-sub">{{ $t('readOnlyProfileSnapshot') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="closeView"><i
               class="fa-solid fa-xmark"></i></button>
@@ -703,29 +703,29 @@ watch(
             </div>
             <div class="detail-grid">
               <div class="detail-row">
-                <span class="detail-label">Email</span>
+                <span class="detail-label">{{ $t('email3') }}</span>
                 <span class="detail-value">{{ selectedUserEmailLabel }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Phone</span>
+                <span class="detail-label">{{ $t('shopPhone') }}</span>
                 <span class="detail-value">{{ selectedUserPhoneLabel }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Role</span>
+                <span class="detail-label">{{ $t('role') }}</span>
                 <span class="detail-value detail-value--badge" :class="selectedUserRoleClass">
                   {{ selectedUserRoleLabel }}
                 </span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Status</span>
+                <span class="detail-label">{{ $t('status') }}</span>
                 <span class="detail-value">{{ selectedUserStatusLabel }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Joined</span>
+                <span class="detail-label">{{ $t('joined') }}</span>
                 <span class="detail-value">{{ selectedUserJoinedLabel }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Last updated</span>
+                <span class="detail-label">{{ $t('lastUpdated') }}</span>
                 <span class="detail-value">{{ selectedUserUpdatedLabel }}</span>
               </div>
             </div>
@@ -737,7 +737,7 @@ watch(
     <section class="grid-2 wide">
       <section class="card">
         <div class="card-head">
-          <h2 class="card-title">User Registration Trends</h2>
+          <h2 class="card-title">{{ $t('userRegistrationTrends') }}</h2>
         </div>
         <div class="chart-bars small" :class="{ animated }">
           <div v-for="point in registrationSeries" :key="point.key" class="bar-col">
@@ -752,7 +752,7 @@ watch(
 
       <section class="card">
         <div class="card-head">
-          <h2 class="card-title">Role Distribution</h2>
+          <h2 class="card-title">{{ $t('roleDistribution') }}</h2>
         </div>
         <div class="fleet-list">
           <div v-for="row in roleDistribution" :key="row.key" class="fleet-row">
@@ -771,8 +771,8 @@ watch(
         <div class="platform-health">
           <div class="health-dot" aria-hidden="true"></div>
           <div>
-            <div class="muted small">PLATFORM HEALTH</div>
-            <div class="health-text">System security is stable</div>
+            <div class="muted small">{{ $t('platformHealth') }}</div>
+            <div class="health-text">{{ $t('systemSecurityIsStable') }}</div>
           </div>
         </div>
       </section>
@@ -782,8 +782,8 @@ watch(
       <div class="modal">
         <div class="modal-head">
           <div>
-            <div class="modal-title">Create User</div>
-            <div class="modal-sub">Add a new platform user.</div>
+            <div class="modal-title">{{ $t('createUser') }}</div>
+            <div class="modal-sub">{{ $t('addANewPlatformUser') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="closeCreate"><i
               class="fa-solid fa-xmark"></i></button>
@@ -791,34 +791,34 @@ watch(
 
         <div class="modal-body form-grid">
           <label class="field">
-            <span class="field-label">Full Name</span>
+            <span class="field-label">{{ $t('fullName2') }}</span>
             <input v-model="createForm.name" type="text" placeholder="e.g. Marcus Weber" />
           </label>
           <label class="field">
-            <span class="field-label">Email</span>
+            <span class="field-label">{{ $t('email3') }}</span>
             <input v-model="createForm.email" type="email" placeholder="name@example.com" />
           </label>
           <label class="field">
-            <span class="field-label">Phone</span>
+            <span class="field-label">{{ $t('shopPhone') }}</span>
             <input v-model="createForm.phone" type="text" placeholder="+855..." />
           </label>
           <label class="field">
-            <span class="field-label">Role</span>
+            <span class="field-label">{{ $t('role') }}</span>
             <select v-model="createForm.role">
-              <option value="customer">customer</option>
-              <option value="admin">admin</option>
-              <option value="shop_owner">shop_owner</option>
-              <option value="shop_staff">shop_staff</option>
+              <option value="customer">{{ $t('customer3') }}</option>
+              <option value="admin">{{ $t('admin2') }}</option>
+              <option value="shop_owner">{{ $t('shopOwner4') }}</option>
+              <option value="shop_staff">{{ $t('shopStaff') }}</option>
             </select>
           </label>
           <label class="field">
-            <span class="field-label">Password</span>
+            <span class="field-label">{{ $t('password') }}</span>
             <input v-model="createForm.password" type="password" placeholder="Strong password" />
           </label>
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" :disabled="isCreating" @click="closeCreate">Cancel</button>
+          <button type="button" class="btn btn-ghost" :disabled="isCreating" @click="closeCreate">{{ $t('cancel') }}</button>
           <button type="button" class="btn btn-primary" :disabled="isCreating" @click="submitCreate">
             {{ isCreating ? 'Creating...' : 'Create' }}
           </button>
@@ -830,8 +830,8 @@ watch(
       <div class="modal">
         <div class="modal-head">
           <div>
-            <div class="modal-title">Edit User</div>
-            <div class="modal-sub">Update user profile and role.</div>
+            <div class="modal-title">{{ $t('editUser') }}</div>
+            <div class="modal-sub">{{ $t('updateUserProfileAndRole') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="closeEdit"><i
               class="fa-solid fa-xmark"></i></button>
@@ -840,28 +840,28 @@ watch(
 
         <div class="modal-body form-grid">
           <label class="field">
-            <span class="field-label">Full Name</span>
+            <span class="field-label">{{ $t('fullName2') }}</span>
             <input v-model="editForm.name" type="text" />
           </label>
           <label class="field">
-            <span class="field-label">Phone</span>
+            <span class="field-label">{{ $t('shopPhone') }}</span>
             <input v-model="editForm.phone" type="text" />
           </label>
           <label class="field">
-            <span class="field-label">Role</span>
+            <span class="field-label">{{ $t('role') }}</span>
             <input v-model="editForm.role" type="text" />
           </label>
           <label class="field">
-            <span class="field-label">Verified</span>
+            <span class="field-label">{{ $t('verified') }}</span>
             <select v-model="editForm.is_verified">
-              <option :value="true">Yes</option>
-              <option :value="false">No</option>
+              <option :value="true">{{ $t('yes') }}</option>
+              <option :value="false">{{ $t('no') }}</option>
             </select>
           </label>
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" :disabled="isUpdating" @click="closeEdit">Cancel</button>
+          <button type="button" class="btn btn-ghost" :disabled="isUpdating" @click="closeEdit">{{ $t('cancel') }}</button>
           <button type="button" class="btn btn-primary" :disabled="isUpdating" @click="submitEdit">
             {{ isUpdating ? 'Saving...' : 'Save Changes' }}
           </button>

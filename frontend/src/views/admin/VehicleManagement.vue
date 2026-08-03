@@ -276,19 +276,19 @@ onMounted(async () => {
   <section class="admin-page">
     <header class="page-head">
       <div>
-        <h1 class="page-title">Vehicle Management</h1>
-        <p class="page-subtitle">Manage fleet inventory across all shops.</p>
+        <h1 class="page-title">{{ $t('vehicleManagement') }}</h1>
+        <p class="page-subtitle">{{ $t('manageFleetInventoryAcrossAllShops') }}</p>
       </div>
       <button type="button" class="btn btn-primary btn-block" @click="openCreate">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
-        <span>Add Vehicle</span>
+        <span>{{ $t('addVehicle') }}</span>
       </button>
     </header>
 
     <section class="card">
       <div class="card-head">
         <div>
-          <h2 class="card-title">Vehicles</h2>
+          <h2 class="card-title">{{ $t('vehicles') }}</h2>
           <p class="card-subtitle">{{ admin.formatted.fmtNumber(filteredVehicles.length) }} total</p>
         </div>
       </div>
@@ -298,11 +298,11 @@ onMounted(async () => {
         <table class="data-table">
           <thead>
             <tr>
-              <th>VEHICLE</th>
-              <th>SHOP</th>
-              <th class="num">PRICE/DAY</th>
-              <th>STATUS</th>
-              <th class="actions">ACTIONS</th>
+              <th>{{ $t('vehicle3') }}</th>
+              <th>{{ $t('shop2') }}</th>
+              <th class="num">{{ $t('priceDay') }}</th>
+              <th>{{ $t('status2') }}</th>
+              <th class="actions">{{ $t('actions2') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -348,7 +348,7 @@ onMounted(async () => {
         <div class="modal-head">
           <div>
             <div class="modal-title">{{ showEdit ? 'Edit Vehicle' : 'Create Vehicle' }}</div>
-            <div class="modal-sub">Update vehicle information and image.</div>
+            <div class="modal-sub">{{ $t('updateVehicleInformationAndImage') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="closeModals"><i class="fa-solid fa-xmark"></i></button>
         </div>
@@ -356,52 +356,52 @@ onMounted(async () => {
 
         <div class="modal-body form-grid">
           <label class="field">
-            <span class="field-label">Vehicle Name</span>
+            <span class="field-label">{{ $t('vehicleName') }}</span>
             <input v-model="form.name" type="text" placeholder="e.g. Honda PCX 160" />
           </label>
           <label class="field">
-            <span class="field-label">Category/Type</span>
+            <span class="field-label">{{ $t('categoryType') }}</span>
             <input v-model="form.category" type="text" placeholder="motorbike, car..." />
           </label>
           <label class="field">
-            <span class="field-label">Brand</span>
+            <span class="field-label">{{ $t('brand') }}</span>
             <input v-model="form.brand" type="text" placeholder="Honda" />
           </label>
           <label class="field">
-            <span class="field-label">Model</span>
+            <span class="field-label">{{ $t('model') }}</span>
             <input v-model="form.model" type="text" placeholder="PCX 160" />
           </label>
           <label class="field">
-            <span class="field-label">Plate</span>
+            <span class="field-label">{{ $t('plate') }}</span>
             <input v-model="form.plate" type="text" placeholder="1AB-2345" />
           </label>
           <label class="field">
-            <span class="field-label">Price/Day</span>
+            <span class="field-label">{{ $t('pricePerDay') }}</span>
             <input v-model.number="form.price" type="number" min="0" />
           </label>
           <label class="field">
-            <span class="field-label">Status</span>
+            <span class="field-label">{{ $t('status') }}</span>
             <select v-model="form.status">
-              <option>Available</option>
-              <option>Rented</option>
-              <option>Maintenance</option>
+              <option>{{ $t('available') }}</option>
+              <option>{{ $t('rented') }}</option>
+              <option>{{ $t('maintenance') }}</option>
             </select>
           </label>
           <label class="field">
-            <span class="field-label">Shop</span>
+            <span class="field-label">{{ $t('shop') }}</span>
             <select v-model.number="form.shop_id">
-              <option :value="null">Unassigned / select a shop</option>
+              <option :value="null">{{ $t('unassignedSelectAShop') }}</option>
               <option v-for="shop in shopOptions" :key="shop.id" :value="shop.id">
                 {{ shop.name }} (ID: {{ shop.id }})
               </option>
             </select>
           </label>
           <label class="field span-2">
-            <span class="field-label">Description</span>
+            <span class="field-label">{{ $t('shopDescription') }}</span>
             <textarea v-model="form.description" rows="3" placeholder="Optional notes..."></textarea>
           </label>
           <label class="field span-2">
-            <span class="field-label">Vehicle Image</span>
+            <span class="field-label">{{ $t('vehicleImage') }}</span>
             <input type="file" accept="image/*" @change="onImageChange" />
             <div v-if="imagePreview || form.image_url" class="image-preview">
               <img :src="imagePreview || form.image_url" alt="Vehicle preview" />
@@ -410,9 +410,9 @@ onMounted(async () => {
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" @click="closeModals">Cancel</button>
-          <button v-if="showEdit" type="button" class="btn btn-primary" @click="submitEdit">Save Changes</button>
-          <button v-else type="button" class="btn btn-primary" @click="submitCreate">Create Vehicle</button>
+          <button type="button" class="btn btn-ghost" @click="closeModals">{{ $t('cancel') }}</button>
+          <button v-if="showEdit" type="button" class="btn btn-primary" @click="submitEdit">{{ $t('saveChanges') }}</button>
+          <button v-else type="button" class="btn btn-primary" @click="submitCreate">{{ $t('createVehicle') }}</button>
         </div>
       </div>
     </div>
@@ -421,8 +421,8 @@ onMounted(async () => {
       <div class="modal modal--profile">
         <div class="modal-head">
           <div>
-            <div class="modal-title">Vehicle Details</div>
-            <div class="modal-sub">Read-only view</div>
+            <div class="modal-title">{{ $t('vehicleDetails') }}</div>
+            <div class="modal-sub">{{ $t('readOnlyView') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="showView = false"><i class="fa-solid fa-xmark"></i></button>
         </div>
@@ -443,35 +443,35 @@ onMounted(async () => {
             </div>
             <div class="detail-grid">
               <div class="detail-row">
-                <span class="detail-label">Brand</span>
+                <span class="detail-label">{{ $t('brand') }}</span>
                 <span class="detail-value">{{ selectedVehicleBrand }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Model</span>
+                <span class="detail-label">{{ $t('model') }}</span>
                 <span class="detail-value">{{ selectedVehicleModel }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Category</span>
+                <span class="detail-label">{{ $t('category') }}</span>
                 <span class="detail-value">{{ selectedVehicleCategory }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Plate</span>
+                <span class="detail-label">{{ $t('plate') }}</span>
                 <span class="detail-value">{{ selectedVehiclePlate }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Fuel</span>
+                <span class="detail-label">{{ $t('fuel') }}</span>
                 <span class="detail-value">{{ selectedVehicleFuel }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Transmission</span>
+                <span class="detail-label">{{ $t('transmission') }}</span>
                 <span class="detail-value">{{ selectedVehicleTransmission }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Price / Day</span>
+                <span class="detail-label">{{ $t('priceDay2') }}</span>
                 <span class="detail-value">{{ selectedVehiclePrice }}</span>
               </div>
               <div class="detail-row span-2">
-                <span class="detail-label">Description</span>
+                <span class="detail-label">{{ $t('shopDescription') }}</span>
                 <span class="detail-value">{{ selectedVehicleDescription }}</span>
               </div>
             </div>

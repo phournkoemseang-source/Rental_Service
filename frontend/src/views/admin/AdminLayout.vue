@@ -5,12 +5,12 @@ import { useI18n } from 'vue-i18n'
 import { useTheme } from '../../composables/useTheme'
 import { useNotifications } from '../../composables/useNotifications'
 import userService from '../../services/userService.js'
-import { setLanguage, getCurrentLanguage } from '@/i18n'
 import { useAdminStore } from '../../stores/adminStore.js'
 import { CAMBODIA_TIMEZONE, cambodiaDateTimeLabel, cambodiaYear } from '../../utils/cambodiaTime.js'
 import '../../css/DashboardAdmin.css'
 import ConfirmModal from '../../components/ConfirmModal.vue'
 import ToastStack from '../../components/ToastStack.vue'
+import LanguageSwitcher from '../../components/LanguageSwitcher.vue'
 
 defineOptions({
   inheritAttrs: false,
@@ -21,15 +21,6 @@ const router = useRouter()
 const { isDark, toggleTheme } = useTheme()
 const adminStore = useAdminStore()
 const { t } = useI18n()
-
-// Language state
-const currentAdminLang = ref(getCurrentLanguage())
-const switchAdminLang = (lang) => {
-  if (lang !== currentAdminLang.value) {
-    setLanguage(lang)
-    currentAdminLang.value = lang
-  }
-}
 
 // Professional Logo path from public folder
 const logoUrl = '/Images/logo-removebg.png'
@@ -367,25 +358,7 @@ const cambodiaCurrentYear = computed(() => cambodiaYear(new Date(nowTick.value))
 
           <div class="topbar-actions">
             <!-- Language Toggle -->
-            <div class="header-lang-toggle">
-              <button
-                class="hl-btn"
-                :class="{ active: currentAdminLang === 'en' }"
-                @click="switchAdminLang('en')"
-                title="English"
-              >
-                EN
-              </button>
-              <span class="hl-sep">|</span>
-              <button
-                class="hl-btn"
-                :class="{ active: currentAdminLang === 'kh' }"
-                @click="switchAdminLang('kh')"
-                title="ភាសាខ្មែរ"
-              >
-                KH
-              </button>
-            </div>
+            <LanguageSwitcher />
             <div class="topbar-time" :title="`Cambodia time (${CAMBODIA_TIMEZONE})`">
               <span class="topbar-time-year">{{ cambodiaCurrentYear }}</span>
               <span class="dot">•</span>
@@ -416,26 +389,20 @@ const cambodiaCurrentYear = computed(() => cambodiaYear(new Date(nowTick.value))
                 @click.stop
               >
                 <header class="notifications-popup__header">
-                  <strong>Notifications</strong>
+                  <strong>{{ $t('notifications') }}</strong>
                   <button
                     type="button"
                     class="ghost-pill ghost-pill--mini"
                     @click="handleMarkAllNotificationsRead"
                     :disabled="notificationsLoading || !hasAdminNotifications"
-                  >
-                    Mark all read
-                  </button>
+                  >{{ $t('markAllRead') }}</button>
                 </header>
                 <section class="notifications-popup__content">
-                  <div v-if="notificationsLoading" class="notifications-popup__empty">
-                    Loading…
-                  </div>
+                  <div v-if="notificationsLoading" class="notifications-popup__empty">{{ $t('loading') }}</div>
                   <div v-else-if="notificationsError" class="notifications-popup__empty error">
                     {{ notificationsError }}
                   </div>
-                  <div v-else-if="!hasAnyNotifications" class="notifications-popup__empty">
-                    No notifications found.
-                  </div>
+                  <div v-else-if="!hasAnyNotifications" class="notifications-popup__empty">{{ $t('noNotificationsFound') }}</div>
                   <ul v-else class="notifications-popup__list">
                     <li
                       v-for="item in notificationPreview"
@@ -458,7 +425,7 @@ const cambodiaCurrentYear = computed(() => cambodiaYear(new Date(nowTick.value))
                   </ul>
                 </section>
                 <footer class="notifications-popup__footer">
-                  <RouterLink to="/admin/notifications" class="link-btn">View all »</RouterLink>
+                  <RouterLink to="/admin/notifications" class="link-btn">{{ $t('viewAll2') }}</RouterLink>
                 </footer>
               </div>
             </div>
@@ -508,47 +475,6 @@ const cambodiaCurrentYear = computed(() => cambodiaYear(new Date(nowTick.value))
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
-}
-
-/* Header Language Toggle */
-.header-lang-toggle {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  background: rgba(59, 130, 246, 0.08);
-  border-radius: 8px;
-  border: 1px solid rgba(59, 130, 246, 0.12);
-}
-
-.hl-btn {
-  background: transparent;
-  border: none;
-  padding: 5px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.78rem;
-  color: #64748b;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  letter-spacing: 0.06em;
-}
-
-.hl-btn:hover {
-  color: #2563eb;
-}
-
-.hl-btn.active {
-  background: #ffffff;
-  color: #2563eb;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.hl-sep {
-  color: #cbd5e1;
-  font-size: 0.7rem;
-  user-select: none;
 }
 
 .topbar-notifications {

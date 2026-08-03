@@ -153,11 +153,11 @@ onBeforeUnmount(() => {
       <div class="profile-actions">
         <button class="btn-reset profile-action" type="button" @click="handleSettingsClick">
           <i class="fa-solid fa-gear" aria-hidden="true"></i>
-          <span>Settings</span>
+          <span>{{ $t('shopSettings') }}</span>
         </button>
         <button class="btn-reset profile-action" type="button" @click="requestLogoutConfirmation">
           <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
-          <span>Logout</span>
+          <span>{{ $t('logout') }}</span>
         </button>
       </div>
     </div>
@@ -166,11 +166,11 @@ onBeforeUnmount(() => {
         <div class="logout-icon-wrapper">
           <i class="fa-solid fa-right-to-bracket"></i>
         </div>
-        <p class="logout-title">Logout</p>
-        <p class="logout-message">Are you sure you want to logout?</p>
+        <p class="logout-title">{{ $t('logout') }}</p>
+        <p class="logout-message">{{ $t('confirmLogout') }}</p>
         <div class="logout-actions">
-          <button class="btn-reset logout-action cancel" type="button" @click="cancelLogout">No</button>
-          <button class="btn-reset logout-action confirm" type="button" @click="confirmLogout">Yes</button>
+          <button class="btn-reset logout-action cancel" type="button" @click="cancelLogout">{{ $t('no') }}</button>
+          <button class="btn-reset logout-action confirm" type="button" @click="confirmLogout">{{ $t('yes') }}</button>
         </div>
       </div>
     </div>

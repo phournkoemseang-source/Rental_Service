@@ -5,7 +5,7 @@
   <div class="activity-history-container p-6 max-w-4xl mx-auto">
     <!-- Header -->
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Activity History</h1>
+      <h1 class="text-2xl font-bold text-gray-800">{{ $t('activityHistory') }}</h1>
     </div>
 
     <!-- Activity List -->

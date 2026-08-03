@@ -480,9 +480,9 @@ onMounted(async () => {
     <section class="report-card category-overview">
       <div class="category-overview-head">
         <div>
-          <h2>Payout categories</h2>
+          <h2>{{ $t('payoutCategories') }}</h2>
         </div>
-        <div class="active-filter">Active filter: <strong>{{ selectedCategoryTitle }}</strong></div>
+        <div class="active-filter">{{ $t('activeFilter') }}<strong>{{ selectedCategoryTitle }}</strong></div>
       </div>
       <div class="category-metric-grid">
         <button
@@ -506,7 +506,7 @@ onMounted(async () => {
     <section class="kpi-modern-grid">
       <article class="report-card kpi-card pending">
         <div class="kpi-top">
-          <span class="kpi-label">Pending payout amount</span>
+          <span class="kpi-label">{{ $t('pendingPayoutAmount2') }}</span>
           <span class="kpi-icon">$</span>
         </div>
         <div class="kpi-value">{{ money2.format(kpiPendingAmount) }}</div>
@@ -514,24 +514,24 @@ onMounted(async () => {
 
       <article class="report-card kpi-card">
         <div class="kpi-top">
-          <span class="kpi-label">Number of shops to pay</span>
+          <span class="kpi-label">{{ $t('numberOfShopsToPay') }}</span>
           <span class="kpi-icon">#</span>
         </div>
-        <div class="kpi-value">{{ kpiShopsToPay }} <small>- Live</small></div>
+        <div class="kpi-value">{{ kpiShopsToPay }} <small>{{ $t('live') }}</small></div>
       </article>
 
       <article class="report-card kpi-card">
         <div class="kpi-top">
-          <span class="kpi-label">Last payout date</span>
+          <span class="kpi-label">{{ $t('lastPayoutDate2') }}</span>
           <span class="kpi-icon">*</span>
         </div>
-        <div class="kpi-value">{{ kpiLastPayout }} <small>- Live</small></div>
+        <div class="kpi-value">{{ kpiLastPayout }} <small>{{ $t('live') }}</small></div>
       </article>
     </section>
         <div class="report-grid">
       <article class="report-card span-2">
         <div class="card-head">
-          <h2>Total Earnings & Net Payouts (Last 6 Periods)</h2>
+          <h2>{{ $t('totalEarningsNetPayoutsLast6Periods') }}</h2>
         </div>
         <svg class="chart-svg earnings-svg" viewBox="0 0 760 320" @mouseleave="hideBarTooltip">
           <line v-for="n in 5" :key="`by-${n}`" x1="56" :y1="18 + (n - 1) * 62.5" x2="740" :y2="18 + (n - 1) * 62.5"
@@ -563,14 +563,14 @@ onMounted(async () => {
           </g>
         </svg>
         <div class="legend-row">
-          <button type="button" class="legend-chip"><span class="dot net"></span> Net Payout</button>
-          <button type="button" class="legend-chip"><span class="dot commission"></span> Platform Commission</button>
-          <button type="button" class="legend-chip"><span class="dot earning"></span> Total Earnings</button>
+          <button type="button" class="legend-chip"><span class="dot net"></span>{{ $t('netPayout') }}</button>
+          <button type="button" class="legend-chip"><span class="dot commission"></span>{{ $t('platformCommission') }}</button>
+          <button type="button" class="legend-chip"><span class="dot earning"></span>{{ $t('totalEarnings') }}</button>
         </div>
       </article>
             <article class="report-card">
         <div class="card-head">
-          <h2>Payout Distribution by Shop Category</h2>
+          <h2>{{ $t('payoutDistributionByShopCategory') }}</h2>
         </div>
         <div class="donut-wrap" @mouseleave="hideDonutTooltip">
           <svg class="chart-svg" viewBox="0 0 220 220">
@@ -625,7 +625,7 @@ onMounted(async () => {
       </article>
             <article class="report-card span-2">
         <div class="card-head">
-          <h2>Pending Payout Trend Over Time</h2>
+          <h2>{{ $t('pendingPayoutTrendOverTime') }}</h2>
         </div>
         <svg class="chart-svg" viewBox="0 0 760 300">
           <line v-for="n in 5" :key="`ly-${n}`" x1="56" :y1="18 + (n - 1) * 58.5" x2="740" :y2="18 + (n - 1) * 58.5"
@@ -649,7 +649,7 @@ onMounted(async () => {
 
       <article class="report-card">
         <div class="card-head">
-          <h2>Payout Status</h2>
+          <h2>{{ $t('payoutStatus') }}</h2>
         </div>
         <div class="status-wrap">
           <svg class="chart-svg" viewBox="0 0 190 190">
@@ -682,18 +682,18 @@ onMounted(async () => {
             </div>
             <button class="close-btn" type="button" @click="closeDetail">x</button>
           </div>
-          <div v-if="detailRows.length === 0" class="detail-empty">No records found for this chart segment.</div>
+          <div v-if="detailRows.length === 0" class="detail-empty">{{ $t('noRecordsFoundForThisChartSegment') }}</div>
           <div v-else class="detail-table-wrap">
             <table class="detail-table">
               <thead>
                 <tr>
-                  <th>Shop</th>
-                  <th>Category</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                  <th>Gross</th>
-                  <th>Commission</th>
-                  <th>Net</th>
+                  <th>{{ $t('shop') }}</th>
+                  <th>{{ $t('category') }}</th>
+                  <th>{{ $t('status') }}</th>
+                  <th>{{ $t('date') }}</th>
+                  <th>{{ $t('gross') }}</th>
+                  <th>{{ $t('commission') }}</th>
+                  <th>{{ $t('net') }}</th>
                 </tr>
               </thead>
               <tbody>

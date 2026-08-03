@@ -267,7 +267,7 @@ onMounted(async () => {
       <span v-if="tooltipInfo.shopCount > 0">
         {{ tooltipInfo.shopCount }} {{ tooltipInfo.shopCount === 1 ? 'shop' : 'shops' }}
       </span>
-      <span v-else>No shops yet</span>
+      <span v-else>{{ $t('noShopsYet') }}</span>
     </div>
   </div>
 </template>

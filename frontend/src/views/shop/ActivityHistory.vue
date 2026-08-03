@@ -40,32 +40,32 @@ const formatDate = (date) => {
 
 <template>
   <div class="history-container">
-    <h1 class="page-title">Activity History</h1>
+    <h1 class="page-title">{{ $t('activityHistory') }}</h1>
 
     <div class="table-container">
       <!-- Loading State -->
       <div v-if="loading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading activity history...</p>
+        <p>{{ $t('loadingActivityHistory') }}</p>
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="error-state">
         <p>{{ error }}</p>
-        <button class="retry-btn" @click="fetchHistories">Retry</button>
+        <button class="retry-btn" @click="fetchHistories">{{ $t('retry') }}</button>
       </div>
 
       <!-- Data Table -->
       <table v-else class="history-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>USER ID</th>
-            <th>SHOP ID</th>
-            <th>BOOKING ID</th>
-            <th>RATING</th>
-            <th>COMMENT</th>
-            <th>CREATED AT</th>
+            <th>{{ $t('id') }}</th>
+            <th>{{ $t('userId') }}</th>
+            <th>{{ $t('shopId2') }}</th>
+            <th>{{ $t('bookingId3') }}</th>
+            <th>{{ $t('rating2') }}</th>
+            <th>{{ $t('comment') }}</th>
+            <th>{{ $t('createdAt3') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -77,7 +77,7 @@ const formatDate = (date) => {
                   <path d="M3 4v5h5"/>
                   <path d="M12 7v5l3 2"/>
                 </svg>
-                <p>No activity history found</p>
+                <p>{{ $t('noActivityHistoryFound') }}</p>
               </div>
             </td>
           </tr>

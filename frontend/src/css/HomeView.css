@@ -64,69 +64,6 @@
   gap: 12px;
 }
 
-/* ─── Language Toggle in Header ── */
-.lang-toggle-header {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-right: 4px;
-  padding: 4px 6px;
-  background: #f1f5f9;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-}
-
-.lang-btn {
-  background: transparent;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.78rem;
-  color: #94a3b8;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  letter-spacing: 0.02em;
-}
-
-.lang-btn:hover {
-  color: #475569;
-}
-
-.lang-btn.active {
-  background: #ffffff;
-  color: #2563eb;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-
-.lang-sep {
-  color: #cbd5e1;
-  font-size: 0.75rem;
-  font-weight: 300;
-  user-select: none;
-}
-
-.lang-text {
-  position: relative;
-}
-
-.lang-text::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: transparent;
-  border-radius: 1px;
-  transition: background 0.2s ease;
-}
-
-.lang-btn.active .lang-text::after {
-  background: #2563eb;
-}
-
 .nav-sep {
   color: var(--color-border, #e2e8f0);
   font-weight: 300;
@@ -882,34 +819,6 @@
 
 .footer-link:hover {
   color: #fff;
-}
-
-.footer-lang-btn {
-  background: none;
-  border: none;
-  font-family: inherit;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  width: 100%;
-  text-align: left;
-}
-
-.footer-lang-btn i {
-  font-size: 0.7rem;
-  width: 14px;
-}
-
-.footer-lang-btn.active {
-  color: #60a5fa;
-}
-
-.footer-lang-btn.active i {
-  color: #60a5fa;
 }
 
 .newsletter {

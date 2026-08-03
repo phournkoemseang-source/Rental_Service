@@ -667,25 +667,25 @@ const skipRating = () => {
     <div class="bookings-back-bar">
       <button class="btn-back-top" @click="handleBack">
         <i class="fa-solid fa-arrow-left"></i>
-        <span>Back</span>
+        <span>{{ $t('back') }}</span>
       </button>
     </div>
 
     <section class="bookings-panel">
       <div class="panel-head">
         <div class="panel-head-text">
-          <h1>My Bookings</h1>
-          <p>View and manage your vehicle rentals.</p>
+          <h1>{{ $t('myBookings') }}</h1>
+          <p>{{ $t('viewAndManageYourVehicleRentals') }}</p>
         </div>
       </div>
 
       <div class="controls-row">
         <div class="tabs-row">
-          <button class="tab-btn" :class="{ active: activeTab === 'all' }" @click="activeTab = 'all'">All Bookings</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'pending' }" @click="activeTab = 'pending'">Pending</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'confirmed' }" @click="activeTab = 'confirmed'">Confirmed</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'completed' }" @click="activeTab = 'completed'">Completed</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'cancelled' }" @click="activeTab = 'cancelled'">Cancelled</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'all' }" @click="activeTab = 'all'">{{ $t('allBookings') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'pending' }" @click="activeTab = 'pending'">{{ $t('pending') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'confirmed' }" @click="activeTab = 'confirmed'">{{ $t('confirmed') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'completed' }" @click="activeTab = 'completed'">{{ $t('completed') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'cancelled' }" @click="activeTab = 'cancelled'">{{ $t('cancelled') }}</button>
         </div>
 
         <div class="search-row">
@@ -707,20 +707,14 @@ const skipRating = () => {
 
     <section class="booking-list-wrap">
       <div class="booking-list-header">
-        <span class="booking-list-title">Bookings</span>
-        <!-- <button class="bookings-home-btn" type="button" @click="goHome">
-          Back to Home
-        </button> -->
+        <span class="booking-list-title">{{ $t('bookings') }}</span>
+        <!-- <button class="bookings-home-btn" type="button" @click="goHome">{{ $t('backToHome') }}</button> -->
       </div>
-      <div v-if="loading" class="empty-state">
-        Loading bookings...
-      </div>
+      <div v-if="loading" class="empty-state">{{ $t('loadingBookings') }}</div>
       <div v-else-if="error" class="empty-state" style="color: red;">
         {{ error }}
       </div>
-      <div v-else-if="filteredBookings.length === 0" class="empty-state">
-        No bookings found for your search.
-      </div>
+      <div v-else-if="filteredBookings.length === 0" class="empty-state">{{ $t('noBookingsFound') }}</div>
       <article v-for="booking in displayedBookings" :key="booking.id" class="booking-card">
         <div class="booking-image">
           <img :src="getBookingImage(booking)" :alt="getBookingVehicleName(booking)" class="vehicle-img" />
@@ -739,39 +733,33 @@ const skipRating = () => {
                 </button>
                 <div v-if="activeMenuId === booking.id" class="menu-dropdown">
                   <button class="menu-item" @click="openDetails(booking)">
-                    <i class="fa-solid fa-eye"></i>
-                    View Details
-                  </button>
+                    <i class="fa-solid fa-eye"></i>{{ $t('viewDetails') }}</button>
                   <button 
                     v-if="booking.status === 'pending' || booking.status === 'confirmed'" 
                     class="menu-item danger" 
                     @click="openCancelModal(booking)"
                   >
-                    <i class="fa-solid fa-xmark"></i>
-                    Cancel Booking
-                  </button>
+                    <i class="fa-solid fa-xmark"></i>{{ $t('cancelBooking') }}</button>
                   <button 
                     v-if="isBookingCompleted(booking) && !booking.rating" 
                     class="menu-item" 
                     @click="openRatingOverlay(booking)"
                   >
-                    <i class="fa-solid fa-star"></i>
-                    Rate Vehicle
-                  </button>
+                    <i class="fa-solid fa-star"></i>{{ $t('rateVehicle') }}</button>
                 </div>
               </div>
             </div>
           </div>
 
-          <p><span class="meta-label">Booking ID:</span> {{ booking.booking_code }}</p>
-          <p><span class="meta-label">Shop:</span> {{ booking.shop_name }}</p>
+          <p><span class="meta-label">{{ $t('bookingId4') }}</span> {{ booking.booking_code }}</p>
+          <p><span class="meta-label">{{ $t('shop3') }}</span> {{ booking.shop_name }}</p>
           <p>
-            <span class="meta-label">Date:</span>
+            <span class="meta-label">{{ $t('date2') }}</span>
             {{ formatDate(booking.start_date) }} to {{ formatDate(booking.end_date) }}
             ({{ getTotalDays(booking.start_date, booking.end_date) }} days)
           </p>
           <p>
-            <span class="meta-label">Payment:</span>
+            <span class="meta-label">{{ $t('payment') }}</span>
             <span class="payment-pill" :class="getPaymentStatusClass(booking.payment_status)">
               {{ getPaymentStatusLabel(booking.payment_status) }}
             </span>
@@ -797,9 +785,7 @@ const skipRating = () => {
         <button v-if="hasMoreBookings" class="see-more-btn" type="button" @click="showMore">
           See More ({{ filteredBookings.length - visibleCount }} more)
         </button>
-        <button v-else-if="visibleCount > 4" class="see-more-btn" type="button" @click="showLess">
-          Show Less
-        </button>
+        <button v-else-if="visibleCount > 4" class="see-more-btn" type="button" @click="showLess">{{ $t('showLess') }}</button>
       </div>
     </section>
 
@@ -826,9 +812,7 @@ const skipRating = () => {
             
             <div class="history-section">
               <h3 class="history-title">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-                Booking History
-              </h3>
+                <i class="fa-solid fa-clock-rotate-left"></i>{{ $t('bookingHistory') }}</h3>
               <div class="history-timeline">
                 <div v-for="log in selectedBooking?.booking_status_logs" :key="log.id" class="history-item">
                   <div class="history-dot" :class="{ active: log.status === selectedBooking.status }"></div>
@@ -841,7 +825,7 @@ const skipRating = () => {
                 <div v-if="!selectedBooking?.booking_status_logs?.length" class="history-item">
                   <div class="history-dot active"></div>
                   <div class="history-content">
-                    <span class="history-status">Created</span>
+                    <span class="history-status">{{ $t('created2') }}</span>
                     <span class="history-time">{{ formatDate(selectedBooking?.created_at) }}</span>
                   </div>
                 </div>
@@ -849,7 +833,7 @@ const skipRating = () => {
             </div>
 
             <div class="detail-rating-row" v-if="selectedBooking?.rating?.rating">
-              <span class="detail-rating-label">Rating</span>
+              <span class="detail-rating-label">{{ $t('rating') }}</span>
               <strong>{{ selectedBooking.rating.rating.toFixed(1) }}</strong>
               <div class="detail-rating-stars">
                 <span
@@ -874,48 +858,48 @@ const skipRating = () => {
 
             <div class="detail-price-row">
               <div class="detail-total-box">
-                <span>Total</span>
+                <span>{{ $t('total3') }}</span>
                 <strong>{{ formatCurrency(detailTotalAmount) }}</strong>
               </div>
               <div>
-                <p class="detail-price-label">Price per day</p>
+                <p class="detail-price-label">{{ $t('pricePerDay2') }}</p>
                 <strong class="detail-price">{{ formatCurrency(detailPricePerDay) }}</strong>
-                <span class="detail-price-suffix">USD</span>
+                <span class="detail-price-suffix">{{ $t('usd') }}</span>
               </div>
             </div>
 
             <div class="detail-section detail-section--compact">
-              <div class="detail-row"><span>Status</span><strong>{{ getStatusLabel(selectedBooking?.status) }}</strong></div>
-              <div class="detail-row"><span>Shop</span><strong>{{ selectedBooking?.shop_name || 'N/A' }}</strong></div>
-              <div class="detail-row"><span>Rental Date</span><strong>{{ formatDate(selectedBooking?.start_date) }} - {{ formatDate(selectedBooking?.end_date) }}</strong></div>
-              <div class="detail-row"><span>Duration</span><strong>{{ detailDays }} day(s)</strong></div>
+              <div class="detail-row"><span>{{ $t('status') }}</span><strong>{{ getStatusLabel(selectedBooking?.status) }}</strong></div>
+              <div class="detail-row"><span>{{ $t('shop') }}</span><strong>{{ selectedBooking?.shop_name || 'N/A' }}</strong></div>
+              <div class="detail-row"><span>{{ $t('rentalDate') }}</span><strong>{{ formatDate(selectedBooking?.start_date) }} - {{ formatDate(selectedBooking?.end_date) }}</strong></div>
+              <div class="detail-row"><span>{{ $t('duration') }}</span><strong>{{ detailDays }} day(s)</strong></div>
             </div>
 
 
             <div class="detail-section detail-section--full">
               <div class="detail-grid detail-grid--info">
                 <div class="detail-item detail-item--info">
-                  <span>Type</span>
+                  <span>{{ $t('type') }}</span>
                   <strong>{{ selectedVehicle.category || 'N/A' }}</strong>
                 </div>
                 <div class="detail-item detail-item--info">
-                  <span>Brand</span>
+                  <span>{{ $t('brand') }}</span>
                   <strong>{{ selectedVehicle.brand || 'N/A' }}</strong>
                 </div>
                 <div class="detail-item detail-item--info">
-                  <span>Fuel</span>
+                  <span>{{ $t('fuel') }}</span>
                   <strong>{{ selectedVehicle.fuel_type || 'N/A' }}</strong>
                 </div>
                 <div class="detail-item detail-item--info">
-                  <span>Transmission</span>
+                  <span>{{ $t('transmission') }}</span>
                   <strong>{{ selectedVehicle.transmission || 'N/A' }}</strong>
                 </div>
                 <div class="detail-item detail-item--info">
-                  <span>Plate</span>
+                  <span>{{ $t('plate') }}</span>
                   <strong>{{ selectedVehicle.plate || selectedVehicle.plate_number || 'N/A' }}</strong>
                 </div>
                 <div class="detail-item detail-item--info">
-                  <span>Status</span>
+                  <span>{{ $t('status') }}</span>
                   <strong>{{ selectedVehicle.status || 'N/A' }}</strong>
                 </div>
               </div>
@@ -941,7 +925,7 @@ const skipRating = () => {
           <i class="fa-solid fa-star"></i>
         </div>
       </div>
-      <p class="rating-alert-title">Rate your experience</p>
+      <p class="rating-alert-title">{{ $t('rateYourExperience') }}</p>
       <p class="rating-alert-subtitle">
         {{ getBookingVehicleName(ratingOverlay.booking) || 'Your rental' }} finished successfully.
       </p>
@@ -971,9 +955,7 @@ const skipRating = () => {
         >
           {{ overlayLoading ? 'Submitting...' : 'Submit' }}
         </button>
-        <button type="button" class="rating-alert-skip" @click="skipRating">
-          No, thanks
-        </button>
+        <button type="button" class="rating-alert-skip" @click="skipRating">{{ $t('noThanks') }}</button>
       </div>
       <p v-if="overlayError" class="rating-alert-error">{{ overlayError }}</p>
     </div>
@@ -984,26 +966,24 @@ const skipRating = () => {
   <div v-if="cancelModal.visible" class="cancel-modal-backdrop" @click.self="closeCancelModal">
     <div class="cancel-modal-card">
       <div class="cancel-modal-header">
-        <h2>Cancel Booking</h2>
+        <h2>{{ $t('cancelBooking') }}</h2>
         <button type="button" class="cancel-modal-close" @click="closeCancelModal">
           &times;
         </button>
       </div>
       <div class="cancel-modal-body">
-        <p>Are you sure you want to cancel this booking?</p>
+        <p>{{ $t('areYouSureYouWantToCancelThisBooking') }}</p>
         <div class="cancel-modal-details">
-          <p><strong>Vehicle:</strong> {{ getBookingVehicleName(cancelModal.booking) }}</p>
-          <p><strong>Booking ID:</strong> {{ cancelModal.booking?.booking_code }}</p>
-          <p><strong>Date:</strong> {{ formatDate(cancelModal.booking?.start_date) }} to {{ formatDate(cancelModal.booking?.end_date) }}</p>
-          <p><strong>Total:</strong> {{ formatCurrency(cancelModal.booking?.total_price) }}</p>
+          <p><strong>{{ $t('vehicle4') }}</strong> {{ getBookingVehicleName(cancelModal.booking) }}</p>
+          <p><strong>{{ $t('bookingId4') }}</strong> {{ cancelModal.booking?.booking_code }}</p>
+          <p><strong>{{ $t('date2') }}</strong> {{ formatDate(cancelModal.booking?.start_date) }} to {{ formatDate(cancelModal.booking?.end_date) }}</p>
+          <p><strong>{{ $t('total2') }}</strong> {{ formatCurrency(cancelModal.booking?.total_price) }}</p>
         </div>
-        <p class="cancel-warning">Note: Cancellation may be subject to the shop's refund policy.</p>
+        <p class="cancel-warning">{{ $t('noteCancellationMayBeSubjectToTheShopSRefundPolicy') }}</p>
         <p v-if="cancelError" class="cancel-error">{{ cancelError }}</p>
       </div>
       <div class="cancel-modal-actions">
-        <button type="button" class="cancel-modal-cancel" @click="closeCancelModal">
-          Keep Booking
-        </button>
+        <button type="button" class="cancel-modal-cancel" @click="closeCancelModal">{{ $t('keepBooking') }}</button>
         <button 
           type="button" 
           class="cancel-modal-confirm" 

@@ -189,6 +189,19 @@ const triggerLanguageSelection = (targetLangCode) => {
   return true;
 };
 
+// Synchronously persist the googtrans cookie for a language without loading
+// the Google Translate widget (used right before a page reload, where loading
+// the widget would just be discarded).
+export const persistGoogTransCookie = (lang) => {
+  if (typeof document === 'undefined' || typeof window === 'undefined') return;
+  const targetLangCode = languageMap[lang] || 'en';
+  if (targetLangCode === 'en') {
+    // Switching back to English: drop any stale translation cookie first.
+    clearGoogTransCookie();
+  }
+  setGoogTransCookie(targetLangCode);
+};
+
 export const applyAutoTranslate = async (lang) => {
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
 

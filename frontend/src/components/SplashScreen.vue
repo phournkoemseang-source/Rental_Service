@@ -19,33 +19,33 @@
         
         <div class="text-wrapper">
           <h1 class="app-name">Chong Choul</h1>
-          <p class="tagline">Premium Vehicle Rentals</p>
+          <p class="tagline">{{ $t('premiumVehicleRentals') }}</p>
         </div>
 
         <div class="loader-container">
           <div class="loader-track">
             <div class="loader-fill"></div>
           </div>
-          <span class="loading-text">Starting your journey...</span>
+          <span class="loading-text">{{ $t('startingYourJourney') }}</span>
         </div>
 
         <div class="trust-row">
-          <span>Trusted Local Shops</span>
-          <span>Fast Booking</span>
-          <span>24/7 Support</span>
+          <span>{{ $t('trustedLocalShops') }}</span>
+          <span>{{ $t('fastBooking') }}</span>
+          <span>{{ $t('247Support') }}</span>
         </div>
 
         <div v-if="locationRequired" class="splash-location-notice">
           <div class="notice-dot"></div>
           <div>
-            <strong>Location permission required</strong>
-            <p>Enable location to use Login and Register with nearby shop matching.</p>
+            <strong>{{ $t('locationPermissionRequired') }}</strong>
+            <p>{{ $t('enableLocationToUseLoginAndRegisterWithNearbyShopMatching') }}</p>
           </div>
         </div>
       </div>
       
       <div class="footer-credit">
-        <span>Powered by Chong Choul Eco-System</span>
+        <span>{{ $t('poweredByChongChoulEcoSystem') }}</span>
       </div>
     </div>
   </transition>

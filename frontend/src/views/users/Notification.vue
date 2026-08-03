@@ -12,8 +12,8 @@
       <section class="notification-shell">
         <header class="notification-shell__header">
           <div>
-            <p class="notification-shell__eyebrow">Notifications</p>
-            <h1>Notification center</h1>
+            <p class="notification-shell__eyebrow">{{ $t('notifications') }}</p>
+            <h1>{{ $t('notificationCenter') }}</h1>
           </div>
           <div class="notification-shell__meta">
             <span>{{ unreadCount }} unread</span>
@@ -33,7 +33,7 @@
         </div>
 
     <div class="notification-list">
-          <div v-if="isLoading" class="notification-list__state">Loading notifications...</div>
+          <div v-if="isLoading" class="notification-list__state">{{ $t('loadingNotifications') }}</div>
           <div v-else-if="error" class="notification-list__state notification-list__state--error">
             {{ error }}
           </div>
@@ -62,9 +62,7 @@
               </div>
               <span class="notification-row__dot" :class="{ unread: item.status === 'unread' }" />
             </article>
-            <p v-if="!filteredNotifications.length" class="notification-list__empty">
-              Nothing new here yet. Start a booking or send a message to see updates.
-            </p>
+            <p v-if="!filteredNotifications.length" class="notification-list__empty">{{ $t('nothingNewHereYetStartABookingOrSendAMessageToSeeUpdates') }}</p>
             <div v-if="canToggleView" class="notification-list__actions">
               <button type="button" class="link-btn" @click="toggleNotificationView">
                 {{ showAllNotifications ? 'See less' : 'See more' }}
@@ -92,7 +90,7 @@
         </div>
         <button class="icon-btn notification-detail-dialog__close" type="button" @click="closeDetailModal">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-          <span class="sr-only">Close</span>
+          <span class="sr-only">{{ $t('close') }}</span>
         </button>
       </header>
       <div class="notification-detail-dialog__meta">

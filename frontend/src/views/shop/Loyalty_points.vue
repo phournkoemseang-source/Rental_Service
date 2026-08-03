@@ -52,29 +52,29 @@ const getCustomerName = (lp) => {
 
 <template>
   <div class="loyalty-container">
-    <h1 class="page-title">Loyalty Points</h1>
+    <h1 class="page-title">{{ $t('loyaltyPoints') }}</h1>
 
     <div class="table-container">
       <!-- Loading State -->
       <div v-if="loading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading loyalty points...</p>
+        <p>{{ $t('loadingLoyalty') }}</p>
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="error-state">
         <p>{{ error }}</p>
-        <button class="retry-btn" @click="fetchLoyaltyPoints">Retry</button>
+        <button class="retry-btn" @click="fetchLoyaltyPoints">{{ $t('retry') }}</button>
       </div>
 
       <!-- Data Table -->
       <table v-else class="loyalty-table">
         <thead>
           <tr>
-            <th>CUSTOMER</th>
-            <th>TOTAL POINTS 🎁</th>
-            <th>BOOKINGS</th>
-            <th>STATUS</th>
+            <th>{{ $t('customer2') }}</th>
+            <th>{{ $t('totalPoints2') }}</th>
+            <th>{{ $t('bookings2') }}</th>
+            <th>{{ $t('status2') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -86,7 +86,7 @@ const getCustomerName = (lp) => {
                   <path d="M12 9v12M3 13h18"/>
                   <path d="M12 9s-3.5-1.5-4.5-3A2.2 2.2 0 0 1 11 4.2c.7 1 .9 2.3 1 4.8zM12 9s3.5-1.5 4.5-3A2.2 2.2 0 0 0 13 4.2c-.7 1-.9 2.3-1 4.8z"/>
                 </svg>
-                <p>No loyalty points data found</p>
+                <p>{{ $t('noLoyaltyData') }}</p>
               </div>
             </td>
           </tr>

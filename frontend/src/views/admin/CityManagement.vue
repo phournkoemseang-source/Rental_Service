@@ -186,12 +186,12 @@ onMounted(load)
   <section class="admin-page">
     <header class="page-head">
       <div>
-        <h1 class="page-title">City Management</h1>
-        <p class="page-subtitle">Manage supported cities used for shops and filtering.</p>
+        <h1 class="page-title">{{ $t('cityManagement2') }}</h1>
+        <p class="page-subtitle">{{ $t('manageSupportedCitiesUsedForShopsAndFiltering') }}</p>
       </div>
       <button type="button" class="btn btn-primary btn-block" @click="openCreate">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
-        <span>Add City</span>
+        <span>{{ $t('addCity') }}</span>
       </button>
     </header>
 
@@ -199,20 +199,20 @@ onMounted(load)
     <section class="card">
       <div class="card-head">
         <div>
-          <h2 class="card-title">Cities</h2>
+          <h2 class="card-title">{{ $t('cities') }}</h2>
           <p class="card-subtitle">{{ filtered.length }} total</p>
         </div>
       </div>
 
-      <div v-if="loading" class="muted">Loading…</div>
+      <div v-if="loading" class="muted">{{ $t('loading') }}</div>
       <div v-else class="table-wrap">
         <table class="data-table">
           <thead>
           <tr>
-            <th>CITY</th>
-            <th>SHOPS</th>
-            <th>CREATED</th>
-            <th class="actions">ACTIONS</th>
+            <th>{{ $t('city') }}</th>
+            <th>{{ $t('shops2') }}</th>
+            <th>{{ $t('created') }}</th>
+            <th class="actions">{{ $t('actions2') }}</th>
           </tr>
           </thead>
           <tbody>
@@ -222,7 +222,7 @@ onMounted(load)
                 <div class="shop-meta">
                   <div class="shop-name">
                     {{ c.name }}
-                    <span v-if="c.derived" class="badges">(auto)</span>
+                    <span v-if="c.derived" class="badges">{{ $t('auto') }}</span>
                   </div>
                   <div class="shop-id">ID: {{ c.id ?? '—' }}</div>
                 </div>
@@ -260,22 +260,22 @@ onMounted(load)
         <div class="modal-head">
           <div>
             <div class="modal-title">{{ showEdit ? 'Edit City' : 'Create City' }}</div>
-            <div class="modal-sub">City name must be unique.</div>
+            <div class="modal-sub">{{ $t('cityNameMustBeUnique') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="closeModals"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div class="modal-body form-grid">
           <label class="field span-2">
-            <span class="field-label">Name</span>
+            <span class="field-label">{{ $t('name') }}</span>
             <input v-model="form.name" type="text" placeholder="Phnom Penh" />
           </label>
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" @click="closeModals">Cancel</button>
-          <button v-if="showEdit" type="button" class="btn btn-primary" @click="submitEdit">Save Changes</button>
-          <button v-else type="button" class="btn btn-primary" @click="submitCreate">Create City</button>
+          <button type="button" class="btn btn-ghost" @click="closeModals">{{ $t('cancel') }}</button>
+          <button v-if="showEdit" type="button" class="btn btn-primary" @click="submitEdit">{{ $t('saveChanges') }}</button>
+          <button v-else type="button" class="btn btn-primary" @click="submitCreate">{{ $t('createCity') }}</button>
         </div>
       </div>
     </div>
@@ -284,18 +284,18 @@ onMounted(load)
       <div class="modal">
         <div class="modal-head">
           <div>
-            <div class="modal-title">City Details</div>
-            <div class="modal-sub">Read-only view</div>
+            <div class="modal-title">{{ $t('cityDetails') }}</div>
+            <div class="modal-sub">{{ $t('readOnlyView') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="showView = false"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body city-details-grid">
           <div class="detail-card">
-            <span class="detail-label">Name</span>
+            <span class="detail-label">{{ $t('name') }}</span>
             <strong>{{ selected?.name || '—' }}</strong>
           </div>
           <div class="detail-card">
-            <span class="detail-label">Created at</span>
+            <span class="detail-label">{{ $t('createdAt2') }}</span>
             <strong>{{ formatDate(selected?.created_at) }}</strong>
           </div>
         </div>

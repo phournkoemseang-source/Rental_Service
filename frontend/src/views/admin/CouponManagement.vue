@@ -345,34 +345,34 @@ onMounted(async () => {
   <section class="admin-page">
     <header class="page-head">
       <div>
-        <h1 class="page-title">Coupon Management</h1>
-        <p class="page-subtitle">Create and manage discount coupons.</p>
+        <h1 class="page-title">{{ $t('couponManagement') }}</h1>
+        <p class="page-subtitle">{{ $t('createAndManageDiscountCoupons') }}</p>
       </div>
       <button type="button" class="btn btn-primary btn-block" @click="openCreate">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
-        <span>Add Coupon</span>
+        <span>{{ $t('addCoupon') }}</span>
       </button>
     </header>
 
     <section class="card">
       <div class="card-head">
         <div>
-          <h2 class="card-title">Coupons</h2>
+          <h2 class="card-title">{{ $t('coupons') }}</h2>
           <p class="card-subtitle">{{ filtered.length }} total</p>
         </div>
       </div>
 
-      <div v-if="loading" class="muted">Loading…</div>
+      <div v-if="loading" class="muted">{{ $t('loading') }}</div>
       <div v-else class="table-wrap">
         <table class="data-table">
           <thead>
             <tr>
-              <th>CODE</th>
-              <th class="num">PERCENT</th>
-              <th class="num">AMOUNT</th>
-              <th>VALID</th>
-              <th>ACTIVE</th>
-              <th class="actions">ACTIONS</th>
+              <th>{{ $t('code2') }}</th>
+              <th class="num">{{ $t('percent') }}</th>
+              <th class="num">{{ $t('amount2') }}</th>
+              <th>{{ $t('valid') }}</th>
+              <th>{{ $t('active3') }}</th>
+              <th class="actions">{{ $t('actions2') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -415,63 +415,61 @@ onMounted(async () => {
         <div class="modal-head">
           <div>
             <div class="modal-title">{{ showEdit ? 'Edit Coupon' : 'Create Coupon' }}</div>
-            <div class="modal-sub">Assign the coupon to a shop and control its validity.</div>
+            <div class="modal-sub">{{ $t('assignTheCouponToAShopAndControlItsValidity') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="closeModals"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div class="modal-body form-grid">
           <label class="field">
-            <span class="field-label">Code</span>
+            <span class="field-label">{{ $t('code') }}</span>
             <input v-model="form.code" type="text" placeholder="SUMMER21" />
           </label>
           <label class="field">
-            <span class="field-label">Shop</span>
+            <span class="field-label">{{ $t('shop') }}</span>
             <select v-model="form.shop_id">
-              <option value="">General (all shops)</option>
+              <option value="">{{ $t('generalAllShops') }}</option>
               <option v-for="shop in shops" :key="shop.id" :value="String(shop.id)">
                 {{ shopLabel(shop, shop.id) }}
               </option>
             </select>
-            <small class="muted muted-block">
-              Leave blank to apply the coupon across all shops.
-            </small>
+            <small class="muted muted-block">{{ $t('leaveBlankToApplyTheCouponAcrossAllShops') }}</small>
           </label>
           <label class="field">
-            <span class="field-label">Discount Percent</span>
+            <span class="field-label">{{ $t('discountPercent2') }}</span>
             <input v-model.number="form.discount_percent" type="number" min="0" max="100" step="0.01" />
           </label>
           <label class="field">
-            <span class="field-label">Discount Amount</span>
+            <span class="field-label">{{ $t('discountAmount2') }}</span>
             <input v-model.number="form.discount_amount" type="number" min="0" step="0.01" />
           </label>
           <label class="field">
-            <span class="field-label">Minimum Amount</span>
+            <span class="field-label">{{ $t('minimumAmount') }}</span>
             <input v-model.number="form.minimum_amount" type="number" min="0" step="0.01" />
           </label>
           <label class="field">
-            <span class="field-label">Usage Limit</span>
+            <span class="field-label">{{ $t('usageLimit') }}</span>
             <input v-model.number="form.usage_limit" type="number" min="0" placeholder="Unlimited" />
           </label>
           <label class="field">
-            <span class="field-label">Valid From</span>
+            <span class="field-label">{{ $t('validFrom') }}</span>
             <input v-model="form.valid_from" type="date" />
           </label>
           <label class="field">
-            <span class="field-label">Valid Until</span>
+            <span class="field-label">{{ $t('validUntil') }}</span>
             <input v-model="form.valid_until" type="date" />
           </label>
           <label class="field">
-            <span class="field-label">Active</span>
+            <span class="field-label">{{ $t('active') }}</span>
             <select v-model="form.is_active">
-              <option :value="true">Yes</option>
-              <option :value="false">No</option>
+              <option :value="true">{{ $t('yes') }}</option>
+              <option :value="false">{{ $t('no') }}</option>
             </select>
           </label>
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" @click="closeModals">Cancel</button>
+          <button type="button" class="btn btn-ghost" @click="closeModals">{{ $t('cancel') }}</button>
           <button type="button" class="btn btn-primary" :disabled="isSubmitting" @click="showEdit ? submitEdit : submitCreate">
             {{ showEdit ? 'Update' : 'Create' }}
           </button>
@@ -483,38 +481,38 @@ onMounted(async () => {
       <div class="modal coupon-view-modal">
         <div class="modal-head">
           <div>
-            <div class="modal-title">Coupon Details</div>
+            <div class="modal-title">{{ $t('couponDetails') }}</div>
             <div class="modal-sub">{{ shopLabel(selectedCoupon.shop, selectedCoupon.shop_id) }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="closeModals"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body coupon-details-grid">
           <div class="detail-card">
-            <span class="detail-label">Code</span>
+            <span class="detail-label">{{ $t('code') }}</span>
             <strong>{{ selectedCoupon.code }}</strong>
           </div>
           <div class="detail-card">
-            <span class="detail-label">Status</span>
+            <span class="detail-label">{{ $t('status') }}</span>
             <span class="badge" :class="getBadgeClass(getStatus(selectedCoupon))">{{ getStatus(selectedCoupon) }}</span>
           </div>
           <div class="detail-card">
-            <span class="detail-label">Discount</span>
+            <span class="detail-label">{{ $t('discount') }}</span>
             <strong>{{ selectedDiscountText }}</strong>
           </div>
           <div class="detail-card">
-            <span class="detail-label">Minimum Spend</span>
+            <span class="detail-label">{{ $t('minimumSpend') }}</span>
             <strong>{{ selectedMinimumText }}</strong>
           </div>
           <div class="detail-card">
-            <span class="detail-label">Usage Limit</span>
+            <span class="detail-label">{{ $t('usageLimit') }}</span>
             <strong>{{ selectedUsageText }}</strong>
           </div>
           <div class="detail-card">
-            <span class="detail-label">Valid From</span>
+            <span class="detail-label">{{ $t('validFrom') }}</span>
             <strong>{{ selectedValidFrom }}</strong>
           </div>
           <div class="detail-card">
-            <span class="detail-label">Valid Until</span>
+            <span class="detail-label">{{ $t('validUntil') }}</span>
             <strong>{{ selectedValidUntil }}</strong>
           </div>
         </div>

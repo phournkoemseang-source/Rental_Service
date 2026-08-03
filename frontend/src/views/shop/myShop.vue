@@ -520,13 +520,13 @@ onBeforeUnmount(() => {
 <template>
   <div class="myshop-page">
     <div class="page-header">
-      <h1>My Shop</h1>
-      <button v-if="!shop" class="create-btn" @click="handleCreateClick">Create Shop</button>
+      <h1>{{ $t('myShop') }}</h1>
+      <button v-if="!shop" class="create-btn" @click="handleCreateClick">{{ $t('createShop2') }}</button>
     </div>
 
     <div v-if="!shop" class="empty-state">
-      <h3>No shop information yet</h3>
-      <p>Click Create Shop and fill in your shop information.</p>
+      <h3>{{ $t('noShopInformationYet') }}</h3>
+      <p>{{ $t('createShopInfo') }}</p>
     </div>
 
     <div v-else class="shop-card">
@@ -547,8 +547,8 @@ onBeforeUnmount(() => {
               </svg>
             </span>
             <div>
-              <h2>Ownership setting</h2>
-              <p>Manage your shop profile details and contact info.</p>
+              <h2>{{ $t('ownershipSetting') }}</h2>
+              <p>{{ $t('manageYourShopProfileDetailsAndContactInfo') }}</p>
             </div>
           </div>
           <span
@@ -596,9 +596,7 @@ onBeforeUnmount(() => {
               type="button"
               class="profile-btn primary"
               @click="handleCreateClick"
-            >
-              Create Shop
-            </button>
+            >{{ $t('createShop2') }}</button>
             <button
               v-else
               type="button"
@@ -614,9 +612,7 @@ onBeforeUnmount(() => {
               class="profile-btn ghost"
               :disabled="isUpdatingImage || !shopImageSrc"
               @click="removeShopImage"
-            >
-              Remove Profile
-            </button>
+            >{{ $t('removeProfile') }}</button>
           </div>
         </div>
         <p v-if="error && !showCreateModal" class="error-text">
@@ -625,39 +621,39 @@ onBeforeUnmount(() => {
 
         <div class="settings-form-grid">
           <label class="settings-field">
-            <span>Full name</span>
+            <span>{{ $t('fullName') }}</span>
             <input type="text" :value="ownerName" readonly />
           </label>
           <label class="settings-field">
-            <span>Email address</span>
+            <span>{{ $t('emailAddress') }}</span>
             <div class="input-with-badge">
               <input type="email" :value="ownerEmail" readonly />
-              <span class="verified-badge">Verified</span>
+              <span class="verified-badge">{{ $t('verified') }}</span>
             </div>
           </label>
           <label class="settings-field">
-            <span>Shop name</span>
+            <span>{{ $t('shopName') }}</span>
             <input type="text" :value="shop.name || ''" readonly />
           </label>
           <label class="settings-field">
-            <span>Province / City</span>
+            <span>{{ $t('provinceCity2') }}</span>
             <div class="province-display">
               <i class="fa-solid fa-location-dot province-icon"></i>
               <span class="province-value">{{ shop.city?.name || shop.location || '—' }}</span>
             </div>
           </label>
           <label class="settings-field">
-            <span>Status</span>
+            <span>{{ $t('status') }}</span>
             <select disabled>
               <option :value="shop.status">{{ shop.status || "inactive" }}</option>
             </select>
           </label>
           <label class="settings-field">
-            <span>Phone number</span>
+            <span>{{ $t('phoneNumber') }}</span>
             <input type="text" :value="shop.phone || ''" readonly />
           </label>
           <label class="settings-field">
-            <span>Password</span>
+            <span>{{ $t('password') }}</span>
             <div class="password-field">
               <input
                 type="password"
@@ -673,7 +669,7 @@ onBeforeUnmount(() => {
             </div>
           </label>
           <label class="settings-field full">
-            <span>Shop address</span>
+            <span>{{ $t('shopAddress2') }}</span>
             <textarea rows="2" :value="shop.address || ''" readonly></textarea>
           </label>
         </div>
@@ -681,9 +677,7 @@ onBeforeUnmount(() => {
         <!-- Shop Location Preview -->
         <div v-if="shop && (shop.latitude || shop.longitude || shop.address)" class="shop-location-preview">
           <h3 class="location-preview-title">
-            <i class="fa-solid fa-map-location-dot"></i>
-            Shop Location
-          </h3>
+            <i class="fa-solid fa-map-location-dot"></i>{{ $t('shopLocation2') }}</h3>
           <div class="location-preview-content">
             <div class="location-preview-info">
               <p v-if="shop.address" class="location-address">
@@ -701,9 +695,7 @@ onBeforeUnmount(() => {
                 rel="noopener"
                 class="location-map-link"
               >
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                Open in Google Maps
-              </a>
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>{{ $t('openInGoogleMaps') }}</a>
             </div>
             <div class="location-preview-map">
               <iframe
@@ -729,10 +721,8 @@ onBeforeUnmount(() => {
       <div class="modal-card create-shop-modal">
         <div class="modal-header create-shop-header">
           <div>
-            <h3>Create New Shop</h3>
-            <p class="shop-header-sub">
-              Add a new rental shop (pending approval by default).
-            </p>
+            <h3>{{ $t('createNewShop') }}</h3>
+            <p class="shop-header-sub">{{ $t('addANewRentalShopPendingApprovalByDefault') }}</p>
           </div>
           <button
             class="close-btn"
@@ -773,8 +763,8 @@ onBeforeUnmount(() => {
                 </p>
               </div>
               <div class="shop-preview-status">
-                <span>Status</span>
-                <strong>Pending</strong>
+                <span>{{ $t('status') }}</span>
+                <strong>{{ $t('pending') }}</strong>
               </div>
             </article>
 
@@ -806,15 +796,15 @@ onBeforeUnmount(() => {
                     </svg>
                   </div>
                   <div>
-                    <p class="upload-title">Upload shop cover</p>
-                    <p class="upload-sub">Drop an image or click to browse files</p>
+                    <p class="upload-title">{{ $t('uploadShopCover') }}</p>
+                    <p class="upload-sub">{{ $t('dropAnImageOrClickToBrowseFiles') }}</p>
                   </div>
                 </div>
               </label>
 
               <div class="field-grid">
                 <label class="form-field">
-                  <span>Shop Name</span>
+                  <span>{{ $t('shopName3') }}</span>
                   <input
                     v-model="createForm.name"
                     type="text"
@@ -822,7 +812,7 @@ onBeforeUnmount(() => {
                   />
                 </label>
                 <label class="form-field full">
-                  <span>Google Map URL</span>
+                  <span>{{ $t('googleMapUrl') }}</span>
                   <input
                     v-model="createForm.map_url"
                     type="url"
@@ -833,7 +823,7 @@ onBeforeUnmount(() => {
                   </small>
                 </label>
                 <label class="form-field">
-                  <span>Address</span>
+                  <span>{{ $t('address') }}</span>
                   <input
                     v-model="createForm.address"
                     type="text"
@@ -841,14 +831,14 @@ onBeforeUnmount(() => {
                   />
                 </label>
                 <label class="form-field">
-                  <span>Province / City</span>
+                  <span>{{ $t('provinceCity2') }}</span>
                   <select v-model="createForm.location" class="province-select">
-                    <option value="" disabled>Select a province…</option>
+                    <option value="" disabled>{{ $t('selectAProvince') }}</option>
                     <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
                   </select>
                 </label>
                 <label class="form-field">
-                  <span>Latitude</span>
+                  <span>{{ $t('latitude') }}</span>
                   <div class="input-with-action">
                     <input
                       v-model="createForm.latitude"
@@ -869,7 +859,7 @@ onBeforeUnmount(() => {
                   </div>
                 </label>
                 <label class="form-field">
-                  <span>Longitude</span>
+                  <span>{{ $t('longitude') }}</span>
                   <div class="input-with-action">
                     <input
                       v-model="createForm.longitude"
@@ -890,7 +880,7 @@ onBeforeUnmount(() => {
                   </div>
                 </label>
                 <label class="form-field">
-                  <span>Phone</span>
+                  <span>{{ $t('shopPhone') }}</span>
                   <input
                     v-model="createForm.phone"
                     type="text"
@@ -898,7 +888,7 @@ onBeforeUnmount(() => {
                   />
                 </label>
                 <label class="form-field full">
-                  <span>Description</span>
+                  <span>{{ $t('shopDescription') }}</span>
                   <textarea
                     v-model="createForm.description"
                     rows="4"
@@ -912,9 +902,7 @@ onBeforeUnmount(() => {
           <p v-if="error" class="error-text form-error">{{ error }}</p>
 
           <div class="form-actions">
-            <button type="button" class="ghost-btn" @click="closeCreateModal">
-              Cancel
-            </button>
+            <button type="button" class="ghost-btn" @click="closeCreateModal">{{ $t('cancel') }}</button>
             <button type="button" class="primary-btn" @click="createShop">
               {{ loading ? "Creating..." : "Create Shop" }}
             </button>
@@ -940,8 +928,8 @@ onBeforeUnmount(() => {
         </svg>
       </span>
       <div class="toast-content">
-        <strong>Success</strong>
-        <p>Your shop was created.</p>
+        <strong>{{ $t('success') }}</strong>
+        <p>{{ $t('yourShopWasCreated') }}</p>
       </div>
     </div>
 
@@ -963,11 +951,9 @@ onBeforeUnmount(() => {
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
           </svg>
         </div>
-        <h3>One Shop Only</h3>
-        <p>You can only create one shop per account.</p>
-        <button class="alert-btn" @click="showSingleShopAlert = false">
-          OK
-        </button>
+        <h3>{{ $t('oneShopOnly') }}</h3>
+        <p>{{ $t('youCanOnlyCreateOneShopPerAccount') }}</p>
+        <button class="alert-btn" @click="showSingleShopAlert = false">{{ $t('ok') }}</button>
       </div>
     </div>
   </div>

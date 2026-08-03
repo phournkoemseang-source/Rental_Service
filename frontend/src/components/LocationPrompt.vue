@@ -17,18 +17,14 @@
           </template>
         </div>
 
-        <h2 id="location-title">Enable Location</h2>
-        <p id="location-message" class="subtitle">
-          Allow location so we can show shops near you.
-        </p>
-        <p class="detail-text">
-          Your location is only used to improve nearby shop results and route accuracy.
-        </p>
+        <h2 id="location-title">{{ $t('enableLocation') }}</h2>
+        <p id="location-message" class="subtitle">{{ $t('allowLocationSoWeCanShowShopsNearYou') }}</p>
+        <p class="detail-text">{{ $t('yourLocationIsOnlyUsedToImproveNearbyShopResultsAndRouteAccuracy') }}</p>
 
         <div class="actions">
           <button type="button" class="cancel-btn" @click="$emit('close')" :disabled="loading">
             <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-            <span>Cancel</span>
+            <span>{{ $t('cancel') }}</span>
           </button>
           <button type="button" class="allow-btn" @click="$emit('confirm')" :disabled="loading">
             <i class="fa-solid fa-check" aria-hidden="true"></i>

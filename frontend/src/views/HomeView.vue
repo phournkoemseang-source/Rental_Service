@@ -12,25 +12,7 @@
 
       <div class="nav-auth">
         <!-- Language Toggle -->
-        <div class="lang-toggle-header">
-          <button
-            class="lang-btn"
-            :class="{ active: currentLang === 'en' }"
-            @click="switchLang('en')"
-            aria-label="Switch to English"
-          >
-            <span class="lang-text">EN</span>
-          </button>
-          <span class="lang-sep">|</span>
-          <button
-            class="lang-btn"
-            :class="{ active: currentLang === 'kh' }"
-            @click="switchLang('kh')"
-            aria-label="ប្តូរទៅភាសាខ្មែរ"
-          >
-            <span class="lang-text">KH</span>
-          </button>
-        </div>
+        <LanguageSwitcher />
         <RouterLink class="link-login" to="/login">{{ $t('signIn') }}</RouterLink>
         <span class="nav-sep" aria-hidden="true">|</span>
         <RouterLink class="btn-signup" to="/chooserole">{{ $t('signUp') }}</RouterLink>
@@ -280,22 +262,7 @@
         <div class="footer-col">
           <h5><i class="fa-solid fa-language" aria-hidden="true"></i> {{ $t('language') }}</h5>
           <div class="footer-list">
-            <button
-              class="footer-link footer-lang-btn"
-              :class="{ active: currentLang === 'en' }"
-              @click="switchLang('en')"
-            >
-              <i class="fa-solid fa-check" v-if="currentLang === 'en'" aria-hidden="true"></i>
-              {{ $t('english') }}
-            </button>
-            <button
-              class="footer-link footer-lang-btn"
-              :class="{ active: currentLang === 'kh' }"
-              @click="switchLang('kh')"
-            >
-              <i class="fa-solid fa-check" v-if="currentLang === 'kh'" aria-hidden="true"></i>
-              {{ $t('khmer') }}
-            </button>
+            <LanguageSwitcher variant="list" />
           </div>
         </div>
       </div>
@@ -315,26 +282,18 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { setLanguage, getCurrentLanguage } from '@/i18n'
 import api, { shopApi, vehicleApi, cityApi } from '@/services/api'
 import '@/css/HomeView.css'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const router = useRouter()
 const { t } = useI18n()
 
-const currentLang = ref(getCurrentLanguage())
 const shops = ref([])
 const vehicles = ref([])
 const cities = ref([])
 const isLoading = ref(true)
 const error = ref('')
-
-const switchLang = (lang) => {
-  if (lang !== currentLang.value) {
-    setLanguage(lang)
-    currentLang.value = lang
-  }
-}
 
 // Resolve image URLs
 const getPublicOrigin = () => {

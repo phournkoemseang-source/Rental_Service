@@ -81,7 +81,7 @@ const handleLogout = async () => {
           @click="handleBack"
         >
           <i class="fa-solid fa-arrow-left"></i>
-          <span>Back</span>
+          <span>{{ $t('back') }}</span>
         </button>
         <h1 class="mobile-header__title">{{ title }}</h1>
         <button class="mobile-header__logout" @click="handleLogout" title="Logout">

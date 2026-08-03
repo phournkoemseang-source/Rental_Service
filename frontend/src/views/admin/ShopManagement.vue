@@ -445,17 +445,17 @@ onMounted(() => {
   <section class="admin-page">
     <header class="page-head">
       <div>
-        <h1 class="page-title">Shop Management</h1>
-        <p class="page-subtitle">Manage, verify, and monitor all registered rental shops.</p>
+        <h1 class="page-title">{{ $t('shopManagement') }}</h1>
+        <p class="page-subtitle">{{ $t('manageVerifyAndMonitorAllRegisteredRentalShops') }}</p>
       </div>
     </header>
 
     <section class="card">
       <div class="card-toolbar">
         <div class="tabs">
-          <button type="button" class="tab" :class="{ active: activeTab === 'all' }" @click="activeTab = 'all'">All Shops</button>
-          <button type="button" class="tab" :class="{ active: activeTab === 'active' }" @click="activeTab = 'active'">Active</button>
-          <button type="button" class="tab" :class="{ active: activeTab === 'inactive' }" @click="activeTab = 'inactive'">Inactive</button>
+          <button type="button" class="tab" :class="{ active: activeTab === 'all' }" @click="activeTab = 'all'">{{ $t('allShops') }}</button>
+          <button type="button" class="tab" :class="{ active: activeTab === 'active' }" @click="activeTab = 'active'">{{ $t('active') }}</button>
+          <button type="button" class="tab" :class="{ active: activeTab === 'inactive' }" @click="activeTab = 'inactive'">{{ $t('inactive') }}</button>
         </div>
 
     <div class="toolbar-right">
@@ -470,14 +470,14 @@ onMounted(() => {
         <table class="data-table">
           <thead>
             <tr>
-              <th>SHOP NAME</th>
-              <th>OWNER</th>
-              <th>PROVINCE/CITY</th>
-              <th class="num">FLEET COUNT</th>
-              <th class="num">TOTAL BOOKINGS</th>
-              <th class="num">REVENUE</th>
-              <th>STATUS</th>
-              <th class="actions">ACTIONS</th>
+              <th>{{ $t('shopName2') }}</th>
+              <th>{{ $t('owner2') }}</th>
+              <th>{{ $t('provinceCity') }}</th>
+              <th class="num">{{ $t('fleetCount') }}</th>
+              <th class="num">{{ $t('totalBookings2') }}</th>
+              <th class="num">{{ $t('revenue') }}</th>
+              <th>{{ $t('status2') }}</th>
+              <th class="actions">{{ $t('actions2') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -498,7 +498,7 @@ onMounted(() => {
                 {{ shopProvince(shop) }}
               </td>
               <td class="num">
-                <strong>{{ fleetCountByShop.get(String(shop.id)) || 0 }}</strong> <span class="muted">VEHICLES</span>
+                <strong>{{ fleetCountByShop.get(String(shop.id)) || 0 }}</strong> <span class="muted">{{ $t('vehicles2') }}</span>
               </td>
               <td class="num">
                 {{ admin.formatted.fmtNumber(bookingCountByShop.get(String(shop.id)) || 0) }}
@@ -511,9 +511,7 @@ onMounted(() => {
                 <button type="button" class="icon-action" title="Edit" :disabled="isUpdating || isCreating || deletingShopId === shop.id || statusChangingShopId === shop.id" @click="openEdit(shop)"><i class="fa-regular fa-pen-to-square"></i></button>
                 <button type="button" class="icon-action" title="Delete" :disabled="deletingShopId === shop.id || isUpdating || isCreating" @click="requestDelete(shop)"><i class="fa-regular fa-trash-can"></i></button>
                 <button type="button" class="icon-action" title="Disable" :disabled="statusChangingShopId === shop.id || isUpdating || isCreating" @click="disable(shop)"><i class="fa-regular fa-circle-xmark"></i></button>
-                <button v-if="statusLabel(shop.status) === 'PENDING'" type="button" class="btn btn-soft" :disabled="statusChangingShopId === shop.id || isUpdating || isCreating" @click="approve(shop)">
-                  Approve
-                </button>
+                <button v-if="statusLabel(shop.status) === 'PENDING'" type="button" class="btn btn-soft" :disabled="statusChangingShopId === shop.id || isUpdating || isCreating" @click="approve(shop)">{{ $t('approve') }}</button>
               </td>
             </tr>
             <tr v-if="!pagedShops.length">
@@ -542,8 +540,8 @@ onMounted(() => {
       <div class="modal create-shop-modal">
         <div class="modal-head">
           <div>
-            <div class="modal-title">Create New Shop</div>
-            <div class="modal-sub">Add a new rental shop (pending approval by default).</div>
+            <div class="modal-title">{{ $t('createNewShop') }}</div>
+            <div class="modal-sub">{{ $t('addANewRentalShopPendingApprovalByDefault') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="closeCreate"><i class="fa-solid fa-xmark"></i></button>
         </div>
@@ -573,8 +571,8 @@ onMounted(() => {
               </p>
             </div>
             <div class="create-shop-preview__meta">
-              <span class="muted">Status</span>
-              <strong>Pending</strong>
+              <span class="muted">{{ $t('status') }}</span>
+              <strong>{{ $t('pending') }}</strong>
             </div>
           </div>
 
@@ -583,13 +581,13 @@ onMounted(() => {
               <input type="file" accept="image/*" @change="onCreateImageChange" />
               <div class="upload-drop__content">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                <strong>Upload shop cover</strong>
-                <span>Drop an image or click to browse files</span>
+                <strong>{{ $t('uploadShopCover') }}</strong>
+                <span>{{ $t('dropAnImageOrClickToBrowseFiles') }}</span>
               </div>
             </label>
             <div class="field-grid two-column">
               <label class="field">
-                <span class="field-label">Shop Name</span>
+                <span class="field-label">{{ $t('shopName3') }}</span>
                 <input
                   v-model="createForm.name"
                   type="text"
@@ -597,22 +595,22 @@ onMounted(() => {
                 />
               </label>
               <label class="field">
-                <span class="field-label">Address</span>
+                <span class="field-label">{{ $t('address') }}</span>
                 <input v-model="createForm.address" type="text" placeholder="Street, City, Country" />
               </label>
             </div>
             <div class="field-grid two-column">
               <label class="field">
-                <span class="field-label">Location</span>
+                <span class="field-label">{{ $t('shopLocation') }}</span>
                 <input v-model="createForm.location" type="text" placeholder="City, Country" />
               </label>
               <label class="field">
-                <span class="field-label">Phone</span>
+                <span class="field-label">{{ $t('shopPhone') }}</span>
                 <input v-model="createForm.phone" type="text" placeholder="+855..." />
               </label>
             </div>
             <label class="field">
-              <span class="field-label">Description</span>
+              <span class="field-label">{{ $t('shopDescription') }}</span>
               <textarea
                 v-model="createForm.description"
                 rows="4"
@@ -623,7 +621,7 @@ onMounted(() => {
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" :disabled="isCreating" @click="closeCreate">Cancel</button>
+          <button type="button" class="btn btn-ghost" :disabled="isCreating" @click="closeCreate">{{ $t('cancel') }}</button>
           <button type="button" class="btn btn-primary" :disabled="isCreating" @click="submitCreate">
             {{ isCreating ? 'Creating...' : 'Create Shop' }}
           </button>
@@ -635,35 +633,35 @@ onMounted(() => {
       <div class="modal">
         <div class="modal-head">
           <div>
-            <div class="modal-title">Edit Shop</div>
-            <div class="modal-sub">Update shop information and image.</div>
+            <div class="modal-title">{{ $t('editShop') }}</div>
+            <div class="modal-sub">{{ $t('updateShopInformationAndImage') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="closeEdit"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div class="modal-body form-grid">
           <label class="field">
-            <span class="field-label">Shop Name</span>
+            <span class="field-label">{{ $t('shopName3') }}</span>
             <input v-model="editForm.name" type="text" />
           </label>
           <label class="field">
-            <span class="field-label">Address</span>
+            <span class="field-label">{{ $t('address') }}</span>
             <input v-model="editForm.address" type="text" />
           </label>
           <label class="field">
-            <span class="field-label">Location</span>
+            <span class="field-label">{{ $t('shopLocation') }}</span>
             <input v-model="editForm.location" type="text" />
           </label>
           <label class="field">
-            <span class="field-label">Phone</span>
+            <span class="field-label">{{ $t('shopPhone') }}</span>
             <input v-model="editForm.phone" type="text" />
           </label>
           <label class="field span-2">
-            <span class="field-label">Description</span>
+            <span class="field-label">{{ $t('shopDescription') }}</span>
             <textarea v-model="editForm.description" rows="3"></textarea>
           </label>
           <label class="field span-2">
-            <span class="field-label">Shop Image</span>
+            <span class="field-label">{{ $t('shopImage') }}</span>
             <input type="file" accept="image/*" @change="onEditImageChange" />
             <div v-if="editImagePreview || editForm.img_url" class="image-preview">
               <img :src="editImagePreview || resolveShopImageUrl(editForm.img_url)" alt="Shop preview" />
@@ -672,7 +670,7 @@ onMounted(() => {
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" :disabled="isUpdating" @click="closeEdit">Cancel</button>
+          <button type="button" class="btn btn-ghost" :disabled="isUpdating" @click="closeEdit">{{ $t('cancel') }}</button>
           <button type="button" class="btn btn-primary" :disabled="isUpdating" @click="submitEdit">
             {{ isUpdating ? 'Saving...' : 'Save Changes' }}
           </button>

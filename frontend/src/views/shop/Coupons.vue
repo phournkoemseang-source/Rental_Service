@@ -555,13 +555,13 @@ const exportCoupons = () => {
           <line x1="14" y1="11" x2="14" y2="17"></line>
         </svg>
       </div>
-      <h3 class="delete-title">Delete Coupon</h3>
-      <p class="delete-message">Are you sure you want to delete this coupon?</p>
+      <h3 class="delete-title">{{ $t('deleteCoupon') }}</h3>
+      <p class="delete-message">{{ $t('deleteCouponConfirm') }}</p>
       <p class="delete-coupon-code">{{ deleteCouponCode }}</p>
-      <p class="delete-warning">This action cannot be undone. All associated data will be permanently removed.</p>
+      <p class="delete-warning">{{ $t('thisActionCannotBeUndone') }}</p>
       <div class="delete-actions">
-        <button class="delete-cancel-btn" @click="cancelDelete">Cancel</button>
-        <button class="delete-confirm-btn" @click="removeCoupon">Delete</button>
+        <button class="delete-cancel-btn" @click="cancelDelete">{{ $t('cancel') }}</button>
+        <button class="delete-confirm-btn" @click="removeCoupon">{{ $t('delete') }}</button>
       </div>
     </div>
   </div>

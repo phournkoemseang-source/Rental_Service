@@ -5,15 +5,15 @@
         <img :src="src" alt="Logo" class="app-logo__image" />
         <div v-if="brandName || showTagline" class="app-logo__brand">
           <span v-if="brandName" class="app-logo__brandName">{{ brandName }}</span>
-          <small v-if="showTagline" class="app-logo__tagline">Vehicle Rentals</small>
+          <small v-if="showTagline" class="app-logo__tagline">{{ $t('appTagline') }}</small>
         </div>
       </div>
     </template>
     <template v-else>
-      <span class="app-logo__mark" aria-hidden="true">CC</span>
+      <span class="app-logo__mark" aria-hidden="true">{{ $t('cc') }}</span>
       <span class="app-logo__img">
         <span class="app-logo__name">Chong Choul</span>
-        <small v-if="showTagline" class="app-logo__tagline">Vehicle Rentals</small>
+        <small v-if="showTagline" class="app-logo__tagline">{{ $t('appTagline') }}</small>
       </span>
     </template>
   </span>

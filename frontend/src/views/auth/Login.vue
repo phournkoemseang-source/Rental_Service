@@ -13,22 +13,16 @@
               <span class="hero-badge-dot"></span>
               {{ $t('appTagline') }}
             </div>
-            <h1>Start your journey<br /><span class="journey-highlight">in minutes.</span></h1>
-            <p>
-              Access a fleet of premium vehicles at your fingertips.
-              Rent for an hour, drive for a lifetime.
-            </p>
+            <h1>{{ $t('startYourJourney') }}<br /><span class="journey-highlight">{{ $t('inMinutes') }}</span></h1>
+            <p>{{ $t('accessAFleetOfPremiumVehiclesAtYourFingertipsRentForAnHourDriveForALifetime') }}</p>
           </div>
 
           <div class="review-card">
             <div class="stars">★★★★★</div>
-            <p class="review-text">
-              "The easiest rental experience I've ever had.
-              No paperwork, just pure driving pleasure."
-            </p>
+            <p class="review-text">{{ $t('theEasiestRentalExperienceIVeEverHadNoPaperworkJustPureDrivingPleasure') }}</p>
             <div class="review-user">
-              <strong>Alex Rivera</strong>
-              <span>Platinum Member</span>
+              <strong>{{ $t('alexRivera') }}</strong>
+              <span>{{ $t('platinumMember') }}</span>
             </div>
           </div>
         </div>

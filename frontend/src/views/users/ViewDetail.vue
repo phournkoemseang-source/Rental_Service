@@ -12,7 +12,7 @@
       />
 
       <main class="content">
-      <p v-if="isLoading" class="action-message">Loading vehicle details...</p>
+      <p v-if="isLoading" class="action-message">{{ $t('loadingVehicleDetails') }}</p>
       <p v-else-if="loadingError" class="action-message">{{ loadingError }}</p>
 
       <template v-else>
@@ -36,9 +36,7 @@
                         @click="setImageIndex(index)"></span>
                 </div>
                 <button class="view-all" @click="viewAllPhotos">
-                  <i class="fas fa-images"></i>
-                  View All Photos
-                </button>
+                  <i class="fas fa-images"></i>{{ $t('viewAllPhotos') }}</button>
               </div>
             </section>
             <section class="detail-hero">
@@ -71,62 +69,48 @@
                 <i class="fas fa-calendar-check"></i>
               </div>
               <div class="header-text">
-                <h3>Booking Details</h3>
-                <p class="booking-card-subtitle">Select options and review the total.</p>
+                <h3>{{ $t('bookingDetails') }}</h3>
+                <p class="booking-card-subtitle">{{ $t('selectOptionsAndReviewTheTotal') }}</p>
               </div>
             </div>
             
             <div class="price-row">
               <span class="price-label">
-                <i class="fas fa-calendar"></i>
-                Duration
-              </span>
+                <i class="fas fa-calendar"></i>{{ $t('duration') }}</span>
               <select v-model.number="bookingDuration" class="rider-select">
-                <option :value="1">1 Day</option>
-                <option :value="2">2 Days</option>
-                <option :value="3">3 Days</option>
-                <option :value="4">4 Days</option>
-                <option :value="5">5 Days</option>
-                <option :value="10">10 Days</option>
-                <option :value="30">30 Days</option>
+                <option :value="1">{{ $t('1Day') }}</option>
+                <option :value="2">{{ $t('2Days') }}</option>
+                <option :value="3">{{ $t('3Days') }}</option>
+                <option :value="4">{{ $t('4Days') }}</option>
+                <option :value="5">{{ $t('5Days') }}</option>
+                <option :value="10">{{ $t('10Days') }}</option>
+                <option :value="30">{{ $t('30Days') }}</option>
               </select>
             </div>
             <div class="price-row">
               <span class="price-label">
-                <i class="fas fa-tag"></i>
-                Daily Rate
-              </span>
+                <i class="fas fa-tag"></i>{{ $t('dailyRate2') }}</span>
               <span class="price-value">{{ formatCurrency(dailyRate) }}</span>
             </div>
             <div class="price-row">
               <span class="price-label">
-                <i class="fas fa-users"></i>
-                Rider Details
-              </span>
+                <i class="fas fa-users"></i>{{ $t('riderDetails') }}</span>
               <span class="rider-info">{{ riderDetails }}</span>
             </div>
             <div class="price-row price-row-toggle">
                <label class="toggle-label">
                  <input v-model="includeInsurance" class="toggle-checkbox" type="checkbox" />
                  <span class="toggle-text">
-                   <i class="fas fa-shield-alt"></i>
-                   Insurance fee
-                 </span>
+                   <i class="fas fa-shield-alt"></i>{{ $t('insuranceFee2') }}</span>
                </label>
              </div>
             <div class="total-row">
               <span class="total-label">
-                <i class="fas fa-calculator"></i>
-                Total Price
-              </span>
+                <i class="fas fa-calculator"></i>{{ $t('totalPrice') }}</span>
               <span class="price-blue">{{ formatCurrency(totalPrice) }}</span>
             </div>
             <button class="book-btn" @click="goToBooking">
-               <i class="fas fa-check-circle"></i>
-               Booking
-             </button>            <p class="disclaimer">
-              No payment taken until booking is confirmed
-            </p>
+               <i class="fas fa-check-circle"></i>{{ $t('booking') }}</button>            <p class="disclaimer">{{ $t('noPaymentTakenUntilBookingIsConfirmed') }}</p>
           </aside>
         </div>
 
@@ -152,29 +136,21 @@
           <div class="two-box-row">
             <div class="content-box">
               <h4>
-                <i class="fas fa-list-ul"></i>
-                Specifications
-              </h4>
+                <i class="fas fa-list-ul"></i>{{ $t('specifications') }}</h4>
               <div class="spec-list">
                 <div class="spec-item">
                   <span class="spec-label">
-                    <i class="fas fa-cog"></i>
-                    Transmission
-                  </span>
+                    <i class="fas fa-cog"></i>{{ $t('transmission') }}</span>
                   <span class="spec-value">{{ vehicleTransmission }}</span>
                 </div>
                 <div class="spec-item">
                   <span class="spec-label">
-                    <i class="fas fa-gas-pump"></i>
-                    Fuel Type
-                  </span>
+                    <i class="fas fa-gas-pump"></i>{{ $t('fuelType') }}</span>
                   <span class="spec-value">{{ vehicleFuel }}</span>
                 </div>
                 <div class="spec-item">
                   <span class="spec-label">
-                    <i class="fas fa-motorcycle"></i>
-                    Vehicle Type
-                  </span>
+                    <i class="fas fa-motorcycle"></i>{{ $t('vehicleType') }}</span>
                   <span class="spec-value">{{ vehicleType }}</span>
                 </div>
               </div>
@@ -182,26 +158,16 @@
 
             <div class="content-box">
               <h4>
-                <i class="fas fa-star"></i>
-                Features
-              </h4>
+                <i class="fas fa-star"></i>{{ $t('features') }}</h4>
               <div class="feature-list">
                 <div class="feature-item">
-                  <i class="fas fa-map-marked-alt"></i>
-                  GPS Navigation
-                </div>
+                  <i class="fas fa-map-marked-alt"></i>{{ $t('gpsNavigation') }}</div>
                 <div class="feature-item">
-                  <i class="fas fa-mobile-alt"></i>
-                  Phone Mount
-                </div>
+                  <i class="fas fa-mobile-alt"></i>{{ $t('phoneMount') }}</div>
                 <div class="feature-item">
-                  <i class="fas fa-suitcase"></i>
-                  Luggage Storage
-                </div>
+                  <i class="fas fa-suitcase"></i>{{ $t('luggageStorage') }}</div>
                 <div class="feature-item">
-                  <i class="fas fa-headset"></i>
-                  24/7 Support
-                </div>
+                  <i class="fas fa-headset"></i>{{ $t('247Support') }}</div>
               </div>
             </div>
           </div>
@@ -209,33 +175,26 @@
           <!-- Full Width Box -->
           <div class="full-width-box">
             <h4>
-              <i class="fas fa-crown"></i>
-              Premium Rental Benefits
-            </h4>
+              <i class="fas fa-crown"></i>{{ $t('premiumRentalBenefits') }}</h4>
             <div class="benefits-grid">
               <div class="benefit-item">
                 <i class="fas fa-tools"></i>
-                <span>Top-of-the-line maintenance</span>
+                <span>{{ $t('topOfTheLineMaintenance') }}</span>
               </div>
               <div class="benefit-item">
                 <i class="fas fa-shield-alt"></i>
-                <span>Comprehensive insurance coverage</span>
+                <span>{{ $t('comprehensiveInsuranceCoverage') }}</span>
               </div>
               <div class="benefit-item">
                 <i class="fas fa-headset"></i>
-                <span>Dedicated customer support</span>
+                <span>{{ $t('dedicatedCustomerSupport') }}</span>
               </div>
               <div class="benefit-item">
                 <i class="fas fa-road"></i>
-                <span>Ultimate riding adventure</span>
+                <span>{{ $t('ultimateRidingAdventure') }}</span>
               </div>
             </div>
-            <p>
-              Experience the ultimate riding adventure with our premium rental
-              service. Enjoy top-of-the-line maintenance, comprehensive
-              insurance coverage, and dedicated customer support throughout your
-              journey.
-            </p>
+            <p>{{ $t('experienceTheUltimateRidingAdventureWithOurPremiumRentalServiceEnjoyTopOfTheLineMaintenanceComprehensiveInsuranceCoverageAndDedicatedCustomerSupportThroughoutYourJourney') }}</p>
           </div>
         </div>
 
@@ -244,9 +203,7 @@
         <div class="bottom-section">
           <div class="full-width-box">
             <h4>
-              <i class="fas fa-info-circle"></i>
-              Description
-            </h4>
+              <i class="fas fa-info-circle"></i>{{ $t('shopDescription') }}</h4>
             <div class="description-highlights">
               <div class="highlight-item">
                 <i class="fas fa-check-circle"></i>
@@ -258,11 +215,11 @@
               </div>
               <div class="highlight-item">
                 <i class="fas fa-city"></i>
-                <span>Perfect for urban commuting</span>
+                <span>{{ $t('perfectForUrbanCommuting') }}</span>
               </div>
               <div class="highlight-item">
                 <i class="fas fa-mountain"></i>
-                <span>Great for long-distance adventures</span>
+                <span>{{ $t('greatForLongDistanceAdventures') }}</span>
               </div>
             </div>
             <p>
@@ -286,11 +243,11 @@
       <div id="receipt" style="width:768px;padding:28px;font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;">
         <div style="text-align:center;margin-bottom:8px;">
           <div style="font-size:34px;font-weight:800;color:#0b4fd6">CHONG CHOUL</div>
-          <div style="font-size:12px;color:#666;margin-top:4px">Powered by MVL</div>
+          <div style="font-size:12px;color:#666;margin-top:4px">{{ $t('poweredByMvl2') }}</div>
         </div>
 
-        <h2 style="margin-top:14px;margin-bottom:6px">Receipt</h2>
-        <div style="font-size:22px;font-weight:800;margin-bottom:8px">Paid: <span id="receipt-paid-amount"></span></div>
+        <h2 style="margin-top:14px;margin-bottom:6px">{{ $t('receipt') }}</h2>
+        <div style="font-size:22px;font-weight:800;margin-bottom:8px">{{ $t('paid') }}<span id="receipt-paid-amount"></span></div>
 
         <div style="display:flex;justify-content:space-between;border-top:1px solid #eee;padding-top:8px;margin-top:8px">
           <div style="flex:1">
@@ -299,9 +256,9 @@
             <div id="receipt-address" style="font-size:12px;color:#666;margin-top:6px"></div>
           </div>
           <div style="text-align:right;min-width:180px">
-            <div style="font-size:12px;color:#666">Date / Time</div>
+            <div style="font-size:12px;color:#666">{{ $t('dateTime2') }}</div>
             <div id="receipt-datetime" style="font-weight:700;color:#111;margin-top:6px"></div>
-            <div style="font-size:12px;color:#666;margin-top:8px">Payment Method</div>
+            <div style="font-size:12px;color:#666;margin-top:8px">{{ $t('paymentMethod') }}</div>
             <div id="receipt-method" style="font-weight:700;margin-top:6px"></div>
           </div>
         </div>
@@ -309,22 +266,22 @@
         <table style="width:100%;margin-top:16px;border-collapse:collapse">
           <tbody>
             <tr>
-              <td style="padding:6px 0;color:#666">Fare</td>
+              <td style="padding:6px 0;color:#666">{{ $t('fare') }}</td>
               <td style="text-align:right;font-weight:700"><span id="receipt-fare"></span></td>
             </tr>
             <tr>
-              <td style="padding:6px 0;color:#666">Discount</td>
+              <td style="padding:6px 0;color:#666">{{ $t('discount') }}</td>
               <td style="text-align:right;color:#e53e3e">-<span id="receipt-discount"></span></td>
             </tr>
             <tr style="border-top:1px solid #eee">
-              <td style="padding:10px 0;font-weight:800">Total</td>
+              <td style="padding:10px 0;font-weight:800">{{ $t('total3') }}</td>
               <td style="text-align:right;font-weight:800"><span id="receipt-total"></span></td>
             </tr>
           </tbody>
         </table>
 
 
-        <div style="margin-top:18px;font-size:12px;color:#666">Support: supportkh@tada.global</div>
+        <div style="margin-top:18px;font-size:12px;color:#666">{{ $t('supportSupportkhTadaGlobal') }}</div>
       </div>
     </div>
     <footer v-if="false" class="site-footer">
@@ -332,7 +289,7 @@
         <div class="footer-top">
           <div class="footer-brand">
             <div class="footer-brand-title">CHONG CHOUL</div>
-            <div class="footer-brand-slogan">Secure rides, fast bookings.</div>
+            <div class="footer-brand-slogan">{{ $t('secureRidesFastBookings') }}</div>
 
             <div class="footer-social">
               <button class="btn-reset social-btn" type="button">F</button>
@@ -341,34 +298,32 @@
               <button class="btn-reset social-btn" type="button">W</button>
               <button class="btn-reset social-btn" type="button">I</button>
             </div>
-            <div class="footer-social-label">Follow Us</div>
+            <div class="footer-social-label">{{ $t('socialMedia') }}</div>
           </div>
 
 
           <div class="footer-nav">
             <div class="footer-nav-links">
-              <button class="btn-reset footer-nav-link" type="button">Home</button>
-              <button class="btn-reset footer-nav-link" type="button">View Detail</button>
-              <button class="btn-reset footer-nav-link" type="button">Booking</button>
-              <button class="btn-reset footer-nav-link" type="button">Promotion</button>
+              <button class="btn-reset footer-nav-link" type="button">{{ $t('home') }}</button>
+              <button class="btn-reset footer-nav-link" type="button">{{ $t('viewDetail') }}</button>
+              <button class="btn-reset footer-nav-link" type="button">{{ $t('booking') }}</button>
+              <button class="btn-reset footer-nav-link" type="button">{{ $t('promotion') }}</button>
             </div>
 
             <div class="footer-about">
-              <div class="footer-section-title">About Us</div>
-              <p>
-                Secure, fast, and transparent bookings across Cambodia with verified partners.
-              </p>
+              <div class="footer-section-title">{{ $t('aboutUs') }}</div>
+              <p>{{ $t('secureFastAndTransparentBookingsAcrossCambodiaWithVerifiedPartners') }}</p>
             </div>
           </div>
 
           <div class="footer-contact">
             <div class="footer-contact-row">
-              <div class="footer-contact-label">Call :</div>
+              <div class="footer-contact-label">{{ $t('call') }}</div>
               <div class="footer-contact-value">+0123 456 789 00</div>
             </div>
             <div class="footer-contact-row">
-              <div class="footer-contact-label">Email:</div>
-              <div class="footer-contact-value">user@example.com</div>
+              <div class="footer-contact-label">{{ $t('email4') }}</div>
+              <div class="footer-contact-value">{{ $t('userExampleCom') }}</div>
             </div>
 
             <div class="footer-newsletter">
@@ -379,11 +334,11 @@
         </div>
 
         <div class="footer-bottom">
-          <span>© 2026 Chong Choul. All rights reserved.</span>
+          <span>{{ $t('footerCopyright') }}</span>
           <div class="footer-bottom-links">
-            <span>Security</span>
-            <span>Accessibility</span>
-            <span>Legal</span>
+            <span>{{ $t('security') }}</span>
+            <span>{{ $t('accessibility') }}</span>
+            <span>{{ $t('legal') }}</span>
           </div>
         </div>
       </div>

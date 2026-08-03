@@ -516,17 +516,17 @@ const getTotalDays = (start, end) => {
   <div class="bookings-page">
     <section class="bookings-panel">
       <div class="panel-head">
-        <h1>Shop Bookings</h1>
-        <p>View and manage customer bookings for your shop.</p>
+        <h1>{{ $t('shopBookings') }}</h1>
+        <p>{{ $t('shopBookingsDesc') }}</p>
       </div>
 
       <div class="controls-row">
         <div class="tabs-row">
-          <button class="tab-btn" :class="{ active: activeTab === 'all' }" @click="activeTab = 'all'">All Bookings</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'pending' }" @click="activeTab = 'pending'">Pending</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'confirmed' }" @click="activeTab = 'confirmed'">Confirmed</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'completed' }" @click="activeTab = 'completed'">Completed</button>
-          <button class="tab-btn" :class="{ active: activeTab === 'cancelled' }" @click="activeTab = 'cancelled'">Cancelled</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'all' }" @click="activeTab = 'all'">{{ $t('allBookings') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'pending' }" @click="activeTab = 'pending'">{{ $t('pending') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'confirmed' }" @click="activeTab = 'confirmed'">{{ $t('confirmed') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'completed' }" @click="activeTab = 'completed'">{{ $t('completed') }}</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'cancelled' }" @click="activeTab = 'cancelled'">{{ $t('cancelled') }}</button>
         </div>
 
         <div class="search-row">
@@ -547,9 +547,9 @@ const getTotalDays = (start, end) => {
     </section>
 
     <section class="booking-list-wrap">
-      <div v-if="loading" class="empty-state">Loading bookings...</div>
+      <div v-if="loading" class="empty-state">{{ $t('loadingBookings') }}</div>
       <div v-else-if="error" class="empty-state">{{ error }}</div>
-      <div v-else-if="filteredBookings.length === 0" class="empty-state">No bookings found for your search.</div>
+      <div v-else-if="filteredBookings.length === 0" class="empty-state">{{ $t('noBookingsFound') }}</div>
 
       <article v-for="booking in displayedBookings" :key="booking.id" class="booking-card">
         <div class="booking-image">
@@ -562,16 +562,16 @@ const getTotalDays = (start, end) => {
             <span :class="['status-pill', getStatusClass(booking.status)]">{{ getStatusLabel(booking.status) }}</span>
           </div>
 
-          <p><span class="meta-label">Booking ID:</span> {{ booking.booking_code || 'N/A' }}</p>
-          <p><span class="meta-label">Customer:</span> {{ booking.customer_name || 'N/A' }}</p>
-          <p><span class="meta-label">Contact:</span> {{ booking.customer_phone || booking.customer_email || 'N/A' }}</p>
+          <p><span class="meta-label">{{ $t('bookingId4') }}</span> {{ booking.booking_code || 'N/A' }}</p>
+          <p><span class="meta-label">{{ $t('customer4') }}</span> {{ booking.customer_name || 'N/A' }}</p>
+          <p><span class="meta-label">{{ $t('contact2') }}</span> {{ booking.customer_phone || booking.customer_email || 'N/A' }}</p>
           <p>
-            <span class="meta-label">Date:</span>
+            <span class="meta-label">{{ $t('date2') }}</span>
             {{ formatDate(booking.start_date) }} to {{ formatDate(booking.end_date) }}
             ({{ getTotalDays(booking.start_date, booking.end_date) }} days)
           </p>
           <p>
-            <span class="meta-label">Payment:</span>
+            <span class="meta-label">{{ $t('payment') }}</span>
             <span :class="['payment-status', getPaymentStatusClass(booking.payment_status)]">
               {{ getPaymentStatusLabel(booking.payment_status) }}
             </span>
@@ -584,27 +584,21 @@ const getTotalDays = (start, end) => {
                 class="action-btn btn-view"
                 @click="openBookingDetails(booking)"
               >
-                <i class="fa-solid fa-file-lines"></i>
-                View
-              </button>
+                <i class="fa-solid fa-file-lines"></i>{{ $t('view') }}</button>
               <button
                 type="button"
                 class="action-btn btn-green"
                 @click="openBookingConfirmation(booking, 'accept')"
                 :disabled="processing"
               >
-                <i class="fa-solid fa-check"></i>
-                Accept
-              </button>
+                <i class="fa-solid fa-check"></i>{{ $t('accept') }}</button>
               <button
                 type="button"
                 class="action-btn btn-red"
                 @click="openBookingConfirmation(booking, 'reject')"
                 :disabled="processing"
               >
-                <i class="fa-solid fa-xmark"></i>
-                Reject
-              </button>
+                <i class="fa-solid fa-xmark"></i>{{ $t('reject') }}</button>
             </template>
             <template v-else-if="booking.status === 'confirmed'">
               <button
@@ -612,18 +606,14 @@ const getTotalDays = (start, end) => {
                 class="action-btn btn-gold"
                 @click="openBookingDetails(booking)"
               >
-                <i class="fa-solid fa-file-lines"></i>
-                View
-              </button>
+                <i class="fa-solid fa-file-lines"></i>{{ $t('view') }}</button>
               <button
                 type="button"
                 class="action-btn btn-complete"
                 @click="openCompletionModal(booking)"
                 :disabled="processing"
               >
-                <i class="fa-solid fa-star"></i>
-                Complete
-              </button>
+                <i class="fa-solid fa-star"></i>{{ $t('complete') }}</button>
             </template>
             <template v-else-if="booking.status === 'completed'">
               <button
@@ -631,9 +621,7 @@ const getTotalDays = (start, end) => {
                 class="action-btn btn-view"
                 @click="openBookingDetails(booking)"
               >
-                <i class="fa-solid fa-file-lines"></i>
-                View
-              </button>
+                <i class="fa-solid fa-file-lines"></i>{{ $t('view') }}</button>
             </template>
             <template v-else-if="booking.status === 'cancelled'">
               <button
@@ -641,9 +629,7 @@ const getTotalDays = (start, end) => {
                 class="action-btn btn-view"
                 @click="openBookingDetails(booking)"
               >
-                <i class="fa-solid fa-file-lines"></i>
-                View
-              </button>
+                <i class="fa-solid fa-file-lines"></i>{{ $t('view') }}</button>
             </template>
           </div>
         </div>
@@ -657,9 +643,7 @@ const getTotalDays = (start, end) => {
         <button v-if="hasMoreBookings" class="see-more-btn" type="button" @click="showMore">
           See More ({{ filteredBookings.length - visibleCount }} more)
         </button>
-        <button v-else-if="visibleCount > 4" class="see-more-btn" type="button" @click="showLess">
-          Show Less
-        </button>
+        <button v-else-if="visibleCount > 4" class="see-more-btn" type="button" @click="showLess">{{ $t('showLess') }}</button>
       </div>
     </section>
 
@@ -667,26 +651,24 @@ const getTotalDays = (start, end) => {
     <div v-if="cancelModal.visible" class="cancel-modal-backdrop" @click.self="closeCancelModal">
       <div class="cancel-modal-card">
         <div class="cancel-modal-header">
-          <h2>Cancel Booking</h2>
+          <h2>{{ $t('cancelBooking') }}</h2>
           <button type="button" class="cancel-modal-close" @click="closeCancelModal">
             &times;
           </button>
         </div>
         <div class="cancel-modal-body">
-          <p>Are you sure you want to cancel this booking?</p>
+          <p>{{ $t('areYouSureYouWantToCancelThisBooking') }}</p>
           <div class="cancel-modal-details">
-            <p><strong>Vehicle:</strong> {{ cancelModal.booking?.vehicle_name }}</p>
-            <p><strong>Customer:</strong> {{ cancelModal.booking?.customer_name }}</p>
-            <p><strong>Date:</strong> {{ formatDate(cancelModal.booking?.start_date) }} to {{ formatDate(cancelModal.booking?.end_date) }}</p>
-            <p><strong>Total:</strong> {{ formatCurrency(cancelModal.booking?.total_price) }}</p>
+            <p><strong>{{ $t('vehicle4') }}</strong> {{ cancelModal.booking?.vehicle_name }}</p>
+            <p><strong>{{ $t('customer4') }}</strong> {{ cancelModal.booking?.customer_name }}</p>
+            <p><strong>{{ $t('date2') }}</strong> {{ formatDate(cancelModal.booking?.start_date) }} to {{ formatDate(cancelModal.booking?.end_date) }}</p>
+            <p><strong>{{ $t('total2') }}</strong> {{ formatCurrency(cancelModal.booking?.total_price) }}</p>
           </div>
-          <p class="cancel-warning">Note: Cancellation may be subject to the shop's refund policy.</p>
+          <p class="cancel-warning">{{ $t('noteCancellationMayBeSubjectToTheShopSRefundPolicy') }}</p>
           <p v-if="cancelError" class="cancel-error">{{ cancelError }}</p>
         </div>
         <div class="cancel-modal-actions">
-          <button type="button" class="cancel-modal-cancel" @click="closeCancelModal">
-            Keep Booking
-          </button>
+          <button type="button" class="cancel-modal-cancel" @click="closeCancelModal">{{ $t('keepBooking') }}</button>
           <button 
             type="button" 
             class="cancel-modal-confirm" 
@@ -713,13 +695,7 @@ const getTotalDays = (start, end) => {
           </h2>
         </div>
         <div class="confirm-modal-body">
-          <p>
-            You are about to
-            <strong>{{ confirmationModal.action === 'accept' ? 'accept' : 'reject' }}</strong>
-            the reservation for
-            <strong>{{ confirmationModal.booking?.vehicle_name || 'the vehicle' }}</strong>
-            booked by
-            <strong>{{ confirmationModal.booking?.customer_name || 'the customer' }}</strong>.
+          <p>{{ $t('youAreAboutTo') }}<strong>{{ confirmationModal.action === 'accept' ? 'accept' : 'reject' }}</strong>{{ $t('theReservationFor') }}<strong>{{ confirmationModal.booking?.vehicle_name || 'the vehicle' }}</strong>{{ $t('bookedBy') }}<strong>{{ confirmationModal.booking?.customer_name || 'the customer' }}</strong>.
           </p>
           <p class="confirm-modal-period">
             {{ formatDate(confirmationModal.booking?.start_date) }} to
@@ -727,14 +703,12 @@ const getTotalDays = (start, end) => {
             ({{ getTotalDays(confirmationModal.booking?.start_date, confirmationModal.booking?.end_date) }} days)
           </p>
           <p class="confirm-modal-detail">
-            <span>Total:</span>
+            <span>{{ $t('total2') }}</span>
             {{ formatCurrency(confirmationModal.booking?.total_price || 0) }}
           </p>
         </div>
         <div class="confirm-modal-actions">
-          <button type="button" class="confirm-cancel-btn" @click="closeBookingConfirmation">
-            Cancel
-          </button>
+          <button type="button" class="confirm-cancel-btn" @click="closeBookingConfirmation">{{ $t('cancel') }}</button>
           <button
             type="button"
             class="confirm-submit-btn"
@@ -779,14 +753,14 @@ const getTotalDays = (start, end) => {
           <div class="highlight-chip">
             <div class="chip-icon" aria-hidden="true">📅</div>
             <div>
-              <span>Booked on</span>
+              <span>{{ $t('bookedOn') }}</span>
               <strong>{{ formatDate(selectedBookingDetail?.start_date) || 'TBD' }}</strong>
             </div>
           </div>
           <div class="highlight-chip neon">
             <div class="chip-icon" aria-hidden="true">⚡</div>
             <div>
-              <span>Current status</span>
+              <span>{{ $t('currentStatus') }}</span>
               <strong>{{ detailStatusText }}</strong>
             </div>
           </div>
@@ -795,29 +769,29 @@ const getTotalDays = (start, end) => {
         <div class="booking-detail-cards">
           <div class="detail-card">
           <div class="detail-card-row">
-            <span>Duration</span>
+            <span>{{ $t('duration') }}</span>
             <strong>{{ detailDaysCount }} day(s)</strong>
             </div>
             <div class="detail-card-row">
-              <span>Daily rate</span>
+              <span>{{ $t('dailyRate') }}</span>
               <strong>{{ formatCurrency(detailPricePerDay) }}</strong>
             </div>
             <div class="detail-card-row">
-              <span>Total</span>
+              <span>{{ $t('total3') }}</span>
               <strong>{{ formatCurrency(detailTotalAmount) }}</strong>
             </div>
           </div>
           <div class="detail-card detail-card--info">
             <div class="detail-card-row">
-              <span>Shop</span>
+              <span>{{ $t('shop') }}</span>
               <strong>{{ selectedBookingDetail?.shop_name || detailShopData?.name || 'N/A' }}</strong>
             </div>
             <div class="detail-card-row">
-              <span>Customer</span>
+              <span>{{ $t('customer') }}</span>
               <strong>{{ detailCustomerData?.name || selectedBookingDetail?.customer_name || 'N/A' }}</strong>
             </div>
             <div class="detail-card-row">
-              <span>Contact</span>
+              <span>{{ $t('contact') }}</span>
               <strong>
                 {{ selectedBookingDetail?.customer_phone || selectedBookingDetail?.customer_email || detailCustomerData?.phone || 'N/A' }}
               </strong>
@@ -826,18 +800,18 @@ const getTotalDays = (start, end) => {
         </div>
 
         <div class="booking-detail-vehicle">
-          <h4>Vehicle specs</h4>
+          <h4>{{ $t('vehicleSpecs') }}</h4>
           <div class="booking-detail-specs">
-            <span>Name: <strong>{{ detailVehicleData?.name || 'N/A' }}</strong></span>
-            <span>Brand: <strong>{{ detailVehicleData?.brand || 'N/A' }}</strong></span>
-            <span>Fuel: <strong>{{ detailVehicleData?.fuel_type || 'N/A' }}</strong></span>
-            <span>Transmission: <strong>{{ detailVehicleData?.transmission || 'N/A' }}</strong></span>
-            <span>Plate: <strong>{{ detailVehicleData?.plate || 'N/A' }}</strong></span>
-            <span>Status: <strong>{{ detailVehicleData?.status || 'N/A' }}</strong></span>
-            <span v-if="detailVehicleData?.total_vehicles">Total: <strong>{{ detailVehicleData.total_vehicles }}</strong></span>
-            <span v-if="detailVehicleData?.rider_details">Rider: <strong>{{ detailVehicleData.rider_details }}</strong></span>
-            <span v-if="detailVehicleData?.insurance_fee">Insurance: <strong>${{ detailVehicleData.insurance_fee }}</strong></span>
-            <span v-if="detailVehicleData?.taxes_fee">Taxes: <strong>${{ detailVehicleData.taxes_fee }}</strong></span>
+            <span>{{ $t('name3') }}<strong>{{ detailVehicleData?.name || 'N/A' }}</strong></span>
+            <span>{{ $t('brand2') }}<strong>{{ detailVehicleData?.brand || 'N/A' }}</strong></span>
+            <span>{{ $t('fuel2') }}<strong>{{ detailVehicleData?.fuel_type || 'N/A' }}</strong></span>
+            <span>{{ $t('transmission2') }}<strong>{{ detailVehicleData?.transmission || 'N/A' }}</strong></span>
+            <span>{{ $t('plate2') }}<strong>{{ detailVehicleData?.plate || 'N/A' }}</strong></span>
+            <span>{{ $t('status3') }}<strong>{{ detailVehicleData?.status || 'N/A' }}</strong></span>
+            <span v-if="detailVehicleData?.total_vehicles">{{ $t('total2') }}<strong>{{ detailVehicleData.total_vehicles }}</strong></span>
+            <span v-if="detailVehicleData?.rider_details">{{ $t('rider') }}<strong>{{ detailVehicleData.rider_details }}</strong></span>
+            <span v-if="detailVehicleData?.insurance_fee">{{ $t('insurance2') }}<strong>${{ detailVehicleData.insurance_fee }}</strong></span>
+            <span v-if="detailVehicleData?.taxes_fee">{{ $t('taxes') }}<strong>${{ detailVehicleData.taxes_fee }}</strong></span>
           </div>
         </div>
       </div>
@@ -852,19 +826,17 @@ const getTotalDays = (start, end) => {
       <div class="completion-modal-card">
         <div class="completion-modal-header">
           <div>
-            <h2>Complete this booking</h2>
+            <h2>{{ $t('completeThisBooking') }}</h2>
           </div>
           <button type="button" class="completion-close" @click="closeCompletionModal">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
         <div class="completion-modal-body">
-          <p>Are you sure you want to mark this booking as completed?</p>
+          <p>{{ $t('areYouSureYouWantToMarkThisBookingAsCompleted') }}</p>
         </div>
         <div class="completion-modal-actions">
-          <button type="button" class="completion-cancel" @click="closeCompletionModal">
-            Cancel
-          </button>
+          <button type="button" class="completion-cancel" @click="closeCompletionModal">{{ $t('cancel') }}</button>
           <button type="button" class="completion-primary" @click="submitCompletion" :disabled="processing">
             {{ processing ? 'Completing...' : 'Complete booking' }}
           </button>

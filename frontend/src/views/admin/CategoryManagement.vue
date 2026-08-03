@@ -141,31 +141,31 @@ onMounted(load)
   <section class="admin-page">
     <header class="page-head">
       <div>
-        <h1 class="page-title">Category Management</h1>
-        <p class="page-subtitle">Manage vehicle categories used across the system.</p>
+        <h1 class="page-title">{{ $t('categoryManagement2') }}</h1>
+        <p class="page-subtitle">{{ $t('manageVehicleCategoriesUsedAcrossTheSystem') }}</p>
       </div>
       <button type="button" class="btn btn-primary btn-block" @click="openCreate">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
-        <span>Add Category</span>
+        <span>{{ $t('addCategory') }}</span>
       </button>
     </header>
 
     <section class="card">
       <div class="card-head">
         <div>
-          <h2 class="card-title">Categories</h2>
+          <h2 class="card-title">{{ $t('categories') }}</h2>
           <p class="card-subtitle">{{ filtered.length }} total</p>
         </div>
       </div>
 
-      <div v-if="loading" class="muted">Loading…</div>
+      <div v-if="loading" class="muted">{{ $t('loading') }}</div>
       <div v-else class="table-wrap">
         <table class="data-table">
           <thead>
             <tr>
-              <th>CATEGORY</th>
-              <th>STATUS</th>
-              <th class="actions">ACTIONS</th>
+              <th>{{ $t('category2') }}</th>
+              <th>{{ $t('status2') }}</th>
+              <th class="actions">{{ $t('actions2') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -205,34 +205,34 @@ onMounted(load)
         <div class="modal-head">
           <div>
             <div class="modal-title">{{ showEdit ? 'Edit Category' : 'Create Category' }}</div>
-            <div class="modal-sub">Name and optional description.</div>
+            <div class="modal-sub">{{ $t('nameAndOptionalDescription') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="closeModals"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div class="modal-body form-grid">
           <label class="field span-2">
-            <span class="field-label">Name</span>
+            <span class="field-label">{{ $t('name') }}</span>
             <input v-model="form.name" type="text" placeholder="e.g. Motorbike" />
           </label>
           <label class="field span-2">
-            <span class="field-label">Description</span>
+            <span class="field-label">{{ $t('shopDescription') }}</span>
             <textarea v-model="form.description" rows="3" placeholder="Optional"></textarea>
           </label>
           <label class="field">
-            <span class="field-label">Status</span>
+            <span class="field-label">{{ $t('status') }}</span>
             <select v-model="form.status">
-              <option value="active">active</option>
-              <option value="inactive">inactive</option>
+              <option value="active">{{ $t('active2') }}</option>
+              <option value="inactive">{{ $t('inactive2') }}</option>
             </select>
           </label>
         </div>
 
 
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" @click="closeModals">Cancel</button>
-          <button v-if="showEdit" type="button" class="btn btn-primary" @click="submitEdit">Save Changes</button>
-          <button v-else type="button" class="btn btn-primary" @click="submitCreate">Create Category</button>
+          <button type="button" class="btn btn-ghost" @click="closeModals">{{ $t('cancel') }}</button>
+          <button v-if="showEdit" type="button" class="btn btn-primary" @click="submitEdit">{{ $t('saveChanges') }}</button>
+          <button v-else type="button" class="btn btn-primary" @click="submitCreate">{{ $t('createCategory') }}</button>
         </div>
       </div>
     </div>
@@ -241,30 +241,30 @@ onMounted(load)
       <div class="modal">
         <div class="modal-head">
           <div>
-            <div class="modal-title">Category Details</div>
-            <div class="modal-sub">Read-only view</div>
+            <div class="modal-title">{{ $t('categoryDetails') }}</div>
+            <div class="modal-sub">{{ $t('readOnlyView') }}</div>
           </div>
           <button type="button" class="icon-action" title="Close" @click="showView = false"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body category-details-grid">
           <div class="detail-card">
-            <span class="detail-label">Name</span>
+            <span class="detail-label">{{ $t('name') }}</span>
             <strong>{{ selected?.name || '—' }}</strong>
           </div>
           <div class="detail-card">
-            <span class="detail-label">Status</span>
+            <span class="detail-label">{{ $t('status') }}</span>
             <strong>{{ String(selected?.status || 'active').toUpperCase() }}</strong>
           </div>
           <div class="detail-card span-full">
-            <span class="detail-label">Description</span>
+            <span class="detail-label">{{ $t('shopDescription') }}</span>
             <strong>{{ selected?.description || 'No description provided.' }}</strong>
           </div>
           <div class="detail-card">
-            <span class="detail-label">Created at</span>
+            <span class="detail-label">{{ $t('createdAt2') }}</span>
             <strong>{{ formatDate(selected?.created_at) }}</strong>
           </div>
           <div class="detail-card">
-            <span class="detail-label">Updated at</span>
+            <span class="detail-label">{{ $t('updatedAt') }}</span>
             <strong>{{ formatDate(selected?.updated_at) }}</strong>
           </div>
         </div>

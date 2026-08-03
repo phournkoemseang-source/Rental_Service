@@ -18,9 +18,30 @@ const syncLocationFromStorage = () => {
   locationGranted.value = hasLocationAccess()
 }
 
+// Detect a reload that was triggered by a language switch so the splash
+// screen can be skipped and the new language appears instantly.
+const isLanguageSwitchReload = () => {
+  try {
+    if (sessionStorage.getItem('lang_switch_reload') === '1') {
+      sessionStorage.removeItem('lang_switch_reload')
+      return true
+    }
+  } catch {
+    // Session storage unavailable — splash will play once, that's fine.
+  }
+  return false
+}
+
 onMounted(() => {
   locationGranted.value = hasLocationAccess()
   window.addEventListener('location-access-updated', syncLocationFromStorage)
+
+  if (isLanguageSwitchReload()) {
+    // Language-switch reloads skip the splash (and the location re-prompt)
+    // so switching languages feels instant.
+    showSplash.value = false
+    return
+  }
 
   setTimeout(() => {
     showSplash.value = false
@@ -149,7 +170,7 @@ const goBack = () => {
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
-      <span>Back</span>
+      <span>{{ $t('back') }}</span>
     </button>
   </div>
 </template>

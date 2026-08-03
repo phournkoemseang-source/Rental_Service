@@ -5,14 +5,14 @@
       <div class="receipt-header-blue">
         <div class="brand-section">
           <h1 class="brand-logo-white">CHONG CHOUL</h1>
-          <p class="brand-tagline-white">powered by MVL</p>
+          <p class="brand-tagline-white">{{ $t('poweredByMvl') }}</p>
         </div>
         <div class="receipt-title-kh-white">វិក្កយបត្រ</div>
       </div>
 
       <!-- Main Amount with Blue Highlight -->
       <div class="amount-section-highlight">
-        <div class="amount-label-kh">ចំនួនទឹកប្រាក់សរុប (Total Amount)</div>
+        <div class="amount-label-kh">{{ $t('totalAmount') }}</div>
         <div class="main-amount-blue">
           <span class="currency">$</span>{{ totalAmount.toFixed(2) }}
         </div>
@@ -25,35 +25,35 @@
       <div class="details-section">
         <!-- New breakdown requested by user -->
         <div class="detail-row">
-          <span class="detail-label-kh">តម្លៃដើម / ១ ថ្ងៃ (Original Price / 1 Day)</span>
+          <span class="detail-label-kh">{{ $t('originalPrice1Day') }}</span>
           <span class="detail-value">${{ dailyRate.toFixed(2) }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label-kh">រយៈពេលជួល (Rental Duration)</span>
+          <span class="detail-label-kh">{{ $t('rentalDuration') }}</span>
           <span class="detail-value">{{ totalDays }} {{ totalDays > 1 ? 'Days' : 'Day' }}</span>
         </div>
         <div class="detail-row" v-if="totalDays > 1">
-          <span class="detail-label-kh">តម្លៃបន្ថែម (Additional Days Price)</span>
+          <span class="detail-label-kh">{{ $t('additionalDaysPrice') }}</span>
           <span class="detail-value">${{ (subtotal - (dailyRate * (props.riderCount || 1))).toFixed(2) }}</span>
         </div>
 
         <div class="total-divider"></div>
 
         <div class="detail-row">
-          <span class="detail-label-kh">តម្លៃសរុបយានយន្ត (Vehicle Subtotal)</span>
+          <span class="detail-label-kh">{{ $t('vehicleSubtotal') }}</span>
           <span class="detail-value">${{ subtotal.toFixed(2) }}</span>
         </div>
         <div class="detail-row" v-if="insurance > 0">
-          <span class="detail-label-kh">សេវាធានារ៉ាប់រង (Insurance)</span>
+          <span class="detail-label-kh">{{ $t('insurance') }}</span>
           <span class="detail-value">${{ insurance.toFixed(2) }}</span>
         </div>
         <div class="detail-row discount" v-if="discount > 0">
-          <span class="detail-label-kh">ការបញ្ចុះតម្លៃ (Discount)</span>
+          <span class="detail-label-kh">{{ $t('discount2') }}</span>
           <span class="detail-value">-${{ discount.toFixed(2) }}</span>
         </div>
         <div class="total-divider"></div>
         <div class="detail-row total-row-fancy">
-          <span class="detail-label-kh bold">សរុប (Grand Total)</span>
+          <span class="detail-label-kh bold">{{ $t('grandTotal') }}</span>
           <span class="detail-value bold-blue">${{ totalAmount.toFixed(2) }}</span>
         </div>
       </div>
@@ -62,39 +62,39 @@
       <!-- Information Grid -->
       <div class="info-grid-fancy">
         <div class="info-item">
-          <div class="info-label-kh-small">កាលបរិច្ឆេទ (Date & Time)</div>
+          <div class="info-label-kh-small">{{ $t('dateTime') }}</div>
           <div class="info-value-dark">{{ dateTime }}</div>
         </div>
         <div class="info-item">
-          <div class="info-label-kh-small">ម្ចាស់ហាង (Shop Owner)</div>
+          <div class="info-label-kh-small">{{ $t('shopOwner2') }}</div>
           <div class="info-value-dark verified">
             {{ ownerName }} <i class="fas fa-check-circle check-icon"></i>
           </div>
         </div>
         <div class="info-item">
-          <div class="info-label-kh-small">យានយន្ត (Vehicle)</div>
+          <div class="info-label-kh-small">{{ $t('vehicle2') }}</div>
           <div class="info-value-dark">{{ vehicleName }}</div>
         </div>
         <div class="info-item">
-          <div class="info-label-kh-small">ផ្លាកលេខ (License Plate)</div>
+          <div class="info-label-kh-small">{{ $t('licensePlate') }}</div>
           <div class="info-value-dark plate-tag">{{ plateNumber }}</div>
         </div>
         <div class="info-item full-width">
-          <div class="info-label-kh-small">ទីតាំង (Pickup Location)</div>
+          <div class="info-label-kh-small">{{ $t('pickupLocation') }}</div>
           <div class="info-value-dark">
             <i class="fas fa-map-marker-alt map-icon-blue"></i> {{ address }}
           </div>
         </div>
         <div class="info-item">
-          <div class="info-label-kh-small">វិធីបង់ប្រាក់ (Payment Method)</div>
+          <div class="info-label-kh-small">{{ $t('paymentMethod2') }}</div>
           <div class="info-value-dark">{{ paymentMethodLabel }}</div>
         </div>
         <div class="info-item">
-          <div class="info-label-kh-small">លេខទូរស័ព្ទ (Phone Number)</div>
+          <div class="info-label-kh-small">{{ $t('phoneNumber2') }}</div>
           <div class="info-value-dark">{{ customerPhone || 'N/A' }}</div>
         </div>
         <div class="info-item">
-          <div class="info-label-kh-small">លេខកក់ (Booking ID)</div>
+          <div class="info-label-kh-small">{{ $t('bookingId2') }}</div>
           <div class="info-value-dark">#{{ bookingId }}</div>
         </div>
       </div>
@@ -102,12 +102,12 @@
       <!-- Footer -->
       <div class="receipt-footer-fancy">
         <div class="footer-brand-dark">CHONG CHOUL</div>
-        <div class="support-email-gray">support@chongchoul.com</div>
+        <div class="support-email-gray">{{ $t('supportChongchoulCom') }}</div>
         <div class="social-icons-blue">
           <i class="fab fa-facebook"></i>
           <i class="fab fa-instagram"></i>
         </div>
-        <div class="thanks-note">Thank you for your booking!</div>
+        <div class="thanks-note">{{ $t('thankYouForYourBooking') }}</div>
       </div>
     </div>
   </div>
