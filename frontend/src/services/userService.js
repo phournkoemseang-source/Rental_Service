@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-// Use relative URL to go through Vite proxy (configured in vite.config.js)
-const API_BASE = ''
-
+// Overridable via VITE_API_BASE_URL at build time.
+// In dev it falls back to the relative /api path (handled by the Vite proxy);
+// in production it points at the Render backend (e.g. https://chong-choul-backend.onrender.com/api).
 const http = axios.create({
-  baseURL: `${API_BASE}/api`,
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   headers: { 'Accept': 'application/json' },
 })
 

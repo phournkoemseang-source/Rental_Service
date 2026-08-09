@@ -1,0 +1,11 @@
+.git
+.gitignore
+node_modules
+frontend
+firebase-debug.log
+package-lock.json
+package.json
+backend/vendor
+backend/.env
+**/.env
+*.log

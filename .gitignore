@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Firebase local cache & logs
+frontend/.firebase/
+firebase-debug.log
+
+# Stray root package files (not part of the app)
+package.json
+package-lock.json
+
+# Logs
+*.log

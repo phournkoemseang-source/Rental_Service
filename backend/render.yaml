@@ -1,0 +1,56 @@
+# Render Blueprint for the chong-choul backend (Laravel API).
+#
+# NOTE: The Dockerfile lives in backend/ but expects the REPO ROOT as its build
+# context (its COPY instructions use "backend/" paths), so:
+#   - dockerfilePath: ./backend/Dockerfile
+#   - do NOT set a root directory on the service (build context = repo root)
+#
+# If you instead created the service manually in the dashboard, just set these
+# same settings under Service -> Settings:
+#   - Dockerfile path: backend/Dockerfile
+#   - Root directory: (leave empty)
+#   - Environment variables: see envVars below (APP_KEY, DB_*, CORS_ALLOWED_ORIGINS, ...)
+services:
+  - type: web
+    name: chong-choul-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /api/cities
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://chong-choul-backend.onrender.com
+      - key: APP_KEY
+        generateValue: true
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      # Allow both the Firebase frontend and the old domain.
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://chong-choul.web.app,https://chongchoul.online
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_PORT
+        value: 3306
+      # Set these from your Render managed MySQL connection string
+      # (Service -> Environment in the dashboard). They are prompted for at
+      # Blueprint creation and ignored on later syncs.
+      - key: DB_HOST
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
