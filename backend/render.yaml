@@ -1,21 +1,21 @@
 # Render Blueprint for the chong-choul backend (Laravel API).
 #
-# NOTE: The Dockerfile lives in backend/ but expects the REPO ROOT as its build
-# context (its COPY instructions use "backend/" paths), so:
-#   - dockerfilePath: ./backend/Dockerfile
-#   - do NOT set a root directory on the service (build context = repo root)
+# The Dockerfile lives in backend/ and expects `backend/` as its build context,
+# so the service must have:
+#   - Root directory:    backend
+#   - Dockerfile path:   Dockerfile
+# (these are the rootDir/dockerfilePath values below)
 #
-# If you instead created the service manually in the dashboard, just set these
-# same settings under Service -> Settings:
-#   - Dockerfile path: backend/Dockerfile
-#   - Root directory: (leave empty)
-#   - Environment variables: see envVars below (APP_KEY, DB_*, CORS_ALLOWED_ORIGINS, ...)
+# If you created the service manually in the dashboard, set the same two
+# settings under Service -> Settings, then add the env vars under Environment
+# (APP_KEY, DB_*, CORS_ALLOWED_ORIGINS, ...).
 services:
   - type: web
     name: chong-choul-backend
     runtime: docker
     plan: free
-    dockerfilePath: ./backend/Dockerfile
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /api/cities
     envVars:
       - key: APP_ENV

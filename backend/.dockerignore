@@ -1,15 +1,9 @@
 .git
-    .gitignore
-    .env
-backend /.env
-backend /.env.*
-    backend / vendor
-backend / node_modules
-backend / storage/*
-!backend/storage/app
-!backend/storage/app/public
-backend/database/database.sqlite
+.gitignore
+.env
+.env.*
+vendor
 node_modules
-frontend
 *.log
-firebase-debug.log
+public/storage
+database/database.sqlite
