@@ -11,7 +11,6 @@ const UserBookings = () => import('../views/users/MyBookings.vue');
 const SettingUser = () => import('../views/users/Setting_user.vue');
 const AdminDashboard = () => import('../views/admin/Dashboard.vue');
 const ShopVehicles = () => import('../views/users/ShopVehicles.vue');
-const VehiclesByShop = () => import('../views/users/VehiclesByShop.vue');
 const Booking = () => import('../views/users/Booking.vue');
 const VehicleDetail = () => import('../views/vehicle/VehicleDetail.vue');
 const AdminLayout = () => import('../views/admin/AdminLayout.vue');
@@ -34,6 +33,16 @@ const getUserRole = () => {
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  // Always land at the top of a new page; back/forward restores the previous position
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      // Wait a tick so async-rendered pages are tall enough to restore the position
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(savedPosition), 120);
+      });
+    }
+    return { left: 0, top: 0 };
+  },
   routes: [
     {
       path: '/',
@@ -200,12 +209,6 @@ const router = createRouter({
       name: 'notifications',
       component: UserNotifications,
       meta: { requiresAuth: true, allowedRoles: ['customer', 'user', 'admin'] }
-    },
-    {
-      path: '/vehicles',
-      name: 'vehicles-by-shop',
-      component: VehiclesByShop,
-      meta: { requiresAuth: false, allowedRoles: ['customer', 'user', 'admin'] }
     },
     {
       path: '/vehicles/:id',

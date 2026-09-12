@@ -25,7 +25,7 @@
       <p v-if="isLoading" class="page-subtitle">{{ $t('loadingVehicleDetails') }}</p>
       <p v-else-if="loadingError" class="page-subtitle">{{ loadingError }}</p>
       <p v-else class="page-subtitle">
-        Complete your booking for the {{ rental.title }}
+        {{ $t('completeBookingFor', { name: rental.title }) }}
       </p>
 
       <div class="card checkout-card-single">
@@ -49,9 +49,9 @@
         <!-- Promo Code -->
         <div class="section-block">
           <div class="promo-input-group">
-            <input type="text" placeholder="Have a promo code?" v-model="promoCode" />
+            <input type="text" :placeholder="$t('promoCode')" v-model="promoCode" />
             <button class="btn-promo" type="button" @click="applyPromoCode">
-              {{ appliedCoupon && promoCode === appliedCoupon.code ? 'Applied' : 'Apply' }}
+              {{ appliedCoupon && promoCode === appliedCoupon.code ? $t('applied') : $t('apply') }}
             </button>
           </div>
           <p v-if="promoFeedback" :class="['promo-feedback', `promo-feedback--${promoFeedbackType}`]">
@@ -93,16 +93,19 @@
         <div class="section-block">
           <div class="pricing-rows">
             <div class="price-row">
-              <span>Daily Rate x {{ calculateDays() }} day(s)</span>
+              <span>{{ $t('dailyRate') }} x {{ calculateDays() }} {{ $t('days') }}</span>
               <span>${{ rental.subtotal.toFixed(2) }}</span>
             </div>
             <div class="insurance-toggle">
-              <label>
-                <input type="checkbox" v-model="includeInsurance" />{{ $t('includeInsurance') }}</label>
+              <label class="insurance-check">
+                <input type="checkbox" v-model="includeInsurance" />
+                <span class="check-box"><i class="fa-solid fa-check"></i></span>
+                {{ $t('includeInsurance') }}
+              </label>
               <span>${{ insuranceAmount.toFixed(2) }}</span>
             </div>
             <div v-if="appliedCoupon && couponDiscount > 0" class="price-row coupon-row">
-              <span>Coupon ({{ appliedCoupon.code }})</span>
+              <span>{{ $t('coupon') }} ({{ appliedCoupon.code }})</span>
               <span class="discount-amount">-${{ couponDiscount.toFixed(2) }}</span>
             </div>
           </div>
@@ -116,16 +119,16 @@
 
         <!-- Payment Method -->
         <div class="section-block">
-          <div class="payment-tabs-single">
-            <button class="tab" :class="{ active: method === 'qr' }" type="button" @click="method = 'qr'">{{ $t('qrCode') }}</button>
-            <button class="tab" :class="{ active: method === 'later' }" type="button" @click="method = 'later'">{{ $t('payLater') }}</button>
+          <div class="payment-tabs-single segmented" role="tablist" :aria-label="$t('paymentMethod')">
+            <button class="tab segmented__btn" :class="{ active: method === 'qr' }" type="button" role="tab" :aria-selected="method === 'qr'" @click="method = 'qr'">{{ $t('qrCode') }}</button>
+            <button class="tab segmented__btn" :class="{ active: method === 'later' }" type="button" role="tab" :aria-selected="method === 'later'" @click="method = 'later'">{{ $t('payLater') }}</button>
           </div>
 
           <!-- Pay Later -->
           <div v-if="method === 'later'" class="later-info">
             <p class="info-text">{{ $t('payDirectlyAtTheShopWhenYouPickUpYourVehicle') }}</p>
             <button type="button" class="btn-book" :disabled="!isFormValid || isSubmittingPayment" @click="handlePayment">
-              {{ isSubmittingPayment ? "Processing..." : "Book Now" }}
+              {{ isSubmittingPayment ? $t('processing') : $t('bookNow') }}
             </button>
           </div>
 
@@ -144,14 +147,14 @@
               <div class="qr-display">
                 <img v-if="qrCodeUrl" :src="qrCodeUrl" alt="QR Code" class="qr-img" />
               </div>
-              <p class="qr-ref">Ref: {{ paymentId }}</p>
+              <p class="qr-ref">{{ $t('ref') }}: {{ paymentId }}</p>
               <ol class="qr-steps">
                 <li>{{ $t('openYourBankingApp') }}</li>
                 <li>{{ $t('scanTheQrCode') }}</li>
                 <li>{{ $t('confirmPayment') }}</li>
               </ol>
               <button type="button" class="btn-book" :disabled="isSubmittingPayment" @click="handlePayment">
-                {{ isSubmittingPayment ? "Processing..." : "Confirm & Book" }}
+                {{ isSubmittingPayment ? $t('processing') : $t('confirmAndBook') }}
               </button>
             </div>
           </div>

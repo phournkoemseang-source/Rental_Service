@@ -40,21 +40,25 @@
           <!-- General Preferences -->
           <div class="card preferences-card">
             <h3 class="card-title">{{ $t('generalPreferences') }}</h3>
-            <div class="preference-section">
+            <div class="preference-section preference-section--stacked">
               <label class="preference-label">{{ $t('language') }}</label>
               <LanguageSwitcher variant="wide" />
             </div>
-            <div class="preference-section">
+            <div class="preference-section preference-section--stacked">
               <label class="preference-label">{{ $t('displayTheme') }}</label>
-              <div class="toggle-group">
+              <div class="toggle-group" role="group" :aria-label="$t('displayTheme')">
                 <button 
+                  type="button"
                   class="toggle-btn" 
                   :class="{ active: activeTheme === 'Light' }"
+                  :aria-pressed="activeTheme === 'Light'"
                   @click="setTheme('Light')"
                 >{{ $t('light') }}</button>
                 <button 
+                  type="button"
                   class="toggle-btn toggle-btn-dark" 
                   :class="{ active: activeTheme === 'Dark' }"
+                  :aria-pressed="activeTheme === 'Dark'"
                   @click="setTheme('Dark')"
                 >{{ $t('dark') }}</button>
               </div>
@@ -119,7 +123,7 @@
           <div class="status-content">
             <span class="status-label">{{ $t('lastLogin') }}</span>
             <span class="status-value">{{ lastLoginTime || currentDateTime }}</span>
-            <span class="status-detail">192.168.1.105</span>
+            <span v-if="lastLoginIp" class="status-detail">{{ lastLoginIp }}</span>
           </div>
         </div>
 
@@ -171,7 +175,6 @@ import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const router = useRouter()
 
-const activeTab = ref('profile')
 const activeTheme = ref(localStorage.getItem('admin_theme') || 'Light')
 const currentDateTime = ref('')
 const userUsagePercent = ref(0)
@@ -277,11 +280,6 @@ const resolveImageUrl = (path) => {
   return `/storage/${path}`;
 }
 
-// Call this after updating profile picture to force refresh
-const refreshProfilePicture = () => {
-  localStorage.setItem('profile_picture_timestamp', Date.now())
-}
-
 const profileAvatarUrl = computed(() => {
   const url = resolveImageUrl(userProfile.value.profile_picture)
   console.log('profileAvatarUrl:', {
@@ -308,6 +306,7 @@ const adminCount = ref(0)
 const shopOwnerCount = ref(0)
 const customerCount = ref(0)
 const lastLoginTime = ref('')
+const lastLoginIp = ref('')
 
 // Fetch admin stats from API
 const fetchAdminStats = async () => {
@@ -330,6 +329,7 @@ const fetchAdminStats = async () => {
     adminCount.value = data.admin_count || 0
     shopOwnerCount.value = data.shop_owner_count || 0
     customerCount.value = data.customer_count || 0
+    lastLoginIp.value = data.last_login_ip || ''
     
     // Format last login time
     if (data.last_login) {
@@ -473,20 +473,6 @@ const goToUpdateProfile = () => {
   router.push('/admin/profile')
 }
 
-const menuItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: 'grid' },
-  { id: 'shop', label: 'Shop Management', icon: 'home' },
-  { id: 'users', label: 'User Management', icon: 'users' },
-  { id: 'vehicles', label: 'Vehicle Management', icon: 'car' },
-  { id: 'bookings', label: 'Booking Management', icon: 'calendar' },
-  { id: 'coupons', label: 'Coupons', icon: 'tag' },
-  { id: 'categories', label: 'Categories', icon: 'folder' },
-  { id: 'cities', label: 'Cities', icon: 'map-pin' },
-  { id: 'financials', label: 'Financials', icon: 'dollar' },
-  { id: 'reports', label: 'Reports', icon: 'file-text' },
-  { id: 'settings', label: 'Settings', icon: 'settings', active: true }
-]
-
 const setTheme = (theme) => {
   console.log('Setting theme to:', theme)
   activeTheme.value = theme
@@ -509,10 +495,5 @@ const setTheme = (theme) => {
   }
 }
 
-const logout = () => {
-  localStorage.removeItem('auth_token')
-  localStorage.removeItem('user')
-  router.push('/login')
-}
 </script>
 

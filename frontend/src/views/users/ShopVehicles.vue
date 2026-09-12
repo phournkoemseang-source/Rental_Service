@@ -285,7 +285,11 @@ const syncShopSelectionCache = () => {
 watch([() => shopId.value, shopDisplayName], syncShopSelectionCache, { immediate: true })
 
 const goBack = () => {
-  router.push('/view_shop')
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/view_shop')
+  }
 }
 
 const handleLogout = async () => {
@@ -357,6 +361,8 @@ const categoryButtons = [
 
 
 onMounted(() => {
+  // Always start this page at the top so the vehicle list is the first thing seen
+  window.scrollTo(0, 0)
   fetchVehicles()
   fetchShop()
   fetchVehicleRatingSummary()
@@ -484,6 +490,12 @@ const openMap = () => {
     />
 
     <main class="vehicles-content">
+      <div class="booking-back-bar">
+        <button class="btn-back-top" @click="goBack">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>{{ $t('backToShops') }}</span>
+        </button>
+      </div>
       <div class="page-header">
         <h1>{{ $t('availableVehicles') }}</h1>
         <p>{{ $t('browseVehiclesFromThisShop') }}</p>
@@ -542,8 +554,7 @@ const openMap = () => {
           </button>
         </div>
         <p class="results-text">
-          {{ filteredVehicles.length }} vehicles found
-          <span v-if="shop?.name">in {{ shop.name }}</span>
+          {{ $t('vehiclesFoundIn', { count: filteredVehicles.length, shop: shop?.name || '' }) }}
         </p>
       </div>
 
@@ -590,7 +601,7 @@ const openMap = () => {
               </div>
               <div class="detail-item available-stock" v-if="vehicle.total_vehicles">
                 <i class="fa-solid fa-car"></i>
-                <span>{{ getAvailableVehicles(vehicle) }} available</span>
+                <span>{{ getAvailableVehicles(vehicle) }} {{ $t('availableLower') }}</span>
               </div>
             </div>
 
@@ -610,7 +621,7 @@ const openMap = () => {
               @click="viewVehicleDetails(vehicle)"
               :disabled="getAvailableVehicles(vehicle) <= 0"
             >
-              {{ getAvailableVehicles(vehicle) <= 0 ? 'Not Available' : 'View Details' }}
+              {{ getAvailableVehicles(vehicle) <= 0 ? $t('notAvailable') : $t('viewDetails') }}
             </button>
           </div>
         </article>
@@ -626,7 +637,7 @@ const openMap = () => {
               <button class="map-mode-btn" :class="{ active: mapMode === 'route' }" @click="mapMode = 'route'">{{ $t('route') }}</button>
             </div>
             <button class="map-locate-btn" :disabled="isLocating" @click="useMyLocation">
-              {{ isLocating ? 'Locating...' : 'Use My Location' }}
+              {{ isLocating ? $t('locating') : $t('useMyLocation') }}
             </button>
           </div>
 
